@@ -18,7 +18,7 @@ class CreatePaidTimeOffsTable extends Migration
             $table->integer('employee_id')->unsigned()->index();
             $table->integer('is_approved')->unsigned()->index()->default(0);
             $table->integer('is_half_day')->unsigned()->index()->default(0);
-            $table->integer('days')->unsigned()->index()->default(1);
+            $table->float('days')->unsigned()->index()->default(1);
             $table->dateTime('start_time')->index();
             $table->dateTime('end_time')->index();
             $table->text('description')->nullable();
