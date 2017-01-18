@@ -36,6 +36,29 @@ class Employee extends Model
                ->get();
     }
 
+    /**
+     * Get the days left of an employee by year
+     * @return float days left to take
+     */
+    public function daysLeft($year = null)
+    {
+        if ($year === null) {
+            $year = date('Y');
+        }
+        $days_taken = $this->ptos()
+                ->select(['id', 'days'])
+                ->whereYear('end_time', $year)
+                ->approved()
+                ->get()
+                ->sum('days');
+
+        return config('app.max_days_off') - $days_taken;
+    }
+
+    /**
+     * Add PTO to an employee
+     * @param PaidTimeOff $pto [description]
+     */
     public function addPto(PaidTimeOff $pto)
     {
         return $this->ptos()->save($pto);

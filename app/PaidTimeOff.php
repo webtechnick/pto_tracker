@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class PaidTimeOff extends Model
 {
     protected $fillable = [
-        'start_time', 'end_time', 'description'
+        'employee_id', 'start_time', 'end_time', 'description', 'notes'
     ];
 
     protected $dates = [
@@ -34,6 +34,16 @@ class PaidTimeOff extends Model
         static::updating(function ($pto) {
             $pto->calculateDays();
         });
+    }
+
+    public static function saveForm($data) {
+        $pto = new PaidTimeOff($data);
+        return $pto;
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
     }
 
     /**
@@ -74,7 +84,8 @@ class PaidTimeOff extends Model
      * Approve the PTO
      * @return self
      */
-    public function approve() {
+    public function approve()
+    {
         $this->is_approved = true;
         return $this;
     }
@@ -83,7 +94,8 @@ class PaidTimeOff extends Model
      * Deny the PTO
      * @return self
      */
-    public function deny() {
+    public function deny()
+    {
         $this->is_approved = false;
         return $this;
     }

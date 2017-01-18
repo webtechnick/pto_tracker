@@ -22,6 +22,7 @@ class CreatePaidTimeOffsTable extends Migration
             $table->dateTime('start_time')->index();
             $table->dateTime('end_time')->index();
             $table->text('description')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

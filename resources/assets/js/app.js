@@ -13,8 +13,26 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import Form from './form.js';
+
 Vue.component('example', require('./components/Example.vue'));
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+
+    data: {
+        ptos: {},
+        form: new Form({
+            employee_id: '',
+            start_time: '',
+            end_time: '',
+            description: ''
+        }),
+    },
+
+    methods: {
+        onSubmit() {
+            alert('submitting');
+        }
+    }
 });

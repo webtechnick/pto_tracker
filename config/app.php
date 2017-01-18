@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Laravel',
+    'name' => 'Paid Time Off Tracker',
 
     /*
     |--------------------------------------------------------------------------
@@ -26,6 +26,11 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    /**
+     * Max days off an employee is allowed in a calendar year
+     */
+    'max_days_off' => 21,
 
     /*
     |--------------------------------------------------------------------------
