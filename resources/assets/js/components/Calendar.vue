@@ -6,7 +6,9 @@
                     <tr><td colspan='7' class="center">{{ month.name }}</td></tr>
                     <tr><th class="center">Su</th><th class="center">Mo</th><th class="center">Tu</th><th class="center">We</th><th class="center">Tr</th><th class="center">Fr</th><th class="center">Sa</th></tr>
                     <tr v-for="week in month.weeks">
-                        <td class="center day" v-for="day in week"><a href="#" v-html="renderDay(month.num, day)" @click="selectDay(month.num, day)"></a></td>
+                        <td class="center day" v-for="day in week">
+                            <a href="#" v-html="renderDay(month.num, day)" @click.prevent="selectDay(month.num, day)"></a>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -97,9 +99,6 @@ export default {
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
-                //console.log(pto);
-                //console.log(pto.start_time);
-                //console.log(currentday.isSame(pto.start_time, 'day'));
                 if (
                     currentday.isSame(pto.start_time, 'day') ||
                     currentday.isSame(pto.end_time, 'day') ||

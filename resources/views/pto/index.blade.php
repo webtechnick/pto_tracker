@@ -11,6 +11,10 @@
         </div>
         <div class="col-md-3">
             @include('pto._form')
+
+            <div class="row">
+                <currentday :ptos="ptos" :holidays="holidays"></currentday>
+            </div>
         </div>
     </div>
 

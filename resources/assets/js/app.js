@@ -16,6 +16,7 @@ import Form from './form.js';
 
 //Vue.component('example', require('./components/Example.vue'));
 Vue.component('calendar', require('./components/Calendar.vue'));
+Vue.component('currentday', require('./components/CurrentDay.vue'));
 
 const app = new Vue({
     el: '#app',
@@ -36,7 +37,6 @@ const app = new Vue({
     mounted() {
         this.getPtos(moment().format('YYYY'));
         this.getHolidays(moment().format('YYYY'));
-        Events.$on('dayselect', this.selectDay.bind(this));
     },
 
     methods: {
@@ -44,12 +44,6 @@ const app = new Vue({
             this.form.start_time = $( "#start_time" ).datepicker( "getDate" );
             this.form.end_time = $( "#end_time" ).datepicker( "getDate" );
             this.form.submit();
-        },
-
-        selectDay(month, day) {
-            alert(month);
-            alert(day);
-            //this.selectedDay = day; //a moment object?
         },
         getHolidays(year) {
             axios.get('/get/holidays/' + moment().format('YYYY'))
