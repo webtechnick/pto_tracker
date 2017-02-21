@@ -1,4 +1,3 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * include Vue and Vue Resource. This gives a great starting point for
@@ -21,6 +20,7 @@ const app = new Vue({
     el: '#app',
 
     data: {
+        selectedDay: {},
         ptos: {},
         form: new Form({
             employee_id: '',
@@ -30,9 +30,34 @@ const app = new Vue({
         }),
     },
 
+    mounted() {
+        this.getPtos(moment().format('YYYY'));
+    },
+
     methods: {
         onSubmit() {
-            alert('submitting');
+            this.form.start_time = $( "#start_time" ).datepicker( "getDate" );
+            this.form.end_time = $( "#end_time" ).datepicker( "getDate" );
+            this.form.submit();
+        },
+
+        daySelect(day) {
+            this.selectedDay = day; //a moment object?
+        },
+
+        dateTimeText(pto) {
+            console.log(pto);
+            let start = moment(pto.start_time).format('l');
+            let end = moment(pto.end_end).format('l');
+            return start + ' to ' + end;
+        },
+
+        getPtos(year) {
+            axios.get('/get/ptos/' + moment().format('YYYY'))
+                 .then(response => this.ptos = response.data)
+                 .catch(function(error) {
+                    console.log(errror);
+                 });
         }
     }
 });

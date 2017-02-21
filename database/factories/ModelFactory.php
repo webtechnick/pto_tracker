@@ -31,6 +31,13 @@ $factory->define(App\Employee::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Holiday::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->sentence,
+        'date' => $faker->dateTimeThisMonth()
+    ];
+});
+
 $factory->define(App\PaidTimeOff::class, function (Faker\Generator $faker) {
     static $format = 'Y-m-d H:i:s';
     $start_time = $faker->dateTimeThisMonth();

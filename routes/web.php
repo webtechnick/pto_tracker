@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,15 +24,21 @@ Route::group([
     Route::get('/ptos/{id}/edit', 'AdminPaidTimeOffsController@edit')->name('pto.edit');
 });
 
+Route::get('/', 'PaidTimeOffsController@home')->name('home');
+
 Route::get('/{year?}', 'PaidTimeOffsController@index')
     ->name('pto.index')
+    ->where([
+        'year' => '[0-9]{4}'
+    ]);
+Route::get('/get/ptos/{year?}', 'PaidTimeOffsController@get_ptos')
+    ->name('pto.index.ajax')
     ->where([
         'year' => '[0-9]{4}'
     ]);
 
 Route::post('/ptos/store', 'PaidTimeOffsController@store')
     ->name('pto.store');
-
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
 

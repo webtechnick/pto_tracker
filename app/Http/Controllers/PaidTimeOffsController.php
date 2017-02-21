@@ -8,29 +8,51 @@ use Illuminate\Http\Request;
 
 class PaidTimeOffsController extends Controller
 {
+    public function home()
+    {
+        $employees = Employee::all();
+        return view('pto.index', compact('employees'));
+    }
+
     public function index($year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
         $ptos = PaidTimeOff::whereYear('end_time', $year)->get();
+        if ($request->ajax()) {
+            return $ptos;
+        }
         $employees = Employee::all();
         return view('pto.index', compact('ptos', 'employees'));
     }
 
-    public function store() {
+    public function store()
+    {
         $this->validate(request(), [
             'start_time' => 'required',
             'end_time' => 'required',
-            'employee' => 'required'
+            'employee_id' => 'required'
         ]);
 
-        $pto = PaidTimeOff::create(request()->all());
+        $pto = PaidTimeOff::saveForm($request->all());
 
         if (request()->ajax()) {
             return $pto;
         }
 
         return redirect()->route('pto.index');
+    }
+
+    public function get_ptos($year = null)
+    {
+        if ($year === null) {
+            $year = date('Y');
+        }
+
+        $ptos = PaidTimeOff::whereYear('end_time', $year)->with(['employee' => function ($query) {
+            $query->select(['id', 'name', 'color']);
+        }])->get();
+        return $ptos;
     }
 }

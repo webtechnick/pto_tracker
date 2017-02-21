@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Employee;
+use App\Holiday;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,8 +16,8 @@ class PaidTimeOff extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'start_time',
-        'end_time'
+        //'start_time',
+        //'end_time'
     ];
 
     protected $casts = [
@@ -36,8 +37,12 @@ class PaidTimeOff extends Model
         });
     }
 
-    public static function saveForm($data) {
+    public static function saveForm($data)
+    {
         $pto = new PaidTimeOff($data);
+        $pto->start_time = Carbon::parse($pto->start_time)->toDateString();
+        $pto->end_time = Carbon::parse($pto->end_time)->toDateString();
+        $pto->save();
         return $pto;
     }
 
@@ -68,15 +73,26 @@ class PaidTimeOff extends Model
             $this->end_time = Carbon::parse($this->end_time);
         }
 
-        $this->days = $this->start_time->diffInDays($this->end_time);
+        // Walk through the PTO requested
+        // Check for Holidays and weekends
+        $current_day = Carbon::parse($this->start_time);
+        $this->days = 0;
+        while ($current_day->timestamp <= $this->end_time->timestamp) {
+            if (!$current_day->isWeekend() && !Holiday::isHoliday($current_day)) {
+                $this->days += 1;
+            }
+            $current_day->addDay();
+        }
+
         // Handle special cases
-        if ($this->days < 1) {
+        if ($this->days <= 1) {
             if ($this->is_half_day) {
                 $this->days = .5;
             } else {
                 $this->days = 1;
             }
         }
+
         return $this;
     }
 

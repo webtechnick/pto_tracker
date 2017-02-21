@@ -5,7 +5,14 @@
 <div class="container">
     <div class="row">
         <div class="col-md-9">
-            @include('pto._list')
+            <div class="calendar">
+                <ul class="january">
+                    <li v-for="pto in ptos">
+                        <span class="name" v-text="pto.employee.name"></span>
+                        <span class="date" v-text="dateTimeText(pto)"></span>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="col-md-3">
             @include('pto._form')
@@ -14,7 +21,7 @@
 
     <div class="row">
         <div class="col-md-9">
-            VIEW ONE PTO
+            VIEW DAY PTO
         </div>
         <div class="col-md-3">
             PTO LEFT PER EMPLOEE

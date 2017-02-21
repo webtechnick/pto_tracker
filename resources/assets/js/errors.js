@@ -1,5 +1,5 @@
 class Errors {
-    constuctor() {
+    constructor() {
         this.errors = {};
     }
 
