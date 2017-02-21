@@ -5,14 +5,9 @@
 <div class="container">
     <div class="row">
         <div class="col-md-9">
-            <div class="calendar">
-                <ul class="january">
-                    <li v-for="pto in ptos">
-                        <span class="name" v-text="pto.employee.name"></span>
-                        <span class="date" v-text="dateTimeText(pto)"></span>
-                    </li>
-                </ul>
-            </div>
+
+            <calendar :ptos="ptos" :holidays="holidays"></calendar>
+
         </div>
         <div class="col-md-3">
             @include('pto._form')

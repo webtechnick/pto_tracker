@@ -19,6 +19,7 @@ require('vue-resource');
 window.moment = require('moment');
 window.axios = require('axios');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.Events = new Vue({});
 
 /**
  * We'll register a HTTP interceptor to attach the "CSRF" header to each of

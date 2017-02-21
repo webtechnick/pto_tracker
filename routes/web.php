@@ -36,6 +36,12 @@ Route::get('/get/ptos/{year?}', 'PaidTimeOffsController@get_ptos')
     ->where([
         'year' => '[0-9]{4}'
     ]);
+Route::get('/get/holidays/{year?}', function() {
+    return \App\Holiday::all();
+})->name('pto.index.ajax')
+  ->where([
+    'year' => '[0-9]{4}'
+  ]);
 
 Route::post('/ptos/store', 'PaidTimeOffsController@store')
     ->name('pto.store');

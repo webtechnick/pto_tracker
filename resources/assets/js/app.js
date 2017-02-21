@@ -14,14 +14,17 @@ require('./bootstrap');
 
 import Form from './form.js';
 
-Vue.component('example', require('./components/Example.vue'));
+//Vue.component('example', require('./components/Example.vue'));
+Vue.component('calendar', require('./components/Calendar.vue'));
 
 const app = new Vue({
     el: '#app',
 
     data: {
         selectedDay: {},
-        ptos: {},
+        ptos: [],
+        holidays: [],
+        employees: [],
         form: new Form({
             employee_id: '',
             start_time: '',
@@ -32,6 +35,8 @@ const app = new Vue({
 
     mounted() {
         this.getPtos(moment().format('YYYY'));
+        this.getHolidays(moment().format('YYYY'));
+        Events.$on('dayselect', this.selectDay.bind(this));
     },
 
     methods: {
@@ -41,17 +46,18 @@ const app = new Vue({
             this.form.submit();
         },
 
-        daySelect(day) {
-            this.selectedDay = day; //a moment object?
+        selectDay(month, day) {
+            alert(month);
+            alert(day);
+            //this.selectedDay = day; //a moment object?
         },
-
-        dateTimeText(pto) {
-            console.log(pto);
-            let start = moment(pto.start_time).format('l');
-            let end = moment(pto.end_end).format('l');
-            return start + ' to ' + end;
+        getHolidays(year) {
+            axios.get('/get/holidays/' + moment().format('YYYY'))
+                 .then(response => this.holidays = response.data)
+                 .catch(function(error) {
+                    console.log(errror);
+                 });
         },
-
         getPtos(year) {
             axios.get('/get/ptos/' + moment().format('YYYY'))
                  .then(response => this.ptos = response.data)
