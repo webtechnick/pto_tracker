@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    protected $fillable = ['name', 'title', 'color'];
+    protected $fillable = ['name', 'title', 'color', 'bgcolor'];
+
+    protected $appends = ['pending_days_left', 'days_left'];
 
     /**
      * Employee has many Paid Time Off
@@ -16,6 +18,16 @@ class Employee extends Model
     public function ptos()
     {
         return $this->hasMany(PaidTimeOff::class);
+    }
+
+    public function getPendingDaysLeftAttribute()
+    {
+        return $this->daysPendingLeft();
+    }
+
+    public function getDaysLeftAttribute()
+    {
+        return $this->daysLeft();
     }
 
     /**
@@ -49,6 +61,24 @@ class Employee extends Model
                 ->select(['id', 'days'])
                 ->whereYear('end_time', $year)
                 ->approved()
+                ->get()
+                ->sum('days');
+
+        return config('app.max_days_off') - $days_taken;
+    }
+
+    /**
+     * Get the days left pending approval for an employee in a year
+     * @return float days left to take
+     */
+    public function daysPendingLeft($year = null)
+    {
+        if ($year === null) {
+            $year = date('Y');
+        }
+        $days_taken = $this->ptos()
+                ->select(['id', 'days'])
+                ->whereYear('end_time', $year)
                 ->get()
                 ->sum('days');
 

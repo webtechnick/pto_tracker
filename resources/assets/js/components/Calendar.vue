@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div class="center"><h1>{{ this.year }}</h1></div>
         <div class="row">
             <div class="col-md-4" v-for="month in months">
                 <table class="month">
@@ -13,14 +14,6 @@
                 </table>
             </div>
         </div>
-
-        <ul>
-            <li v-for="pto in ptos">
-                <span class="name" v-text="pto.employee.name"></span>
-                <span class="date" v-text="dateTimeText(pto)"></span>
-            </li>
-        </ul>
-
     </div>
 </template>
 
@@ -60,8 +53,7 @@ export default {
                 {'name': 'Sep', 'num': 9, 'weeks': this.buildMonth('09')},
                 {'name': 'Oct', 'num': 10, 'weeks': this.buildMonth('10')},
                 {'name': 'Nov', 'num': 11, 'weeks': this.buildMonth('11')},
-                {'name': 'Dec', 'num': 12, 'weeks': this.buildMonth('12')},
-                //'Jan', 'Feb', 'Mar', 'Api', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                {'name': 'Dec', 'num': 12, 'weeks': this.buildMonth('12')}
             ]
         };
     },
@@ -94,8 +86,8 @@ export default {
             if (day == '') {
                 return '';
             }
+            day += ' ';
             let currentday = moment(this.year + '-' + month + '-' + day, 'YYYY-MM-DD');
-            //console.log(currentday);
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
@@ -111,7 +103,7 @@ export default {
         },
         renderPto(pto) {
             let letter = pto.employee.name[0];
-            return `<span style="color:red;">${letter}</span>`;
+            return `<span class="day-pto" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
         },
         selectDay(month, day) {
             Events.$emit('dayselect', month, day);
@@ -134,13 +126,18 @@ export default {
 <style>
 .month {
     width: 100%;
-    height: 300px;
+    height: 350px;
 }
 .center {
     text-align: center;
 }
+.day-pto {
+    border-radius: 2px;
+    padding: 2px;
+}
 .day {
-    /*width: 20px;*/
-    /*height: 20px;*/
+    border: 1px solid black;
+    width: 40px;
+    height: 50px;
 }
 </style>

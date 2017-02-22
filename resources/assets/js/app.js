@@ -13,16 +13,17 @@ require('./bootstrap');
  */
 
 import Form from './form.js';
+//import Employee from './employee.js';
 
 //Vue.component('example', require('./components/Example.vue'));
 Vue.component('calendar', require('./components/Calendar.vue'));
 Vue.component('currentday', require('./components/CurrentDay.vue'));
+Vue.component('employeekey', require('./components/EmployeeKey.vue'));
 
 const app = new Vue({
     el: '#app',
 
     data: {
-        selectedDay: {},
         ptos: [],
         holidays: [],
         employees: [],
@@ -32,11 +33,15 @@ const app = new Vue({
             end_time: '',
             description: ''
         }),
+        admin: false
     },
 
     mounted() {
-        this.getPtos(moment().format('YYYY'));
-        this.getHolidays(moment().format('YYYY'));
+        let date = moment().format('YYYY');
+        this.getPtos(date);
+        this.getHolidays(date);
+        this.getEmployees();
+        this.isAdmin();
     },
 
     methods: {
@@ -45,18 +50,32 @@ const app = new Vue({
             this.form.end_time = $( "#end_time" ).datepicker( "getDate" );
             this.form.submit();
         },
+        isAdmin() {
+            axios.get('/is_admin')
+                .then(response => this.admin = response.data)
+                .catch(function(error) {
+                    console.log(error);
+                });
+        },
+        getEmployees() {
+            axios.get('/get/employees/')
+                 .then(response => this.employees = response.data)
+                 .catch(function(error) {
+                    console.log(error);
+                 });
+        },
         getHolidays(year) {
-            axios.get('/get/holidays/' + moment().format('YYYY'))
+            axios.get('/get/holidays/' + year)
                  .then(response => this.holidays = response.data)
                  .catch(function(error) {
-                    console.log(errror);
+                    console.log(error);
                  });
         },
         getPtos(year) {
-            axios.get('/get/ptos/' + moment().format('YYYY'))
+            axios.get('/get/ptos/' + year)
                  .then(response => this.ptos = response.data)
                  .catch(function(error) {
-                    console.log(errror);
+                    console.log(error);
                  });
         }
     }

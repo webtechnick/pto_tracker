@@ -1,16 +1,19 @@
 <template>
     <div>
-            <div class="panel panel-default">
+            <div class="panel panel-default" v-if="events.length">
                 <div class="panel-heading">
                     Day: {{ currentday.format('l') }}
                 </div>
                 <div class="panel-body">
-                    <ul>
-                        <li v-for="event in events">
+                    <ol class="list-group">
+                        <li class="list-group-item" v-for="event in events">
+                            <span class="pull-right" v-html="isApproved(event.approved)"></span>
                             <h4 v-text="event.title"></h4>
                             <p v-text="event.description"></p>
+                            <button v-if="showButton(event)" class="btn btn-success" @click="approve(event)">Approve</button>
+                            <button v-if="showButton(event)" class="btn btn-warning" @click="deny(event)">Deny</button>
                         </li>
-                    </ul>
+                    </ol>
                 </div>
             </div>
     </div>
@@ -27,20 +30,23 @@ export default {
         },
         ptos: {
             default() {
-                return []
+                return [];
             }
         },
         holidays: {
             default () {
-                return []
+                return [];
+            }
+        },
+        admin: {
+            default() {
+                return false;
             }
         }
     },
     data() {
         return {
-            'events': [
-
-            ],
+            'events': [],
             'currentday': moment()
         };
     },
@@ -48,13 +54,35 @@ export default {
         Events.$on('dayselect', this.rePopulateEvents.bind(this));
     },
     methods: {
+        showButton(event) {
+            if (!this.admin) {
+                return false;
+            }
+            if (event.holday) {
+                return false;
+            }
+            return true;
+        },
+        deny(event) {
+            axios.post('/ptos/deny/' + event.pto.id)
+                .then()
+                .catch(function(error) {
+                    console.log(error);
+                });
+            location.reload();
+        },
+        approve(event) {
+            axios.post('/ptos/approve/' + event.pto.id)
+                .then()
+                .catch(function(error) {
+                    console.log(error);
+                });
+            location.reload();
+        },
         populateEvents() {
             this.rePopulateEvents(this.currentday.format('MM'), this.currentday.format('DD'));
         },
         rePopulateEvents(month, day) {
-            console.log(month);
-            console.log(day);
-            console.log(this.holidays);
             this.currentday = moment(this.year + '-' + month + '-' + day, 'YYYY-MM-DD');
             this.reset();
 
@@ -63,7 +91,9 @@ export default {
                 if (this.currentday.isSame(holiday.date, 'day')) {
                     this.events.push({
                         'title': 'HOLIDAY',
-                        'description': holiday.title
+                        'description': holiday.title,
+                        'approved': true,
+                        'holday': holiday,
                     });
                 }
             }
@@ -77,10 +107,18 @@ export default {
                 ) {
                     this.events.push({
                         'title': pto.employee.name,
-                        'description': pto.description
+                        'description': pto.description,
+                        'approved': pto.is_approved,
+                        'pto': pto
                     });
                 }
             }
+        },
+        isApproved(approved) {
+            if (approved) {
+                return `<span class="glyphicon glyphicon-thumbs-up" style="color: green;" aria-hidden="true"></span> Approved`;
+            }
+            return `<span class="glyphicon glyphicon-thumbs-down" style="color: red;" aria-hidden="true"></span> Pending`;
         },
         reset() {
             this.events = [];

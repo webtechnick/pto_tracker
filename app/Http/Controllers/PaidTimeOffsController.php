@@ -35,13 +35,27 @@ class PaidTimeOffsController extends Controller
             'employee_id' => 'required'
         ]);
 
-        $pto = PaidTimeOff::saveForm($request->all());
+        $pto = PaidTimeOff::saveForm(request()->all());
 
         if (request()->ajax()) {
             return $pto;
         }
 
         return redirect()->route('pto.index');
+    }
+
+    public function approve($id = null)
+    {
+        $pto = PaidTimeOff::findOrFail($id);
+        $pto->approve()->save();
+        return $pto;
+    }
+
+    public function deny($id = null)
+    {
+        $pto = PaidTimeOff::findOrFail($id);
+        $pto->deny()->save();
+        return $pto;
     }
 
     public function get_ptos($year = null)
@@ -51,7 +65,7 @@ class PaidTimeOffsController extends Controller
         }
 
         $ptos = PaidTimeOff::whereYear('end_time', $year)->with(['employee' => function ($query) {
-            $query->select(['id', 'name', 'color']);
+            $query->select(['id', 'name', 'color', 'bgcolor']);
         }])->get();
         return $ptos;
     }

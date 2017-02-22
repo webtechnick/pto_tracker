@@ -17,7 +17,8 @@ class CreateEmployeesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('title')->nullable();
-            $table->string('color')->default('Green');
+            $table->string('color')->default('white');
+            $table->string('bgcolor')->default('green');
             $table->timestamps();
         });
     }
