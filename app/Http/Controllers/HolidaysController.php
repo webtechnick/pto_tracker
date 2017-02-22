@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Holiday;
 use Illuminate\Http\Request;
 
 class HolidaysController extends Controller
@@ -11,7 +12,7 @@ class HolidaysController extends Controller
         if (!$year) {
             $year = date('Y');
         }
-        $holidays = PaidTimeOff::whereYear('date', $year)->get();
+        $holidays = Holiday::whereYear('date', $year)->get();
         return $holidays;
     }
 }

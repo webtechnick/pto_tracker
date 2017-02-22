@@ -33,13 +33,13 @@ const app = new Vue({
             end_time: '',
             description: ''
         }),
+        year: $('#inputyear').val(),
         admin: false
     },
 
     mounted() {
-        let date = moment().format('YYYY');
-        this.getPtos(date);
-        this.getHolidays(date);
+        this.getPtos();
+        this.getHolidays();
         this.getEmployees();
         this.isAdmin();
     },
@@ -64,15 +64,15 @@ const app = new Vue({
                     console.log(error);
                  });
         },
-        getHolidays(year) {
-            axios.get('/get/holidays/' + year)
+        getHolidays() {
+            axios.get('/get/holidays/' + this.year)
                  .then(response => this.holidays = response.data)
                  .catch(function(error) {
                     console.log(error);
                  });
         },
-        getPtos(year) {
-            axios.get('/get/ptos/' + year)
+        getPtos() {
+            axios.get('/get/ptos/' + this.year)
                  .then(response => this.ptos = response.data)
                  .catch(function(error) {
                     console.log(error);

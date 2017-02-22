@@ -8,23 +8,13 @@ use Illuminate\Http\Request;
 
 class PaidTimeOffsController extends Controller
 {
-    public function home()
-    {
-        $employees = Employee::all();
-        return view('pto.index', compact('employees'));
-    }
-
-    public function index($year = null)
+    public function home($year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
-        $ptos = PaidTimeOff::whereYear('end_time', $year)->get();
-        if ($request->ajax()) {
-            return $ptos;
-        }
         $employees = Employee::all();
-        return view('pto.index', compact('ptos', 'employees'));
+        return view('pto.index', compact('employees', 'year'));
     }
 
     public function store()
@@ -41,7 +31,7 @@ class PaidTimeOffsController extends Controller
             return $pto;
         }
 
-        return redirect()->route('pto.index');
+        return redirect()->route('home');
     }
 
     public function approve($id = null)

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div class="center"><h1>{{ this.year }}</h1></div>
         <div class="row">
             <div class="col-md-4" v-for="month in months">
                 <table class="month">
@@ -41,7 +40,20 @@ export default {
     },
     data() {
         return {
-            'months': [
+            'months': []
+        };
+    },
+    mounted() {
+        this.months = this.renderYear();
+    },
+    watch: {
+        year: function(value) {
+            this.months = this.renderYear();
+        }
+    },
+    methods: {
+        renderYear() {
+            return [
                 {'name': 'Jan', 'num': 1, 'weeks': this.buildMonth('01')},
                 {'name': 'Feb', 'num': 2, 'weeks': this.buildMonth('02')},
                 {'name': 'Mar', 'num': 3, 'weeks': this.buildMonth('03')},
@@ -54,13 +66,8 @@ export default {
                 {'name': 'Oct', 'num': 10, 'weeks': this.buildMonth('10')},
                 {'name': 'Nov', 'num': 11, 'weeks': this.buildMonth('11')},
                 {'name': 'Dec', 'num': 12, 'weeks': this.buildMonth('12')}
-            ]
-        };
-    },
-    mounted() {
-
-    },
-    methods: {
+            ];
+        },
         buildMonth(month_number) {
             let firstDay = new Date(this.year, month_number - 1, 1); // Feb 1st
             let startingDay = firstDay.getDay();

@@ -1,21 +1,21 @@
 <template>
     <div>
-            <div class="panel panel-default" v-if="events.length">
-                <div class="panel-heading">
-                    Day: {{ currentday.format('l') }}
-                </div>
-                <div class="panel-body">
-                    <ol class="list-group">
-                        <li class="list-group-item" v-for="event in events">
-                            <span class="pull-right" v-html="isApproved(event.approved)"></span>
-                            <h4 v-text="event.title"></h4>
-                            <p v-text="event.description"></p>
-                            <button v-if="showButton(event)" class="btn btn-success" @click="approve(event)">Approve</button>
-                            <button v-if="showButton(event)" class="btn btn-warning" @click="deny(event)">Deny</button>
-                        </li>
-                    </ol>
-                </div>
+        <div class="panel panel-default" v-if="events.length">
+            <div class="panel-heading">
+                Day: {{ currentday.format('l') }}
             </div>
+            <div class="panel-body">
+                <ol class="list-group">
+                    <li class="list-group-item" v-for="event in events">
+                        <span class="pull-right" v-html="isApproved(event.approved)"></span>
+                        <h4 v-text="event.title"></h4>
+                        <p v-text="event.description"></p>
+                        <button v-if="showButton(event)" class="btn btn-success" @click="approve(event)">Approve</button>
+                        <button v-if="showButton(event)" class="btn btn-warning" @click="deny(event)">Deny</button>
+                    </li>
+                </ol>
+            </div>
+        </div>
     </div>
 </template>
 
