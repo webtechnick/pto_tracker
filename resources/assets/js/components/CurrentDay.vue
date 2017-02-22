@@ -62,7 +62,7 @@ export default {
             if (!this.admin) {
                 return false;
             }
-            if (event.holday) {
+            if (event.holiday) {
                 return false;
             }
             return true;
@@ -120,7 +120,7 @@ export default {
                         'title': 'HOLIDAY',
                         'description': holiday.title,
                         'approved': true,
-                        'holday': holiday,
+                        'holiday': holiday,
                     });
                 }
             }
