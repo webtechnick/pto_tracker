@@ -10,8 +10,12 @@
                         <span class="pull-right" v-html="isApproved(event.approved)"></span>
                         <h4 v-text="event.title"></h4>
                         <p v-text="event.description"></p>
-                        <button v-if="showButton(event)" class="btn btn-success" @click="approve(event)">Approve</button>
-                        <button v-if="showButton(event)" class="btn btn-warning" @click="deny(event)">Deny</button>
+                        <div class="btn-group">
+                            <button v-if="showButton(event)" class="btn btn-success btn-sm" @click="approve(event)">Approve</button>
+                            <button v-if="showButton(event)" class="btn btn-warning btn-sm" @click="deny(event)">Deny</button>
+                            <button v-if="showButton(event)" class="btn btn-danger btn-sm" @click="remove(event)"><span class="glyphicon glyphicon-trash"></span></button>
+                            <button v-if="showButton(event)" class="btn btn-info btn-sm" @click="addToGoogle(event)"><span class="glyphicon glyphicon-calendar"></span></button>
+                        </div>
                     </li>
                 </ol>
             </div>
@@ -63,13 +67,21 @@ export default {
             }
             return true;
         },
+        remove(event) {
+            axios.post('/ptos/destroy/' + event.pto.id)
+                .then()
+                .catch(function(error) {
+                    console.log(error);
+                });
+            this.reloadPage();
+        },
         deny(event) {
             axios.post('/ptos/deny/' + event.pto.id)
                 .then()
                 .catch(function(error) {
                     console.log(error);
                 });
-            location.reload();
+            this.reloadPage();
         },
         approve(event) {
             axios.post('/ptos/approve/' + event.pto.id)
@@ -77,6 +89,12 @@ export default {
                 .catch(function(error) {
                     console.log(error);
                 });
+            this.reloadPage();
+        },
+        addToGoogle(event) {
+            window.open('https://calendar.google.com');
+        },
+        reloadPage() {
             location.reload();
         },
         populateEvents() {

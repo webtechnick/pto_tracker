@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class PaidTimeOffsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'admin'])->only(['approve', 'deny', 'destroy']);
+    }
+
     public function home($year = null)
     {
         if ($year === null) {
@@ -46,6 +51,13 @@ class PaidTimeOffsController extends Controller
         $pto = PaidTimeOff::findOrFail($id);
         $pto->deny()->save();
         return $pto;
+    }
+
+    public function destroy($id = null)
+    {
+        $pto = PaidTimeOff::findOrFail($id);
+        $pto->delete();
+        return 1;
     }
 
     public function get_ptos($year = null)

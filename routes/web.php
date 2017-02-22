@@ -49,8 +49,11 @@ Route::get('/get/holidays/{year?}', 'HolidaysController@index')->name('holidays.
 Route::get('/get/employees', 'EmployeesController@index')->name('employee.index.ajax');
 
 Route::post('/ptos/store', 'PaidTimeOffsController@store')->name('pto.store');
-Route::post('/ptos/approve/{id}', 'PaidTimeOffsController@approve')->name('pto.approve');
-Route::post('/ptos/deny/{id}', 'PaidTimeOffsController@deny')->name('pto.deny');
+
+Route::post('/ptos/approve/{id}', 'PaidTimeOffsController@approve')->name('pto.approve')->middleware('admin');
+Route::post('/ptos/deny/{id}', 'PaidTimeOffsController@deny')->name('pto.deny')->middleware('admin');
+Route::post('/ptos/destroy/{id}', 'PaidTimeOffsController@destroy')->name('pto.destroy')->middleware('admin');
+
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
 

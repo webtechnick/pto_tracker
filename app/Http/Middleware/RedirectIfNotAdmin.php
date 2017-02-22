@@ -16,9 +16,9 @@ class RedirectIfNotAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->isAdmin()) {
+        if (Auth::check() && Auth::user()->isAdmin()) {
             return $next($request);
         }
-        return $next($request);
+        return redirect('/login');
     }
 }
