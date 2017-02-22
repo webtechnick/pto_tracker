@@ -7,7 +7,6 @@
   "devDependencies": {
     "bootstrap-sass": "^3.3.7",
     "gulp": "^3.9.1",
-    "jquery": "^3.1.0",
     "laravel-elixir": "^6.0.0-14",
     "laravel-elixir-vue-2": "^0.2.0",
     "laravel-elixir-webpack-official": "^1.0.2",
@@ -16,9 +15,8 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
+    "jquery": "^3.1.0",
     "moment": "^2.17.1",
-    "sass-loader": "^6.0.1",
-    "scss-loader": "0.0.1",
     "vue": "^2.0.1"
   }
 }

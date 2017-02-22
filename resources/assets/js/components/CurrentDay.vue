@@ -92,7 +92,16 @@ export default {
             this.reloadPage();
         },
         addToGoogle(event) {
-            window.open('https://calendar.google.com');
+            let start = moment(event.pto.start_time).format('YYYYMMDD');
+            let end = moment(event.pto.end_time).add(1, 'days').format('YYYYMMDD');
+            let options = {
+                'action': 'TEMPLATE',
+                'text': event.pto.employee.name + ' OOO - PTO',
+                'details': event.pto.description,
+                'trp': 'true',
+                'dates': start + '/' + end
+            };
+            window.open('http://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
         },
         reloadPage() {
             location.reload();
