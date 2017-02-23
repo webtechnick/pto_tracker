@@ -9,7 +9,7 @@ class Employee extends Model
 {
     protected $fillable = ['name', 'title', 'color', 'bgcolor'];
 
-    protected $appends = ['pending_days_left', 'days_left'];
+    //protected $appends = ['pending_days_left', 'days_left'];
 
     /**
      * Employee has many Paid Time Off
