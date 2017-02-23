@@ -2,7 +2,7 @@
 <form action="/ptos/store" method="POST">
     {{ csrf_field() }}
     <div class="form-group">
-        <label for="employee_id">Employee: </label>
+        <label for="employee_id">Resource Unit:</label>
         <!-- <select v-model="form.employee_id" name="employee_id" id="employee" class="form-control"> -->
         <select name="employee_id" id="employee" class="form-control">
             @foreach ( $employees as $employee )

@@ -40,7 +40,7 @@ const app = new Vue({
     mounted() {
         this.getPtos();
         this.getHolidays();
-        this.getEmployees();
+        // this.getEmployees();
         this.isAdmin();
     },
 

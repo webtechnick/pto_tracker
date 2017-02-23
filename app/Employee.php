@@ -22,7 +22,7 @@ class Employee extends Model
 
     public function getPendingDaysLeftAttribute()
     {
-        return $this->daysPendingLeft();
+        return $this->pendingDaysLeft();
     }
 
     public function getDaysLeftAttribute()
@@ -71,7 +71,7 @@ class Employee extends Model
      * Get the days left pending approval for an employee in a year
      * @return float days left to take
      */
-    public function daysPendingLeft($year = null)
+    public function pendingDaysLeft($year = null)
     {
         if ($year === null) {
             $year = date('Y');
