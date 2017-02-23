@@ -6,8 +6,8 @@
                     <tr><td colspan='7' class="center">{{ month.name }}</td></tr>
                     <tr><th class="center">Su</th><th class="center">Mo</th><th class="center">Tu</th><th class="center">We</th><th class="center">Tr</th><th class="center">Fr</th><th class="center">Sa</th></tr>
                     <tr v-for="week in month.weeks">
-                        <td class="center day" v-for="day in week">
-                            <a href="#" v-html="renderDay(month.num, day)" @click.prevent="selectDay(month.num, day)"></a>
+                        <td class="center day" v-bind:class="dayClass(month.num, day)"  @click.prevent="selectDay(month.num, day)" v-for="day in week">
+                            <a href="#" class="day-link" v-html="renderDay(month.num, day)" @click.prevent></a>
                         </td>
                     </tr>
                 </table>
@@ -94,7 +94,7 @@ export default {
                 return '';
             }
             day += ' ';
-            let currentday = moment(this.year + '-' + month + '-' + day, 'YYYY-MM-DD');
+            let currentday = this.getDay(month, day);
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
@@ -110,7 +110,11 @@ export default {
         },
         renderPto(pto) {
             let letter = pto.employee.name[0];
-            return `<span class="day-pto" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
+            let style = 'pto-day';
+            if (!pto.is_approved) {
+                style += ' pending';
+            }
+            return `<span class="${style}" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
         },
         selectDay(month, day) {
             Events.$emit('dayselect', month, day);
@@ -126,6 +130,19 @@ export default {
             let start = moment(pto.start_time).format('l');
             let end = moment(pto.end_time).format('l');
             return start + ' to ' + end;
+        },
+        dayClass(month, day) {
+            let currentday = this.getDay(month, day);
+            for (let i in this.holidays) {
+                let holiday = this.holidays[i];
+                if (currentday.isSame(holiday.date, 'day')) {
+                    return 'holiday';
+                }
+            }
+            return '';
+        },
+        getDay(month, day) {
+            return moment(this.year + '-' + month + '-' + day, 'YYYY-MM-DD');
         }
     }
 }
@@ -142,7 +159,18 @@ export default {
     border-radius: 2px;
     padding: 2px;
 }
+.holiday {
+    background-color: lightpink;
+}
+.pending {
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+.day-link {
+    color: grey;
+}
 .day {
+    cursor: pointer;
     border: 1px solid black;
     width: 40px;
     height: 50px;
