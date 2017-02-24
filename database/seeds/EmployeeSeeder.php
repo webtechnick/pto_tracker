@@ -14,8 +14,8 @@ class EmployeeSeeder extends Seeder
     {
         $employees = [
             ['name' => 'Aaron Hall', 'bgcolor' => 'green'],
-            ['name' => 'Ben Stout', 'bgcolor' => 'grey'],
-            ['name' => 'Craig Knowles', 'bgcolor' => 'black'],
+            ['name' => 'Ben Stout', 'bgcolor' => 'moccasin', 'color' => 'black'],
+            ['name' => 'Craig Knowles', 'bgcolor' => 'brown'],
             ['name' => 'Dillon Formo', 'bgcolor' => 'salmon'],
             ['name' => 'Jeff Kolesnikowicz', 'bgcolor' => 'red'],
             ['name' => 'Laura Kimpel-Matthews', 'bgcolor' => 'gold', 'color' => 'black'],

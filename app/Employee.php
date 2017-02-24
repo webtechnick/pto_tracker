@@ -3,10 +3,13 @@
 namespace App;
 
 use App\PaidTimeOff;
+use App\Traits\UtilityScopes;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
+    use UtilityScopes;
+
     protected $fillable = ['name', 'title', 'color', 'bgcolor'];
 
     //protected $appends = ['pending_days_left', 'days_left'];

@@ -1,12 +1,18 @@
 <template>
     <div>
+        <div v-if="loading" class="panel panel-default ajax-loader">
+            <div class="panel-body">
+                Loading Holidays and PTOs...
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-4" v-for="month in months">
                 <table class="month">
                     <tr><td colspan='7' class="center">{{ month.name }}</td></tr>
                     <tr><th class="center">Su</th><th class="center">Mo</th><th class="center">Tu</th><th class="center">We</th><th class="center">Tr</th><th class="center">Fr</th><th class="center">Sa</th></tr>
                     <tr v-for="week in month.weeks">
-                        <td class="center day" v-bind:class="dayClass(month.num, day)"  @click.prevent="selectDay(month.num, day)" v-for="day in week">
+                        <td class="center day" v-bind:class="dayClass(month.num, day)" @click.prevent="selectDay(month.num, day)" v-for="day in week">
                             <a href="#" class="day-link" v-html="renderDay(month.num, day)" @click.prevent></a>
                         </td>
                     </tr>
@@ -28,30 +34,36 @@ export default {
         ptos: {
             //type: Array,
             default() {
-                return []
+                return [];
             }
         },
         holidays: {
             //type: Object,
             default () {
-                return []
+                return [1];
             }
         }
     },
     data() {
         return {
-            'months': []
+            'months': this.renderYear(),
+            'loading': false,
         };
     },
-    mounted() {
-        this.months = this.renderYear();
-    },
-    watch: {
-        year: function(value) {
+    /*watch: {
+        'ptos': function (val) {
             this.months = this.renderYear();
         }
+    },*/
+    mounted() {
+
     },
     methods: {
+        finishedLoading() {
+            if (this.ptos.length) {
+                this.loading = false;
+            }
+        },
         renderYear() {
             return [
                 {'name': 'Jan', 'num': 1, 'weeks': this.buildMonth('01')},
@@ -80,6 +92,10 @@ export default {
                 retval[i] = [];
                 for (let j = 0; j <= 6; j++) {
                     if (day <= monthLength && (i > 0 || j >= startingDay)) {
+                        // Good option loading on watch of ptos, but it's fast to calculate anyway.
+                        // Rather tive the user something to look at than nothing.
+                        //let cell = this.renderDay(month_number, day);
+                        //retval[i].push(cell);
                         retval[i].push(day);
                         day++;
                     } else {
@@ -95,16 +111,20 @@ export default {
             }
             day += ' ';
             let currentday = this.getDay(month, day);
+            let count = 0;
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
-                if (
-                    currentday.isSame(pto.start_time, 'day') ||
-                    currentday.isSame(pto.end_time, 'day') ||
-                    currentday.isBetween(pto.start_time, pto.end_time, 'day')
-                ) {
+                if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
+                    if (count % 3 === 0) {
+                        day += ' ';
+                    }
                     day += this.renderPto(pto);
+                    count++;
                 }
+            }
+            if (month == 12 && day == 31) {
+                this.finishedLoading();
             }
             return day;
         },
@@ -126,11 +146,6 @@ export default {
             var used = firstOfMonth.getDay() + lastOfMonth.getDate();
             return Math.ceil( used / 7);
         },
-        dateTimeText(pto) {
-            let start = moment(pto.start_time).format('l');
-            let end = moment(pto.end_time).format('l');
-            return start + ' to ' + end;
-        },
         dayClass(month, day) {
             let currentday = this.getDay(month, day);
             for (let i in this.holidays) {
@@ -148,6 +163,12 @@ export default {
 }
 </script>
 <style>
+.ajax-loader {
+    position: fixed;
+    top: 10%;
+    left: 20%;
+    z-index: 9999;
+}
 .month {
     width: 100%;
     height: 350px;
@@ -168,6 +189,7 @@ export default {
 }
 .day-link {
     color: grey;
+    word-wrap: break-word;
 }
 .day {
     cursor: pointer;
