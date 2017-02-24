@@ -14,7 +14,7 @@ class HolidaySeeder extends Seeder
     {
         $holidays = [
             ['title' => 'New Year', 'date' => '2017-01-02'],
-            ['title' => 'Good Friday', 'date' => '2017-04-19'],
+            ['title' => 'Good Friday', 'date' => '2017-04-14'],
             ['title' => 'Memorial Day', 'date' => '2017-05-29'],
             ['title' => 'Indepedence Day', 'date' => '2017-07-04'],
             ['title' => 'Indepedence Day', 'date' => '2017-07-03'],
