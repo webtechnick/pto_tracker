@@ -14,16 +14,16 @@ class EmployeeSeeder extends Seeder
     {
         $employees = [
             ['name' => 'Aaron Hall', 'bgcolor' => 'green'],
-            ['name' => 'Ben Stout', 'bgcolor' => 'moccasin', 'color' => 'black'],
+            ['name' => 'Ben Stout', 'bgcolor' => 'darkslategrey', 'color' => 'white'],
             ['name' => 'Craig Knowles', 'bgcolor' => 'brown'],
-            ['name' => 'Dillon Formo', 'bgcolor' => 'salmon'],
+            ['name' => 'Dillon Formo', 'bgcolor' => 'olive'],
             ['name' => 'Jeff Kolesnikowicz', 'bgcolor' => 'red'],
             ['name' => 'Laura Kimpel-Matthews', 'bgcolor' => 'gold', 'color' => 'black'],
-            ['name' => 'Lyle Smart', 'bgcolor' => 'lavender', 'color' => 'black'],
-            ['name' => 'Mark Vince', 'bgcolor' => 'magenta'],
-            ['name' => 'Nick Baker', 'bgcolor' => 'blue'],
+            ['name' => 'Lyle Smart', 'bgcolor' => 'blueviolet', 'color' => 'white'],
+            ['name' => 'Mark Vince', 'bgcolor' => 'maroon'],
+            ['name' => 'Nick Baker', 'bgcolor' => 'navy'],
             ['name' => 'Rachelle Zani', 'bgcolor' => 'pink', 'color' => 'black'],
-            ['name' => 'Travis Reddell', 'bgcolor' => 'orange'],
+            ['name' => 'Travis Reddell', 'bgcolor' => 'orangered'],
             ['name' => 'Tyler Shaw', 'bgcolor' => 'purple'],
         ];
 

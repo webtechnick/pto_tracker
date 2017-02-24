@@ -176,9 +176,9 @@ export default {
 .center {
     text-align: center;
 }
-.day-pto {
-    border-radius: 2px;
-    padding: 2px;
+.pto-day {
+    border-radius: 3px;
+    padding: 1px;
 }
 .holiday {
     background-color: lightpink;
@@ -194,7 +194,7 @@ export default {
 .day {
     cursor: pointer;
     border: 1px solid black;
-    width: 40px;
+    width: 43px;
     height: 50px;
 }
 </style>
