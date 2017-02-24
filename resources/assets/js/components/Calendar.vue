@@ -109,8 +109,14 @@ export default {
             if (day == '') {
                 return '';
             }
-            day += ' ';
             let currentday = this.getDay(month, day);
+            if (this.isWeekend(currentday)) {
+                return day;
+            }
+            if (this.isHoliday(currentday)) {
+                return day;
+            }
+            day += ' ';
             let count = 0;
 
             for (let i in this.ptos) {
@@ -127,6 +133,19 @@ export default {
                 this.finishedLoading();
             }
             return day;
+        },
+        isHoliday(moment_day) {
+            for (let i in this.holidays) {
+                let holiday = this.holidays[i];
+                if (moment_day.isSame(holiday.date, 'day')) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        isWeekend(moment_day) {
+            let weekday = moment_day.weekday();
+            return (weekday == 0 || weekday == 6);
         },
         renderPto(pto) {
             let letter = pto.employee.name[0];
