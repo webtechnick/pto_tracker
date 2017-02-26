@@ -35,4 +35,13 @@ class User extends Authenticatable
     {
         return $this->role == 'admin';
     }
+
+    /**
+     * Retrieve a list of user accounts
+     * @return [type] [description]
+     */
+    public static function admins()
+    {
+        return self::where('role', 'admin')->get();
+    }
 }

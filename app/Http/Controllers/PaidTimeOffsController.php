@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PaidTimeOffsController extends Controller
 {
@@ -31,6 +34,9 @@ class PaidTimeOffsController extends Controller
         ]);
 
         $pto = PaidTimeOff::saveForm(request()->all());
+
+        // Send Mail
+        Mail::to(User::admins())->send(new PaidTimeOffRequested($pto));
 
         if (request()->ajax()) {
             return $pto;

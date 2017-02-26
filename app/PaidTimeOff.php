@@ -16,8 +16,8 @@ class PaidTimeOff extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        //'start_time',
-        //'end_time'
+        'start_time',
+        'end_time'
     ];
 
     protected $casts = [
