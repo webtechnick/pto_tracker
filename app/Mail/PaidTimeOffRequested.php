@@ -31,6 +31,6 @@ class PaidTimeOffRequested extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.pto.requested');
+        return $this->subject('Paid Time Off Request from ' . $pto->employee->name)->view('emails.pto.requested');
     }
 }
