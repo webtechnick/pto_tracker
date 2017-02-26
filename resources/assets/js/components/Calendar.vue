@@ -121,6 +121,11 @@ export default {
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
+                if (month == 3 && day == 3) {
+                    console.log(currentday);
+                    console.log(currentday.isSame(pto.end_day, 'day'));
+                    console.log(currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]'));
+                }
                 if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
                     if (count % 3 === 0) {
                         day += ' ';

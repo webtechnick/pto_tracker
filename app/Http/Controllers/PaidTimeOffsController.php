@@ -26,7 +26,7 @@ class PaidTimeOffsController extends Controller
     {
         $this->validate(request(), [
             'start_time' => 'required',
-            'end_time' => 'required',
+            'end_time' => 'required|date|after_or_equal:start_time',
             'employee_id' => 'required'
         ]);
 
