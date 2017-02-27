@@ -93,7 +93,7 @@ export default {
                 for (let j = 0; j <= 6; j++) {
                     if (day <= monthLength && (i > 0 || j >= startingDay)) {
                         // Good option loading on watch of ptos, but it's fast to calculate anyway.
-                        // Rather tive the user something to look at than nothing.
+                        // Rather give the user something to look at than nothing.
                         //let cell = this.renderDay(month_number, day);
                         //retval[i].push(cell);
                         retval[i].push(day);
@@ -121,11 +121,6 @@ export default {
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
-                if (month == 3 && day == 3) {
-                    console.log(currentday);
-                    console.log(currentday.isSame(pto.end_day, 'day'));
-                    console.log(currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]'));
-                }
                 if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
                     if (count % 3 === 0) {
                         day += ' ';
