@@ -24,7 +24,7 @@ Route::group([
     Route::get('/ptos/{id}/edit', 'AdminPaidTimeOffsController@edit')->name('pto.edit');
 });
 
-Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->where([
+Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->middleware('google')->where([
     'year' => '[0-9]{4}'
 ]);
 Route::get('/is_admin', function() {
@@ -60,3 +60,9 @@ Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+// Route::get('login/github', 'Auth\LoginController@redirectToProvider');
+// Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
+
+Route::get('login/google', 'Auth\LoginController@redirectToProvider');
+Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback');
