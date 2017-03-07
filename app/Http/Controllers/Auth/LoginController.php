@@ -46,7 +46,7 @@ class LoginController extends Controller
      */
     public function redirectToProvider()
     {
-        return Socialite::driver('google')->with(['hd' => env('GOOGLE_DOMAIN')])->redirect();
+        return Socialite::driver('google')->with(['hd' => config('services.google.domain')])->redirect();
     }
 
     /**
