@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Http\Requests\PaidTimeOffRequest;
 use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
 use App\User;
@@ -25,20 +26,14 @@ class PaidTimeOffsController extends Controller
         return view('pto.index', compact('employees', 'year'));
     }
 
-    public function store()
+    public function store(PaidTimeOffRequest $request)
     {
-        $this->validate(request(), [
-            'start_time' => 'required',
-            'end_time' => 'required|date|after_or_equal:start_time',
-            'employee_id' => 'required'
-        ]);
-
-        $pto = PaidTimeOff::saveForm(request()->all());
+        $pto = PaidTimeOff::saveForm($request->all());
 
         // Send Mail
         Mail::to(User::admins())->send(new PaidTimeOffRequested($pto));
 
-        if (request()->ajax()) {
+        if ($request->ajax()) {
             return $pto;
         }
 

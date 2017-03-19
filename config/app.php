@@ -171,6 +171,7 @@ return [
         /** Laravel packages */
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+        Laravel\Dusk\DuskServiceProvider::class,
 
         /*
          * Package Service Providers...
