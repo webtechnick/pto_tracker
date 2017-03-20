@@ -40,7 +40,7 @@ class PaidTimeOffsController extends Controller
             return $pto;
         }
 
-        $this->goodFlash('Paid Time Off Requested.');
+        $this->goodFlash('Paid Time Off Requested: ' . $pto->simpleString());
 
         return redirect()->route('home');
     }

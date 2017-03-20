@@ -21,6 +21,17 @@ class PaidTimeOffRequest extends FormRequest
     }
 
     /**
+     * Overwrite message
+     * @return [type] [description]
+     */
+    public function messages()
+    {
+        return [
+            'end_time.after_or_equal' => 'End date must be later or equal to start date',
+        ];
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -34,6 +45,11 @@ class PaidTimeOffRequest extends FormRequest
         ];
     }
 
+    /**
+     * Set flash on session if we don't pass validation.
+     * Check to make sure year is not the same.
+     * @param  Validator $validator
+     */
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
@@ -47,7 +63,11 @@ class PaidTimeOffRequest extends FormRequest
         }
     }
 
-    public function isSameYear()
+    /**
+     * Private function to check if start_time and end_time are the same year
+     * @return boolean success
+     */
+    private function isSameYear()
     {
         $start_time = Carbon::parse($this->input('start_time'));
         $end_time = Carbon::parse($this->input('end_time'));

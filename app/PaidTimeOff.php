@@ -115,4 +115,25 @@ class PaidTimeOff extends Model
         $this->is_approved = false;
         return $this;
     }
+
+    /**
+     * Represent the PTO as a string
+     * @return [type] [description]
+     */
+    public function simpleString()
+    {
+        $format = 'D, M jS Y';
+        $approvedText = 'Pending';
+        if ($this->is_approved) {
+            $approvedText = 'Approved';
+        }
+        return $this->start_time->format($format) .
+                ' to ' .
+                $this->end_time->format($format) .
+                ' by ' .
+                $this->employee->name .
+                ' (' . $approvedText . ') ' .
+                $this->days .
+                ' day(s).';
+    }
 }
