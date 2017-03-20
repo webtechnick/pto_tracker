@@ -79,6 +79,8 @@
             </div>
         </nav>
 
+        @include('layouts.flashes')
+
         @yield('content')
     </div>
 

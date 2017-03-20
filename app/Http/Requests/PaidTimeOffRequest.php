@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\Flashes;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PaidTimeOffRequest extends FormRequest
 {
+    use Flashes;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -38,6 +41,10 @@ class PaidTimeOffRequest extends FormRequest
                 $validator->errors()->add('end_time', 'Error: Start and end date must be in the same year.');
             }
         });
+
+        if ($validator->fails()) {
+            $this->badFlash('Unable to save PTO request.');
+        }
     }
 
     public function isSameYear()

@@ -6,12 +6,15 @@ use App\Employee;
 use App\Http\Requests\PaidTimeOffRequest;
 use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
+use App\Traits\Flashes;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class PaidTimeOffsController extends Controller
 {
+    use Flashes;
+
     public function __construct()
     {
         $this->middleware(['auth', 'admin'])->only(['approve', 'deny', 'destroy']);
@@ -36,6 +39,8 @@ class PaidTimeOffsController extends Controller
         if ($request->ajax()) {
             return $pto;
         }
+
+        $this->goodFlash('Paid Time Off Requested.');
 
         return redirect()->route('home');
     }
