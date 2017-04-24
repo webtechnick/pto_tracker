@@ -37,6 +37,8 @@ Route::get('/is_admin', function() {
 });
 
 Route::get('/oncall', 'EmployeesController@oncall')->name('oncall');
+Route::get('/oncall/clear', 'EmployeesController@clear_on_call')->name('clearoncall');
+Route::get('/oncall/set/{employee}', 'EmployeesController@set_on_call')->name('setoncall');
 
 Route::get('/get/ptos/{year?}', 'PaidTimeOffsController@get_ptos')
     ->name('pto.index.ajax')

@@ -23,14 +23,14 @@ class EmployeesController extends Controller
         return view('employees.oncall', compact('onCallEmployees'));
     }
 
-    public function setOnCall(Employee $employee)
+    public function set_on_call(Employee $employee)
     {
         $employee->setOnCall()->save();
 
         return back();
     }
 
-    public function clearOnCall()
+    public function clear_on_call()
     {
         Employee::clearOnCall();
 
