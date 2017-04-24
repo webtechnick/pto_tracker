@@ -117,6 +117,17 @@ class PaidTimeOff extends Model
     }
 
     /**
+     * Set pto to half day.
+     * @return [type] [description]
+     */
+    public function makeHalfDay()
+    {
+        $this->is_half_day = true;
+        $this->days = .5;
+        return $this;
+    }
+
+    /**
      * Represent the PTO as a string
      * @return [type] [description]
      */

@@ -29,6 +29,7 @@ $factory->define(App\Employee::class, function (Faker\Generator $faker) {
         'title' => $faker->sentence,
         'color' => $faker->colorName,
         'bgcolor' => $faker->colorName,
+        'is_on_call' => 0
     ];
 });
 

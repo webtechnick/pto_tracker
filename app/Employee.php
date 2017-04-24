@@ -12,6 +12,10 @@ class Employee extends Model
 
     protected $fillable = ['name', 'title', 'color', 'bgcolor'];
 
+    protected $casts = [
+        'is_on_call' => 'boolean'
+    ];
+
     //protected $appends = ['pending_days_left', 'days_left'];
 
     /**
@@ -31,6 +35,27 @@ class Employee extends Model
     public function getDaysLeftAttribute()
     {
         return $this->daysLeft();
+    }
+
+    public function scopeOnCall($query)
+    {
+        return $query->where('is_on_call', true);
+    }
+
+    public function isOnCall()
+    {
+        return $this->is_on_call;
+    }
+
+    public function setOnCall()
+    {
+        $this->is_on_call = true;
+        return $this;
+    }
+
+    static public function clearOnCall()
+    {
+        Employee::where('is_on_call', true)->update(['is_on_call' => false]);
     }
 
     /**

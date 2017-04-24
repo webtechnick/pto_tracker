@@ -36,6 +36,8 @@ Route::get('/is_admin', function() {
     }
 });
 
+Route::get('/oncall', 'EmployeesController@oncall')->name('oncall');
+
 Route::get('/get/ptos/{year?}', 'PaidTimeOffsController@get_ptos')
     ->name('pto.index.ajax')
     ->where([
