@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Traits\Flashes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeesController extends Controller
 {
+    use Flashes;
+
     public function index()
     {
         $employees = Employee::select([
@@ -21,19 +24,5 @@ class EmployeesController extends Controller
         $onCallEmployees = Employee::onCall()->get();
 
         return view('employees.oncall', compact('onCallEmployees'));
-    }
-
-    public function set_on_call(Employee $employee)
-    {
-        $employee->setOnCall()->save();
-
-        return back();
-    }
-
-    public function clear_on_call()
-    {
-        Employee::clearOnCall();
-
-        return back();
     }
 }

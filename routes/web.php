@@ -16,12 +16,23 @@ use Illuminate\Http\Request;
 //Admin Routing
 Route::group([
     'middleware' => ['auth', 'admin'],
-    'as' => 'admin::',
+    'as' => 'admin.',
     'prefix' => 'admin',
     'namespace' => 'Admin',
 ], function() {
-    Route::get('/', 'AdminPaidTimeOffsController@index')->name('dashboard');
-    Route::get('/ptos/{id}/edit', 'AdminPaidTimeOffsController@edit')->name('pto.edit');
+    //Route::get('/', 'AdminsController@index')->name('admin.dashboard');
+    Route::get('/ptos', 'AdminPaidTimeOffsController@index')->name('ptos');
+
+    Route::get('/', 'AdminEmployeesController@index')->name('employees');
+
+    Route::get('/employees/create', 'AdminEmployeesController@create')->name('employees.create');
+    Route::get('/employees/{employee}/edit', 'AdminEmployeesController@edit')->name('employees.edit');
+    Route::post('/employees/store', 'AdminEmployeesController@store')->name('employees.store');
+    Route::post('/employees/{employee}/update', 'AdminEmployeesController@update')->name('employees.update');
+    Route::get('/employees/{employee}/destroy', 'AdminEmployeesController@destroy')->name('employees.destroy');
+
+    Route::get('/employees/oncall/clear', 'AdminEmployeesController@clear_on_call')->name('employees.clearoncall');
+    Route::get('/employees/oncall/set/{employee}', 'AdminEmployeesController@set_on_call')->name('employees.setoncall');
 });
 
 Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->middleware('google')->where([
@@ -36,9 +47,8 @@ Route::get('/is_admin', function() {
     }
 });
 
-Route::get('/oncall', 'EmployeesController@oncall')->name('oncall');
-Route::get('/oncall/clear', 'EmployeesController@clear_on_call')->name('clearoncall');
-Route::get('/oncall/set/{employee}', 'EmployeesController@set_on_call')->name('setoncall');
+Route::get('/oncall', 'EmployeesController@oncall')->name('oncall')->middleware('google');
+Route::get('/get/employees', 'EmployeesController@index')->name('employee.index.ajax');
 
 Route::get('/get/ptos/{year?}', 'PaidTimeOffsController@get_ptos')
     ->name('pto.index.ajax')
@@ -50,14 +60,10 @@ Route::get('/get/holidays/{year?}', 'HolidaysController@index')->name('holidays.
     'year' => '[0-9]{4}'
   ]);
 
-Route::get('/get/employees', 'EmployeesController@index')->name('employee.index.ajax');
-
 Route::post('/ptos/store', 'PaidTimeOffsController@store')->name('pto.store');
-
 Route::post('/ptos/approve/{id}', 'PaidTimeOffsController@approve')->name('pto.approve')->middleware('admin');
 Route::post('/ptos/deny/{id}', 'PaidTimeOffsController@deny')->name('pto.deny')->middleware('admin');
 Route::post('/ptos/destroy/{id}', 'PaidTimeOffsController@destroy')->name('pto.destroy')->middleware('admin');
-
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
 

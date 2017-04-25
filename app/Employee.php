@@ -10,7 +10,7 @@ class Employee extends Model
 {
     use UtilityScopes;
 
-    protected $fillable = ['name', 'title', 'color', 'bgcolor'];
+    protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone'];
 
     protected $casts = [
         'is_on_call' => 'boolean'
