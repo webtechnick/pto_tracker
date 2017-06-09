@@ -1,7 +1,8 @@
 <?php
 
-//namespace Tests\Unit;
+namespace Tests\Unit;
 
+use Tests\TestCase;
 use App\Employee;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

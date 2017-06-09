@@ -7,7 +7,11 @@
             <div class="panel-body">
                 <ol class="list-group">
                     <li class="list-group-item" v-for="event in events">
-                        <span class="pull-right" v-html="isApproved(event.approved)"></span>
+                        <div class="pull-right">
+                            <span v-html="isApproved(event.approved)"></span>
+                            <span v-html="isHalfDay(event)"></span>
+                            <span v-html="isSentToCalendar(event)"></span>
+                        </div>
                         <h4 v-text="event.title"></h4>
                         <p v-text="event.description"></p>
                         <div class="btn-group">
@@ -92,6 +96,7 @@ export default {
             this.reloadPage();
         },
         addToGoogle(event) {
+            this.sentToCalendar(event);
             let start = moment(event.pto.start_time).format('YYYYMMDD');
             let end = moment(event.pto.end_time).add(1, 'days').format('YYYYMMDD');
             let options = {
@@ -102,6 +107,13 @@ export default {
                 'dates': start + '/' + end
             };
             window.open('http://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
+        },
+        sentToCalendar(event) {
+            axios.post('/ptos/sent_to_calendar/' + event.pto.id)
+                .then()
+                .catch(function(error) {
+                    console.log(error);
+                });
         },
         reloadPage() {
             location.reload();
@@ -139,6 +151,22 @@ export default {
                         'pto': pto
                     });
                 }
+            }
+        },
+        isHalfDay(event) {
+            if (event.holiday) {
+                return;
+            }
+            if (event.pto.is_half_day) {
+                return `<br><span class="glyphicon glyphicon-adjust"></span> Half Day `;
+            }
+        },
+        isSentToCalendar(event) {
+            if (event.holiday) {
+                return;
+            }
+            if (event.pto.is_sent_to_calendar) {
+                return `<br><span class="glyphicon glyphicon-calendar"></span> On OOO`;
             }
         },
         isApproved(approved) {

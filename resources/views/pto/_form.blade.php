@@ -20,6 +20,11 @@
         <!-- <input v-model="form.end_time" type="text" class="form-control datepicker" name="end_time" id="end_time" placeholder="End Date" value="{{ old('end') }}" required> -->
         <input type="text" class="form-control datepicker" name="end_time" id="end_time" placeholder="End Date" value="{{ old('end') }}" required>
     </div>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="half_day" id="half_day" value="1"> Half Day?<br><small>Specify morning or afternoon below</small>
+        </label>
+    </div>
     <div class="form-group">
         <label for="description">Description (optional): </label>
         <!-- <textarea v-model="form.description" class="form-control" name="description" id="description" rows="3">{{ old('description') }}</textarea> -->

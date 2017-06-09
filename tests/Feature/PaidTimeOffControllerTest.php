@@ -1,8 +1,8 @@
 <?php
 
-// namespace Tests\Feature\controller;
+namespace Tests\Feature;
 
-//use Tests\TestCase;
+use Tests\TestCase;
 use App\PaidTimeOff;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -77,5 +77,20 @@ class PaidTimeOffControllerTest extends TestCase
 
         $response->assertSessionHasErrors(['end_time']);
         $this->assertEquals($count, PaidTimeOff::count()); // We did not add a PTO
+    }
+
+    /** @test */
+    public function it_should_mark_pto_as_sent_to_calendar()
+    {
+        $this->signInAdmin();
+
+        $pto = factory(PaidTimeOff::class)->create();
+
+        $this->assertFalse($pto->fresh()->is_sent_to_calendar);
+
+        $response = $this->post('/ptos/sent_to_calendar/' . $pto->id);
+
+        $this->assertTrue($pto->fresh()->is_sent_to_calendar);
+
     }
 }

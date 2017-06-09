@@ -64,6 +64,7 @@ Route::post('/ptos/store', 'PaidTimeOffsController@store')->name('pto.store');
 Route::post('/ptos/approve/{id}', 'PaidTimeOffsController@approve')->name('pto.approve')->middleware('admin');
 Route::post('/ptos/deny/{id}', 'PaidTimeOffsController@deny')->name('pto.deny')->middleware('admin');
 Route::post('/ptos/destroy/{id}', 'PaidTimeOffsController@destroy')->name('pto.destroy')->middleware('admin');
+Route::post('/ptos/sent_to_calendar/{id}', 'PaidTimeOffsController@sent_to_calendar')->name('pto.sent_to_calendar')->middleware('admin');
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
 

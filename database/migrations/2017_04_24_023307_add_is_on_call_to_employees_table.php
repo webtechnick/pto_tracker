@@ -27,8 +27,8 @@ class AddIsOnCallToEmployeesTable extends Migration
     public function down()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->dropColumn('is_on_call');
-            $table->dropColumn('phone');
+            //$table->dropColumn('is_on_call');
+            //$table->dropColumn('phone');
         });
     }
 }

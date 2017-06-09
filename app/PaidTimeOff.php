@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class PaidTimeOff extends Model
 {
     protected $fillable = [
-        'employee_id', 'start_time', 'end_time', 'description', 'notes'
+        'employee_id', 'start_time', 'end_time', 'description', 'notes',
     ];
 
     protected $dates = [
@@ -22,7 +22,8 @@ class PaidTimeOff extends Model
 
     protected $casts = [
         'is_approved' => 'boolean',
-        'is_half_day' => 'boolean'
+        'is_half_day' => 'boolean',
+        'is_sent_to_calendar' => 'boolean',
     ];
 
     public static function boot()
@@ -42,6 +43,11 @@ class PaidTimeOff extends Model
         $pto = new PaidTimeOff($data);
         $pto->start_time = Carbon::parse($pto->start_time)->toDateString();
         $pto->end_time = Carbon::parse($pto->end_time)->toDateString();
+
+        if (isset($data['half_day'])) {
+            $pto->makeHalfDay();
+        }
+
         $pto->save();
         return $pto;
     }
@@ -122,8 +128,19 @@ class PaidTimeOff extends Model
      */
     public function makeHalfDay()
     {
+        $this->end_time = $this->start_time;
         $this->is_half_day = true;
         $this->days = .5;
+        return $this;
+    }
+
+    /**
+     * Mark the PTO as sent to Calendar
+     * @return [type] [description]
+     */
+    public function sentToCalendar()
+    {
+        $this->is_sent_to_calendar = true;
         return $this;
     }
 

@@ -1,7 +1,12 @@
 <?php
 
-abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
+namespace Tests;
+
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+
+abstract class TestCase extends BaseTestCase
 {
+    use CreatesApplication;
     /**
      * The base URL to use while testing the application.
      *
@@ -10,16 +15,53 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
     protected $baseUrl = 'http://localhost';
 
     /**
-     * Creates the application.
-     *
-     * @return \Illuminate\Foundation\Application
+     * Make a factory model
+     * @param  [type]  $model    [description]
+     * @param  array   $defaults [description]
+     * @param  integer $count    [description]
+     * @return [type]            [description]
      */
-    public function createApplication()
+    public function make($model, $defaults = [], $count = 1)
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
+        if ($count > 1) {
+            return factory($model, $count)->make($defaults);
+        }
+        return factory($model)->make($defaults);
+    }
 
-        $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+    /**
+     * Create a factory model
+     * @param  [type]  $model    [description]
+     * @param  array   $defaults [description]
+     * @param  integer $count    [description]
+     * @return [type]            [description]
+     */
+    public function create($model, $defaults = [], $count = 1)
+    {
+        if ($count > 1) {
+            return factory($model, $count)->create($defaults);
+        }
+        return factory($model)->create($defaults);
+    }
 
-        return $app;
+    /**
+     * Sign in a user.
+     * @param  boolean $is_admin [description]
+     * @return [type]            [description]
+     */
+    public function signIn($user = null)
+    {
+        $user = $user ?: $this->create('App\User');
+        $this->actingAs($user);
+        return $user;
+    }
+
+    /**
+     * Sign in an admin user.
+     * @return [type] [description]
+     */
+    public function signInAdmin()
+    {
+        return $this->signIn($this->create('App\User', ['role' => 'admin']));
     }
 }

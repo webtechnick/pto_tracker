@@ -66,6 +66,13 @@ class PaidTimeOffsController extends Controller
         return 1;
     }
 
+    public function sent_to_calendar($id = null)
+    {
+        $pto = PaidTimeOff::findOrFail($id);
+        $pto->sentToCalendar()->save();
+        return 1;
+    }
+
     public function get_ptos($year = null)
     {
         if ($year === null) {
