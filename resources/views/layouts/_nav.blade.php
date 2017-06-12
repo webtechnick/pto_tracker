@@ -12,7 +12,7 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
+                <span><img alt="Brand" src="/favicon-32x32.png"></span> Paid Time Off Tracker
             </a>
         </div>
 
