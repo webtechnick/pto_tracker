@@ -19,6 +19,8 @@ import Form from './form.js';
 Vue.component('calendar', require('./components/Calendar.vue'));
 Vue.component('currentday', require('./components/CurrentDay.vue'));
 Vue.component('employeekey', require('./components/EmployeeKey.vue'));
+Vue.component('grid-loader', require('vue-spinner/src/GridLoader.vue'));
+Vue.component('bounce-loader', require('vue-spinner/src/BounceLoader.vue'));
 
 const app = new Vue({
     el: '#app',
@@ -38,13 +40,20 @@ const app = new Vue({
     },
 
     mounted() {
-        this.getPtos();
-        this.getHolidays();
-        // this.getEmployees();
+        Events.$on('reloadData', this.loadData.bind(this));
+        this.loadData();
         this.isAdmin();
     },
 
     methods: {
+        loadData() {
+            Events.$emit('loading');
+            this.getPtos();
+            this.getHolidays();
+            // this.getEmployees();
+            //setTimeout(() => Events.$emit('finishedLoading'), 1000);
+            //Events.$emit('finishedLoading');
+        },
         onSubmit() {
             this.form.start_time = $( "#start_time" ).datepicker( "getDate" );
             this.form.end_time = $( "#end_time" ).datepicker( "getDate" );
@@ -66,7 +75,10 @@ const app = new Vue({
         },
         getHolidays() {
             axios.get('/get/holidays/' + this.year)
-                 .then(response => this.holidays = response.data)
+                 .then(function(response) {
+                    this.holidays = response.data;
+                    Events.$emit('finishedLoading');
+                 }.bind(this))
                  .catch(function(error) {
                     console.log(error);
                  });

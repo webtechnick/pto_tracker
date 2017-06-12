@@ -60,6 +60,7 @@ export default {
     },
     mounted() {
         Events.$on('dayselect', this.rePopulateEvents.bind(this));
+        //Events.$on('finishedLoading', this.populateEvents.bind(this));
     },
     methods: {
         showButton(event) {
@@ -80,20 +81,24 @@ export default {
             this.reloadPage();
         },
         deny(event) {
+            event.approved = false;
             axios.post('/ptos/deny/' + event.pto.id)
                 .then()
                 .catch(function(error) {
                     console.log(error);
                 });
-            this.reloadPage();
+            console.log(event);
+            this.reloadData();
         },
         approve(event) {
+            event.approved = true;
             axios.post('/ptos/approve/' + event.pto.id)
                 .then()
                 .catch(function(error) {
                     console.log(error);
                 });
-            this.reloadPage();
+            console.log(event);
+            this.reloadData();
         },
         addToGoogle(event) {
             this.sentToCalendar(event);
@@ -109,11 +114,15 @@ export default {
             window.open('http://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
         },
         sentToCalendar(event) {
+            event.pto.is_sent_to_calendar = true;
             axios.post('/ptos/sent_to_calendar/' + event.pto.id)
                 .then()
                 .catch(function(error) {
                     console.log(error);
                 });
+        },
+        reloadData() {
+            Events.$emit('reloadData');
         },
         reloadPage() {
             location.reload();

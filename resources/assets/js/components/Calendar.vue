@@ -1,10 +1,15 @@
 <template>
     <div>
-        <div v-if="loading" class="panel panel-default ajax-loader">
-            <div class="panel-body">
-                Loading Holidays and PTOs...
-            </div>
+        <div class="ajax-loader">
+            <!-- <grid-loader :loading="loading" color="blue" size="75px"></grid-loader> -->
+            <bounce-loader :loading="loading" color="blue" size="175px"></bounce-loader>
         </div>
+
+        <!-- <div v-if="loading" class="hidden panel panel-default ajax-loader">
+            <div class="panel-body text-center">
+                <h4>Loading Holidays and PTOs...</h4>
+            </div>
+        </div> -->
 
         <div class="row">
             <div class="col-md-4" v-for="month in months">
@@ -47,7 +52,7 @@ export default {
     data() {
         return {
             'months': this.renderYear(),
-            'loading': false,
+            'loading': true,
         };
     },
     /*watch: {
@@ -56,13 +61,20 @@ export default {
         }
     },*/
     mounted() {
-
+        Events.$on('loading', this.startLoading.bind(this));
+        Events.$on('finishedLoading', this.finishLoading.bind(this));
     },
     methods: {
         finishedLoading() {
             if (this.ptos.length) {
                 this.loading = false;
             }
+        },
+        startLoading() {
+            this.loading = true;
+        },
+        finishLoading() {
+            this.loading = false;
         },
         renderYear() {
             return [
@@ -184,8 +196,8 @@ export default {
 <style>
 .ajax-loader {
     position: fixed;
-    top: 10%;
-    left: 20%;
+    top: 35%;
+    left: 35%;
     z-index: 9999;
 }
 .month {
