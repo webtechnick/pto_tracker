@@ -12,7 +12,7 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                <span><img alt="Brand" src="/favicon-32x32.png"></span> Paid Time Off Tracker
+                <span><img alt="Brand" src="/logo-sm.png"></span> {{ config('app.name') }}
             </a>
         </div>
 
