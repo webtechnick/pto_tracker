@@ -19,7 +19,6 @@ import Form from './form.js';
 Vue.component('calendar', require('./components/Calendar.vue'));
 Vue.component('currentday', require('./components/CurrentDay.vue'));
 Vue.component('employeekey', require('./components/EmployeeKey.vue'));
-Vue.component('grid-loader', require('vue-spinner/src/GridLoader.vue'));
 Vue.component('bounce-loader', require('vue-spinner/src/BounceLoader.vue'));
 
 const app = new Vue({

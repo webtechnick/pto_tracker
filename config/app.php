@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Paid Time Off Tracker',
+    'name' => env('APP_NAME', 'Paid Time Off Tracker'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ return [
     /**
      * Max days off an employee is allowed in a calendar year
      */
-    'max_days_off' => 21,
+    'max_days_off' => env('MAX_DAYS_OFF_IN_YEAR', 21),
 
     /*
     |--------------------------------------------------------------------------

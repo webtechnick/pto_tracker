@@ -4,19 +4,13 @@
             <bounce-loader :loading="loading" color="blue" size="175px"></bounce-loader>
         </div>
 
-        <!-- <div v-if="loading" class="hidden panel panel-default ajax-loader">
-            <div class="panel-body text-center">
-                <h4>Loading Holidays and PTOs...</h4>
-            </div>
-        </div> -->
-
         <div class="row">
             <div class="col-md-4" v-for="month in months">
                 <table class="month">
                     <tr><td colspan='7' class="center">{{ month.name }}</td></tr>
                     <tr><th class="center">Su</th><th class="center">Mo</th><th class="center">Tu</th><th class="center">We</th><th class="center">Tr</th><th class="center">Fr</th><th class="center">Sa</th></tr>
                     <tr v-for="week in month.weeks">
-                        <td class="center day" v-bind:class="dayClass(month.num, day)" @click.prevent="selectDay(month.num, day)" v-for="day in week">
+                        <td class="center day" v-bind:class="dayClass(month.num, day)" v-bind:id="dayId(month.num, day)" @click.prevent="selectDay(month.num, day, $event)" v-for="day in week">
                             <a href="#" class="day-link" v-html="renderDay(month.num, day)" @click.prevent></a>
                         </td>
                     </tr>
@@ -52,6 +46,7 @@ export default {
         return {
             'months': this.renderYear(),
             'loading': true,
+            'today': moment()
         };
     },
     /*watch: {
@@ -166,7 +161,12 @@ export default {
             }
             return `<span class="${style}" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
         },
-        selectDay(month, day) {
+        selectDay(month, day, event) {
+            $('.day').removeClass('selectedday');
+            let daycell = $('#' + month + '-' + day);
+            if (daycell) {
+                daycell.addClass('selectedday');
+            }
             Events.$emit('dayselect', month, day);
         },
         weekCount(month_number, year) {
@@ -178,11 +178,20 @@ export default {
         },
         dayClass(month, day) {
             let currentday = this.getDay(month, day);
+            if (currentday.isSame(this.today, 'day')) {
+                return 'today';
+            }
             for (let i in this.holidays) {
                 let holiday = this.holidays[i];
                 if (currentday.isSame(holiday.date, 'day')) {
                     return 'holiday';
                 }
+            }
+            return '';
+        },
+        dayId(month, day) {
+            if (day) {
+                return month + '-' + day;
             }
             return '';
         },
@@ -212,6 +221,12 @@ export default {
 }
 .holiday {
     background-color: lightpink;
+}
+.today {
+    background-color: lightblue;
+}
+.selectedday {
+    background-color: lightgreen;
 }
 .pending {
     opacity: 0.4;
