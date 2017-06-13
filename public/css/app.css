@@ -7688,4 +7688,20 @@ button.close {
   }
 }
 
+.level {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.flex {
+  -webkit-box-flex: 1;
+  flex: 1;
+}
+
+[v-cloak] {
+  display: none;
+}
+
 /*# sourceMappingURL=app.css.map */

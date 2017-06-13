@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="calendar">
         <div class="ajax-loader">
             <bounce-loader :loading="loading" color="blue" size="175px"></bounce-loader>
         </div>
@@ -162,7 +162,7 @@ export default {
             return `<span class="${style}" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
         },
         selectDay(month, day, event) {
-            $('.day').removeClass('selectedday');
+            $('#calendar .day').removeClass('selectedday');
             let daycell = $('#' + month + '-' + day);
             if (daycell) {
                 daycell.addClass('selectedday');

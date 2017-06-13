@@ -27,6 +27,10 @@
                 @include('pto._employee_key')
                 <!-- <employeekey :employees="employees"></employeekey> -->
             </div>
+
+            <div class="row">
+                @include('pto._calendar_legend')
+            </div>
         </div>
     </div>
 </div>
