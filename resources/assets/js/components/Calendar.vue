@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="ajax-loader">
-            <!-- <grid-loader :loading="loading" color="blue" size="75px"></grid-loader> -->
             <bounce-loader :loading="loading" color="blue" size="175px"></bounce-loader>
         </div>
 

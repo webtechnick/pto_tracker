@@ -41,6 +41,7 @@ const app = new Vue({
 
     mounted() {
         Events.$on('reloadData', this.loadData.bind(this));
+        this.getHolidays();
         this.loadData();
         this.isAdmin();
     },
@@ -49,10 +50,6 @@ const app = new Vue({
         loadData() {
             Events.$emit('loading');
             this.getPtos();
-            this.getHolidays();
-            // this.getEmployees();
-            //setTimeout(() => Events.$emit('finishedLoading'), 1000);
-            //Events.$emit('finishedLoading');
         },
         onSubmit() {
             this.form.start_time = $( "#start_time" ).datepicker( "getDate" );
@@ -75,17 +72,17 @@ const app = new Vue({
         },
         getHolidays() {
             axios.get('/get/holidays/' + this.year)
-                 .then(function(response) {
-                    this.holidays = response.data;
-                    Events.$emit('finishedLoading');
-                 }.bind(this))
+                 .then(response => this.holidays = response.data)
                  .catch(function(error) {
                     console.log(error);
                  });
         },
         getPtos() {
             axios.get('/get/ptos/' + this.year)
-                 .then(response => this.ptos = response.data)
+                 .then(function(response) {
+                    this.ptos = response.data;
+                    Events.$emit('finishedLoading');
+                 }.bind(this))
                  .catch(function(error) {
                     console.log(error);
                  });
