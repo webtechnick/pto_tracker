@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\ShuffleOnCall::class,
+        Commands\DisplayOnCall::class
     ];
 
     /**
@@ -24,8 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // Shuffle the on call weekly on mondays at 1AM.
+        $schedule->command('oncall:shuffle')->weekly()->mondays()->at('01:00');
     }
 
     /**
