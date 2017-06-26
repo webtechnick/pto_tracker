@@ -18,5 +18,12 @@
                 </div>
             </div>
         @endforeach
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="pull-right">
+                    <a href="/admin/employees/create" class="btn btn-primary btn-lg">Create New Employee</a>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

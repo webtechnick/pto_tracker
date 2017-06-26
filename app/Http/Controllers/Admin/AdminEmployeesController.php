@@ -14,7 +14,8 @@ class AdminEmployeesController extends Controller
 
     public function index()
     {
-        return view('employees.index', ['employees' => Employee::all()]);
+        $employees = Employee::orderBy('name', 'ASC')->get();
+        return view('employees.index', compact('employees'));
     }
 
     public function set_on_call(Employee $employee)

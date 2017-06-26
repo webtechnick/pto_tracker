@@ -25,7 +25,7 @@ class PaidTimeOffsController extends Controller
         if ($year === null) {
             $year = date('Y');
         }
-        $employees = Employee::all();
+        $employees = Employee::orderBy('name', 'ASC')->get();
         return view('pto.index', compact('employees', 'year'));
     }
 
