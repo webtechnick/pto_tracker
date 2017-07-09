@@ -7,7 +7,7 @@
         <select name="employee_id" id="employee" class="form-control" required>
             <option value="">Select One..</option>
             @foreach ( $employees as $employee )
-                <option value="{{ $employee->id }}" @if($user->name == $employee->name) selected @endif>{{ $employee->name }}</option>
+                <option value="{{ $employee->id }}" @if(isset($user) && $user->name == $employee->name) selected @endif>{{ $employee->name }}</option>
             @endforeach
         </select>
     </div>
