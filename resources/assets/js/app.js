@@ -39,10 +39,12 @@ const app = new Vue({
     },
 
     mounted() {
-        Events.$on('reloadData', this.loadData.bind(this));
-        this.getHolidays();
-        this.loadData();
-        this.isAdmin();
+        if (this.year) {
+            Events.$on('reloadData', this.loadData.bind(this));
+            this.getHolidays();
+            this.loadData();
+            this.isAdmin();
+        }
     },
 
     methods: {

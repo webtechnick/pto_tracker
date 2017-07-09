@@ -10,7 +10,7 @@ class Employee extends Model
 {
     use UtilityScopes;
 
-    protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone'];
+    protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone', 'max_days_off'];
 
     protected $casts = [
         'is_on_call' => 'boolean'
@@ -92,7 +92,9 @@ class Employee extends Model
                 ->get()
                 ->sum('days');
 
-        return config('app.max_days_off') - $days_taken;
+        $max_days_off = $this->max_days_off ?: config('app.max_days_off');
+
+        return $max_days_off - $days_taken;
     }
 
     /**
@@ -110,7 +112,9 @@ class Employee extends Model
                 ->get()
                 ->sum('days');
 
-        return config('app.max_days_off') - $days_taken;
+        $max_days_off = $this->max_days_off ?: config('app.max_days_off');
+
+        return $max_days_off - $days_taken;
     }
 
     /**

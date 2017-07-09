@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Session;
+use Laravel\Socialite\Facades\Socialite;
 
 class RedirectToGoogleLoginIfNotGoogleAuth
 {
@@ -17,7 +18,8 @@ class RedirectToGoogleLoginIfNotGoogleAuth
     public function handle($request, Closure $next, $domain = null)
     {
         if (Session::has('GoogleToken')) {
-            //$user = Socialite::driver('google')->userFromToken(Session::get('GoogleToken'));
+            $user = Socialite::driver('google')->userFromToken(Session::get('GoogleToken'));
+            view()->share(compact('user'));
 
             return $next($request);
         }

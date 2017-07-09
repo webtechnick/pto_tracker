@@ -12,6 +12,18 @@ class EmployeeTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
+    public function employee_can_have_different_max_days_off_allowed()
+    {
+        $employee = $this->create('App\Employee');
+
+        $this->assertEquals(config('app.max_days_off'), $employee->daysLeft());
+
+        $employee = $this->create('App\Employee', ['max_days_off' => 6]);
+
+        $this->assertEquals(6, $employee->daysLeft());
+    }
+
+    /** @test */
     public function employee_can_be_on_call()
     {
         $employee = factory(Employee::class)->create();
