@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -21,7 +22,7 @@ class RedirectToGoogleLoginIfNotGoogleAuth
             try {
                 $user = Socialite::driver('google')->userFromToken(Session::get('GoogleToken'));
                 view()->share(compact('user'));
-            } catch (Exception $e) {
+            } catch (RequestException $e) {
                 return redirect('/login/google'); // re-signin
             }
 
