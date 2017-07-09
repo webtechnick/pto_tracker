@@ -32,15 +32,7 @@
         <textarea class="form-control" name="description" id="description" rows="3">{{ old('description') }}</textarea>
     </div>
 
-    @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <ul class="list-group">
-                @foreach ($errors->all() as $error)
-                    <li class="list-group-item">{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    @include('layouts/_errors')
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Request PTO</button>
     </div>
