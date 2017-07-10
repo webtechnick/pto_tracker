@@ -174,6 +174,7 @@ return [
         //Laravel\Dusk\DuskServiceProvider::class,
 
         Collective\Html\HtmlServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Package Service Providers...

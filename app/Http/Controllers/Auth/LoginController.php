@@ -64,8 +64,9 @@ class LoginController extends Controller
 
         if (!empty($user->token)) {
             Session::put('GoogleToken', $user->token);
+            Session::put('GoogleUser', $user);
         }
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 }

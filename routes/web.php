@@ -35,6 +35,7 @@ Route::group([
     Route::get('/employees/oncall/set/{employee}', 'AdminEmployeesController@set_on_call')->name('employees.setoncall');
 });
 
+// App Routing
 Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->middleware('google')->where([
     'year' => '[0-9]{4}'
 ]);
@@ -45,6 +46,7 @@ Route::get('/is_admin', function() {
     if (request()->user()->isAdmin()) {
         return 1;
     }
+    return 0;
 });
 
 Route::get('/oncall', 'EmployeesController@oncall')->name('oncall')->middleware('google');

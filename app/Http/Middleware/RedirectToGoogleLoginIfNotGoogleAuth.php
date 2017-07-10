@@ -19,12 +19,16 @@ class RedirectToGoogleLoginIfNotGoogleAuth
     public function handle($request, Closure $next, $domain = null)
     {
         if (Session::has('GoogleToken')) {
-            try {
-                $user = Socialite::driver('google')->userFromToken(Session::get('GoogleToken'));
-                view()->share(compact('user'));
-            } catch (RequestException $e) {
-                return redirect('/login/google'); // re-signin
+            if (!Session::has('GoogleUser')) {
+                try {
+                    $user = Socialite::driver('google')->userFromToken(Session::get('GoogleToken'));
+                    Session::put('GoogleUser', $user);
+                } catch (RequestException $e) {
+                    return redirect('/login/google'); // re-signin
+                }
             }
+            $user = Session::get('GoogleUser');
+            view()->share(compact('user'));
 
             return $next($request);
         }
