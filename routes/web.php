@@ -1,7 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,15 +36,7 @@ Route::group([
 Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->middleware('google')->where([
     'year' => '[0-9]{4}'
 ]);
-Route::get('/is_admin', function() {
-    if (!request()->user()) {
-        return 0;
-    }
-    if (request()->user()->isAdmin()) {
-        return 1;
-    }
-    return 0;
-});
+Route::get('/is_admin', 'UtilController@is_admin')->name('is_admin');
 
 Route::get('/oncall', 'EmployeesController@oncall')->name('oncall')->middleware('google');
 Route::get('/get/employees', 'EmployeesController@index')->name('employee.index.ajax');

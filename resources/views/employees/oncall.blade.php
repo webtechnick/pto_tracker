@@ -15,7 +15,7 @@
         @endforeach
 
         <div class="jumbotron">
-            <p>Only notify an on call developer after hours if a there is an emergency related to our product line.</p>
+            <p>Only notify an on-call developer after hours if there is an emergency related to our product line.</p>
             <p>Things that are considered emergencies:
                 <ul>
                     <li>Fire tickets</li>
