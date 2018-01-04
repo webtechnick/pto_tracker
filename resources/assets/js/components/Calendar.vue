@@ -162,6 +162,9 @@ export default {
             return `<span class="${style}" style="background-color:${pto.employee.bgcolor}; color: ${pto.employee.color};">${letter}</span>`;
         },
         selectDay(month, day, event) {
+            if (day == '') {
+                return;
+            }
             $('#calendar .day').removeClass('selectedday');
             let daycell = $('#' + month + '-' + day);
             if (daycell) {
@@ -177,6 +180,9 @@ export default {
             return Math.ceil( used / 7);
         },
         dayClass(month, day) {
+            if (day == '') {
+                return '';
+            }
             let currentday = this.getDay(month, day);
             if (currentday.isSame(this.today, 'day')) {
                 return 'today';
@@ -190,10 +196,10 @@ export default {
             return '';
         },
         dayId(month, day) {
-            if (day) {
-                return month + '-' + day;
+            if (day == '') {
+                return '';
             }
-            return '';
+            return month + '-' + day;
         },
         getDay(month, day) {
             return moment(this.year + '-' + month + '-' + day, 'YYYY-MM-DD');

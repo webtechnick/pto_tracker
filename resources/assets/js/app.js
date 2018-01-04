@@ -14,12 +14,16 @@ require('./bootstrap');
 
 import Form from './form.js';
 //import Employee from './employee.js';
+import Vue from 'vue';
+import Calendar from './components/Calendar.vue';
+import CurrentDay from './components/CurrentDay.vue';
+import EmployeeKey from './components/EmployeeKey.vue';
+import BounceLoader from 'vue-spinner/src/BounceLoader.vue';
 
-//Vue.component('example', require('./components/Example.vue'));
-Vue.component('calendar', require('./components/Calendar.vue'));
-Vue.component('currentday', require('./components/CurrentDay.vue'));
-Vue.component('employeekey', require('./components/EmployeeKey.vue'));
-Vue.component('bounce-loader', require('vue-spinner/src/BounceLoader.vue'));
+Vue.component('calendar', Calendar);
+Vue.component('currentday', CurrentDay);
+Vue.component('employeekey', EmployeeKey);
+Vue.component('bounce-loader', BounceLoader);
 
 const app = new Vue({
     el: '#app',
