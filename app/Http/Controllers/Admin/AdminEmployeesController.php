@@ -44,6 +44,21 @@ class AdminEmployeesController extends Controller
         return view('employees.edit', compact('employee'));
     }
 
+    /**
+     * Delete an Employee and all their PTO
+     *
+     * @param  Employee $employee [description]
+     * @return [type]             [description]
+     */
+    public function delete(Employee $employee)
+    {
+        $employee->delete();
+
+        $this->goodFlash('Employee and all related PTO removed.');
+
+        return redirect()->route('admin.employees');
+    }
+
     public function store(EmployeeRequest $request)
     {
         $employee = Employee::create($request->all());

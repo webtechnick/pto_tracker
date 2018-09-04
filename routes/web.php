@@ -24,6 +24,7 @@ Route::group([
 
     Route::get('/employees/create', 'AdminEmployeesController@create')->name('employees.create');
     Route::get('/employees/{employee}/edit', 'AdminEmployeesController@edit')->name('employees.edit');
+    Route::get('/employees/{employee}/delete', 'AdminEmployeesController@delete')->name('employees.delete');
     Route::post('/employees/store', 'AdminEmployeesController@store')->name('employees.store');
     Route::post('/employees/{employee}/update', 'AdminEmployeesController@update')->name('employees.update');
     Route::get('/employees/{employee}/destroy', 'AdminEmployeesController@destroy')->name('employees.destroy');

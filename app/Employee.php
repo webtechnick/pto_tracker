@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\EmployeeDeleting;
 use App\PaidTimeOff;
 use App\Traits\UtilityScopes;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,10 @@ class Employee extends Model
     use UtilityScopes;
 
     protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone', 'max_days_off'];
+
+    protected $events = [
+        'deleting' => EmployeeDeleting::class,
+    ];
 
     protected $casts = [
         'is_on_call' => 'boolean'
