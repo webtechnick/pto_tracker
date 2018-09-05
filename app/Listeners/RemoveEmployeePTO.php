@@ -26,7 +26,7 @@ class RemoveEmployeePTO
      */
     public function handle(EmployeeDeleting $event)
     {
-        if ($event->employee && $event->employee->ptos()->count()) {
+        if ($event->employee) {
             $event->employee->ptos()->delete();
         }
     }

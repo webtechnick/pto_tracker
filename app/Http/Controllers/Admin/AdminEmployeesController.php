@@ -12,12 +12,24 @@ class AdminEmployeesController extends Controller
 {
     use Flashes;
 
+    /**
+     * Show list of employees
+     *
+     * @return view
+     */
     public function index()
     {
         $employees = Employee::orderBy('name', 'ASC')->get();
+
         return view('employees.index', compact('employees'));
     }
 
+    /**
+     * Set an employee on call
+     *
+     * @param Employee $employee [description]
+     * @return redirect
+     */
     public function set_on_call(Employee $employee)
     {
         $employee->setOnCall()->save();
@@ -26,6 +38,11 @@ class AdminEmployeesController extends Controller
         return redirect()->route('admin.employees');
     }
 
+    /**
+     * Clear all the Employees on call
+     *
+     * @return redirect
+     */
     public function clear_on_call()
     {
         Employee::clearOnCall();
@@ -34,11 +51,22 @@ class AdminEmployeesController extends Controller
         return redirect()->route('admin.employees');
     }
 
+    /**
+     * Show form to create an employee
+     *
+     * @return view
+     */
     public function create()
     {
         return view('employees.create');
     }
 
+    /**
+     * Show a form to edit an employee
+     *
+     * @param  Employee $employee [description]
+     * @return view
+     */
     public function edit(Employee $employee)
     {
         return view('employees.edit', compact('employee'));
@@ -48,40 +76,43 @@ class AdminEmployeesController extends Controller
      * Delete an Employee and all their PTO
      *
      * @param  Employee $employee [description]
-     * @return [type]             [description]
+     * @return redirect
      */
     public function delete(Employee $employee)
     {
         $employee->delete();
-
         $this->goodFlash('Employee and all related PTO removed.');
 
         return redirect()->route('admin.employees');
     }
 
+    /**
+     * Store a new employee
+     *
+     * @param  EmployeeRequest $request [description]
+     * @return redirect
+     */
     public function store(EmployeeRequest $request)
     {
         $employee = Employee::create($request->all());
-
         $this->goodFlash($employee->name . ' Created.');
 
         return redirect()->route('admin.employees');
     }
 
+    /**
+     * Update an employee
+     *
+     * @param  Request  $request  [description]
+     * @param  Employee $employee [description]
+     * @return redirect
+     */
     public function update(Request $request, Employee $employee)
     {
         $employee->fill($request->all());
         $employee->save();
 
         $this->goodFlash($employee->name . ' Updated.');
-
-        return redirect()->route('admin.employees');
-    }
-
-    public function destroy(Employee $employee)
-    {
-        $employee->delete();
-        $this->goodFlash('Employee Removed');
 
         return redirect()->route('admin.employees');
     }
