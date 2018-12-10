@@ -50,7 +50,15 @@ class ShuffleOnCall extends Command
         if (empty($name)) {
             return null;
         }
-        return Employee::where('name', $name)->first();
+        $employee = Employee::where('name', $name)->first();
+
+        // Let's not put them on call twice in a row
+        // TODO: implement Knuth Shuffle
+        while ($employee->is_on_call) {
+            $employee = $this->getRandomEmployee();
+        }
+
+        return $employee;
     }
 
     /**
