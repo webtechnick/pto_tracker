@@ -54,7 +54,7 @@ class ShuffleOnCall extends Command
 
         // Let's not put them on call twice in a row
         // TODO: implement Knuth Shuffle
-        while ($employee->is_on_call) {
+        while ($employee->isOnCall()) {
             $employee = $this->getRandomEmployee();
         }
 
