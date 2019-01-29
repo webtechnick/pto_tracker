@@ -11,7 +11,7 @@
         "doctrine/dbal": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
         "laravel/framework": "5.4.*",
-        "laravel/socialite": "^3.0",
+        "laravel/socialite": "3.0.x-dev",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.4.0"
     },
