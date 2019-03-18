@@ -6,7 +6,7 @@
            <li>{{ $employee->name }}</li>
         @endforeach
     </ul>
-    <p>Thank you resourse units! Your sacrafice will go unnoticed and under appreciated by tall foreheads, but I will always adore and love you!</p>
+    <p>Thank you resource units! Your sacrifice will go unnoticed and under appreciated by tall foreheads, but I will always adore and love you!</p>
 
     <p>Warm Binary Regards,<br>
     Your Overly-Supportive PTO Tracker</p>
