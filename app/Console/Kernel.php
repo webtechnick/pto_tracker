@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Shuffle the on call weekly on mondays at 1AM.
-        $schedule->command('oncall:shuffle')->weekly()->mondays()->at('01:00');
+        $schedule->command('oncall:shuffle')->weekly()->mondays()->at('14:00');
     }
 
     /**
