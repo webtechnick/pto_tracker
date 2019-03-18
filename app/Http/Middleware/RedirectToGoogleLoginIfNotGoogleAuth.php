@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -18,6 +19,9 @@ class RedirectToGoogleLoginIfNotGoogleAuth
      */
     public function handle($request, Closure $next, $domain = null)
     {
+        if (App::environment('local')) {
+            return $next($request);
+        }
         if (Session::has('GoogleToken')) {
             if (!Session::has('GoogleUser')) {
                 try {

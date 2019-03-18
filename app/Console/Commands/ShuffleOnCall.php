@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Employee;
+use App\Mail\OnCallDigest;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class ShuffleOnCall extends Command
 {
@@ -68,6 +70,10 @@ class ShuffleOnCall extends Command
             $employee->setOnCall()->save();
             $this->line($employee->name . ' set to On Call.');
         }
+
+        // send digest email notification to oncall@lacallegroup.com
+        Mail::to('oncall@lacallegroup.com')->send(new OnCallDigest());
+
         $this->comment('Finished.');
     }
 }
