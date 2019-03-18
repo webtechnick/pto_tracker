@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ShuffleOnCall::class,
-        Commands\DisplayOnCall::class
+        Commands\DisplayOnCall::class,
+        Commands\SendOnCallDigest::class,
     ];
 
     /**
