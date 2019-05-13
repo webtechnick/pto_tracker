@@ -13,7 +13,8 @@ class ShuffleOnCall extends Command
     public $OnCallRotation = [
         'Nick Baker',
         'Mark Vince',
-        'Jeff Kolesnikowicz',
+        'Jason Hardy',
+        'Eric Pridham',
         'Dillon Formo',
         'Travis Reddell',
         'Aaron Hall'
