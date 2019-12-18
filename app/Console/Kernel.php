@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\ShuffleOnCall::class,
         Commands\DisplayOnCall::class,
         Commands\SendOnCallDigest::class,
+        Commands\ClearProratedPtoLimit::class,
     ];
 
     /**
@@ -28,6 +29,9 @@ class Kernel extends ConsoleKernel
     {
         // Shuffle the on call weekly on mondays at 1AM.
         $schedule->command('oncall:shuffle')->weekly()->mondays()->at('14:00');
+
+        // Clear Prorated PTO limit for new employees yearly on the first
+        $schedule->command('employee:clear-pto-limit')->yearly();
     }
 
     /**

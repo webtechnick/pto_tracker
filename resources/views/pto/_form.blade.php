@@ -14,12 +14,12 @@
     <div class="form-group">
         <label for="start">Start: </label>
         <!-- <input v-model="form.start_time" type="text" class="form-control datepicker" name="start_time" id="start_time" placeholder="Start Date" value="{{ old('start') }}" required> -->
-        <input type="text" class="form-control datepicker" name="start_time" id="start_time" placeholder="Start Date" value="{{ old('start') }}" required>
+        <input type="text" class="form-control datepicker" name="start_time" id="start_time" placeholder="Start Date" value="{{ old('start') }}" autocomplete="off" required>
     </div>
     <div class="form-group">
         <label for="end">End: </label>
         <!-- <input v-model="form.end_time" type="text" class="form-control datepicker" name="end_time" id="end_time" placeholder="End Date" value="{{ old('end') }}" required> -->
-        <input type="text" class="form-control datepicker" name="end_time" id="end_time" placeholder="End Date" value="{{ old('end') }}" required>
+        <input type="text" class="form-control datepicker" name="end_time" id="end_time" placeholder="End Date" value="{{ old('end') }}" autocomplete="off" required>
     </div>
     <div class="checkbox">
         <label>

@@ -216,7 +216,7 @@ export default {
 }
 .month {
     width: 100%;
-    height: 350px;
+    height: 400px;
 }
 .center {
     text-align: center;
@@ -247,5 +247,8 @@ export default {
     border: 1px solid black;
     width: 43px;
     height: 50px;
+}
+.clear {
+    clear: both;
 }
 </style>
