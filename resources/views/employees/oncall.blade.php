@@ -10,9 +10,17 @@
             </div>
         </div>
 
-        @foreach ($onCallEmployees as $employee)
+        <div class="panel panel-default">
+            <div class="panel-body">
+                Oncall rotation is now handled via OpsGenie.
+
+                Please contact Zeb for in slack or via phone for instructions.
+            </div>
+        </div>
+
+        {{-- @foreach ($onCallEmployees as $employee)
             @include('employees._person', ['employee' => $employee])
-        @endforeach
+        @endforeach --}}
 
         <div class="jumbotron">
             <p>Only notify an on-call developer after hours if there is an emergency related to our product line.</p>

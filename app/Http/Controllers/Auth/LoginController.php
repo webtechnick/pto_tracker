@@ -60,11 +60,17 @@ class LoginController extends Controller
      */
     public function handleProviderCallback()
     {
-        $user = Socialite::driver('google')->user();
+        try {
+            $user = Socialite::driver('google')->user();
 
-        if (!empty($user->token)) {
-            Session::put('GoogleToken', $user->token);
-            Session::put('GoogleUser', $user);
+            if (!empty($user->token)) {
+                Session::put('GoogleToken', $user->token);
+                Session::put('GoogleUser', $user);
+            }
+
+        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
+            Session::forget('GoogleToken');
+            Session::forget('GoogleUser');
         }
 
         return redirect()->route('home');
