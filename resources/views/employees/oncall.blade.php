@@ -12,9 +12,9 @@
 
         <div class="panel panel-default">
             <div class="panel-body">
-                Oncall rotation is now handled via OpsGenie.
+                Oncall rotation is now handled via OpsGenie.<br><br>
 
-                Please contact Zeb for in slack or via phone for instructions.
+                Please contact Zeb (in slack or via phone) for instructions.
             </div>
         </div>
 
