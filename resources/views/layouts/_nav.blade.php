@@ -19,7 +19,7 @@
         <div class="collapse navbar-collapse" id="app-navbar-collapse">
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
-                {{-- <li><a href="/oncall">On Call</a></li> --}}
+                <li><a href="/oncall">On Call</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         Team @if(isset($selectedteam) && $selectedteam) :: {{ $selectedteam->name }} @endif <span class="caret"></span>
