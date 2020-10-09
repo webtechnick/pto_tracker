@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\TagDeleting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,10 @@ class Tag extends Model
         'name',
         'slug',
         'description',
+    ];
+
+    protected $events = [
+        'deleting' => TagDeleting::class,
     ];
 
     public function getFilters()

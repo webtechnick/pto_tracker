@@ -22,7 +22,7 @@
                 {{-- <li><a href="/oncall">On Call</a></li> --}}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        Team @if(isset($selectedteam) && $selectedteam) :: {{ \App\Tag::nameBySlug($selectedteam) }} @endif <span class="caret"></span>
+                        Team @if(isset($selectedteam) && $selectedteam) :: {{ $selectedteam->name }} @endif <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/">All</a></li>
