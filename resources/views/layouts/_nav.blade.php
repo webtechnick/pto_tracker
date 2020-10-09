@@ -26,7 +26,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/">All</a></li>
-                        @foreach(\App\Tag::all() as $t)
+                        @foreach(\App\Tag::orderBy('name', 'asc')->get() as $t)
                             <li><a href="{{ $t->link() }}">{{ $t->name }}</a></li>
                         @endforeach
                     </ul>
