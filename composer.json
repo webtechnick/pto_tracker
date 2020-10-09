@@ -14,6 +14,7 @@
         "laravel/socialite": "3.0.x-dev",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.4.0",
+        "composer-plugin-api": "^1.1",
         "webtechnick/laravel-glow": "dev-master"
     },
     "require-dev": {
