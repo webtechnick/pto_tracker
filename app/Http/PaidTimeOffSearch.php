@@ -15,6 +15,7 @@ class PaidTimeOffSearch extends ModelSearch
     protected $params = [
         'team',
         'year',
+        'q'
     ];
 
     /**
@@ -61,5 +62,10 @@ class PaidTimeOffSearch extends ModelSearch
         $this->query->whereHas('employee', function($q) use ($input) {
             $q->byInputTags($input);
         });
+    }
+
+    public function _q($input)
+    {
+        $this->query->filter($input);
     }
 }

@@ -31,8 +31,14 @@
                         @endforeach
                     </ul>
                 </li>
-
             </ul>
+
+            <form class="navbar-form navbar-left" method="GET" action="/">
+                <div class="form-group">
+                    <input type="text" name="q" class="form-control" placeholder="Find Employee">
+                </div>
+                <button type="submit" class="btn btn-default">Find</button>
+            </form>
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right">

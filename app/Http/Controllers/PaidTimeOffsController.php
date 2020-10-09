@@ -42,8 +42,9 @@ class PaidTimeOffsController extends Controller
         // Pass team to view
         $team = $search->field('team');
         $selectedteam = Tag::byName($team)->first();
+        $old = $search->old();
 
-        return view('pto.index', compact('employees', 'year', 'selectedteam'));
+        return view('pto.index', compact('employees', 'year', 'selectedteam', 'old'));
     }
 
     /**

@@ -6,13 +6,10 @@
     <div class="row">
         <div class="col-md-9">
             <input id="inputyear" name="inputyear" type="hidden" value="{{ $year }}">
-            @if ($selectedteam)
-                <input id="inputteam" name="inputteam" type="hidden" value="{{ $selectedteam->slug }}">
-            @endif
 
             <div class="center">
-                <a class="pull-left" href="/{{ $year - 1 }}@if($selectedteam)?team={{$selectedteam->slug}}@endif"><span class="glyphicon glyphicon-backward"></span></a>
-                <a class="pull-right" href="/{{ $year + 1 }}@if($selectedteam)?team={{$selectedteam->slug}}@endif"><span class="glyphicon glyphicon-forward"></span></a>
+                <a class="pull-left" href="/{{ $year - 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-backward"></span></a>
+                <a class="pull-right" href="/{{ $year + 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-forward"></span></a>
                 <h1 v-text="year"></h1>
             </div>
 

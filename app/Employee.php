@@ -4,6 +4,7 @@ namespace App;
 
 use App\Events\EmployeeDeleting;
 use App\PaidTimeOff;
+use App\Traits\Filterable;
 use App\Traits\Taggable;
 use App\Traits\UtilityScopes;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 class Employee extends Model
 {
     use UtilityScopes,
+        Filterable,
         Taggable;
 
     protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone', 'max_days_off'];
@@ -25,6 +27,14 @@ class Employee extends Model
     ];
 
     //protected $appends = ['pending_days_left', 'days_left'];
+
+
+    public function getFilters()
+    {
+        return [
+            'name', 'title'
+        ];
+    }
 
     /**
      * Employee has many Paid Time Off

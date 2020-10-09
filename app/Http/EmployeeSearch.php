@@ -14,6 +14,7 @@ class EmployeeSearch extends ModelSearch
 {
     protected $params = [
         'team',
+        'q',
     ];
 
     /**
@@ -42,5 +43,10 @@ class EmployeeSearch extends ModelSearch
     public function _team($input)
     {
         $this->query->byInputTags($input);
+    }
+
+    public function _q($input)
+    {
+        $this->query->filter($input);
     }
 }

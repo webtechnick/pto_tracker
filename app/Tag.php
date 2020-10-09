@@ -3,10 +3,10 @@
 namespace App;
 
 use App\Events\TagDeleting;
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use WebTechNick\LaravelGlow\Traits\Filterable;
 use WebTechNick\LaravelGlow\Traits\ToggleActivatable;
 
 class Tag extends Model
