@@ -31,6 +31,15 @@ Route::group([
 
     Route::get('/employees/oncall/clear', 'AdminEmployeesController@clear_on_call')->name('employees.clearoncall');
     Route::get('/employees/oncall/set/{employee}', 'AdminEmployeesController@set_on_call')->name('employees.setoncall');
+
+    // Teams
+    Route::get('/teams', 'AdminTeamsController@index')->name('teams');
+    Route::get('/teams/create', 'AdminTeamsController@create')->name('teams.create');
+    Route::get('/teams/{tag}/edit', 'AdminTeamsController@edit')->name('teams.edit');
+    Route::get('/teams/{tag}/delete', 'AdminTeamsController@delete')->name('teams.delete');
+    Route::post('/teams/store', 'AdminTeamsController@store')->name('teams.store');
+    Route::post('/teams/{tag}/update', 'AdminTeamsController@update')->name('teams.update');
+    Route::get('/teams/{tag}/destroy', 'AdminTeamsController@destroy')->name('teams.destroy');
 });
 
 // App Routing
@@ -59,6 +68,15 @@ Route::post('/ptos/destroy/{id}', 'PaidTimeOffsController@destroy')->name('pto.d
 Route::post('/ptos/sent_to_calendar/{id}', 'PaidTimeOffsController@sent_to_calendar')->name('pto.sent_to_calendar')->middleware('admin');
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
+// Team Routes
+Route::get('/{team}/{year?}', 'PaidTimeOffsController@team')->name('team')->middleware('google')->where([
+    'year' => '[0-9]{4}'
+]);
+Route::get('/get/ptos/{team}/{year?}', 'PaidTimeOffsController@get_team_ptos')
+    ->name('pto.team.ajax')
+    ->where([
+        'year' => '[0-9]{4}'
+    ]);
 
 Auth::routes();
 

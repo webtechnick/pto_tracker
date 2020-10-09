@@ -4,12 +4,15 @@ namespace App;
 
 use App\Events\EmployeeDeleting;
 use App\PaidTimeOff;
+use App\Traits\Taggable;
 use App\Traits\UtilityScopes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Employee extends Model
 {
-    use UtilityScopes;
+    use UtilityScopes,
+        Taggable;
 
     protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone', 'max_days_off'];
 
@@ -129,5 +132,42 @@ class Employee extends Model
     public function addPto(PaidTimeOff $pto)
     {
         return $this->ptos()->save($pto);
+    }
+        /**
+     * Create a Employee from the incomming request
+     *
+     * @return [type] [description]
+     */
+    public static function createFromRequest($data)
+    {
+        $employee = new self($data);
+
+        DB::transaction(function() use ($thread, $data) {
+            $employee->save(); // Concrete employee now
+
+            if (!empty($data['tag_string'])) {
+                $employee->syncTagString($data['tag_string']);
+            }
+        });
+
+
+        return $employee;
+    }
+
+    /**
+     * Update a Employee from an incomming request
+     *
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     */
+    public function updateFromRequest($data)
+    {
+        $this->update($data);
+
+        if (!empty($data['tag_string'])) {
+            $this->syncTagString($data['tag_string']);
+        }
+
+        return $this;
     }
 }

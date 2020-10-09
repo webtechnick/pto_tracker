@@ -4,7 +4,7 @@
         @foreach($employees as $employee)
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <span class="name">{{ $employee->name }}</span>
+                    <span class="name">{{ $employee->name }}</span> <small>(Teams: {{ $employee->tag_string ?: 'None'}})</small>
                     <div class="pull-right">
                         <div class="btn-group" role="group" aria-label="...">
                             @if ($employee->isOnCall())
