@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Http\EmployeeSearch;
+use App\Http\PaidTimeOffSearch;
 use App\Http\Requests\PaidTimeOffRequest;
 use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
@@ -28,21 +30,20 @@ class PaidTimeOffsController extends Controller
      * @param  [type] $team [description]
      * @return [type]       [description]
      */
-    public function home($year = null, $team = null)
+    public function home(Request $request, $year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
 
-        $query = Employee::orderBy('name', 'ASC');
-        if ($team) {
-            $query->byInputTags($team);
-        }
-        $employees = $query->get();
+        $search = new EmployeeSearch($request);
+        $employees = $search->get();
 
-        $teams = Tag::all();
+        // Pass team to view
+        $selectedteam = $search->field('team');
+        $old = $search->old();
 
-        return view('pto.index', compact('employees', 'year', 'team', 'teams'));
+        return view('pto.index', compact('employees', 'year', 'selectedteam', 'old'));
     }
 
     /**
@@ -127,48 +128,13 @@ class PaidTimeOffsController extends Controller
      * @param  [type] $team [description]
      * @return [type]       [description]
      */
-    public function get_ptos($year = null, $team = null)
+    public function get_ptos(Request $request, $year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
 
-        $query = PaidTimeOff::whereYear('end_time', $year)
-                           ->with(['employee' => function ($query) {
-                                $query->select(['id', 'name', 'color', 'bgcolor']);
-                            }]);
-        if ($team) {
-            // Add Team condition.
-            $query->whereHas('employee', function($q) use ($team) {
-                $q->byInputTags($team);
-            });
-        }
-
-        $ptos = $query->get();
-        return $ptos;
-    }
-
-    /**
-     * Wrapper for pto@home
-     *
-     * @param  [type] $team [description]
-     * @param  [type] $year [description]
-     * @return [type]       [description]
-     */
-    public function team($team, $year = null)
-    {
-        return $this->home($year, $team);
-    }
-
-    /**
-     * Wrapper for pto@get_ptos
-     *
-     * @param  [type] $team [description]
-     * @param  [type] $year [description]
-     * @return [type]       [description]
-     */
-    public function get_team_ptos($team, $year = null)
-    {
-        return $this->get_ptos($year, $team);
+        $request->merge(['year' => $year]);
+        return (new PaidTimeOffSearch($request))->get();
     }
 }

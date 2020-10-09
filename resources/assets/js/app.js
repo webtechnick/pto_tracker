@@ -86,10 +86,10 @@ const app = new Vue({
         getPtos() {
             var url = '/get/ptos/' + this.year;
             if (this.team) {
-                url = '/get/ptos/' + this.team + '/' + this.year;
+                url += '?team=' + this.team;
             }
-            console.log(url);
-            console.log(this.team);
+            // console.log(url);
+            // console.log(this.team);
             axios.get(url)
                  .then(function(response) {
                     this.ptos = response.data;

@@ -42,7 +42,9 @@ class Tag extends Model
      */
     public function link()
     {
-        return route('team', ['team' => $this->slug]);
+        return '/?team=' . $this->slug;
+        // return route('home', ['query' => ['team' => $this->slug]]);
+        // return route('home', ['team' => $this->slug]);
     }
 
     /**
@@ -105,5 +107,22 @@ class Tag extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * Get the name by slug
+     *
+     * @param  [type] $slug [description]
+     * @return [type]       [description]
+     */
+    public static function nameBySlug($slug)
+    {
+        $tag = self::where('slug', $slug)->pluck('name');
+
+        if (!empty($tag)) {
+            return $tag->first();
+        }
+
+        return '';
     }
 }

@@ -42,6 +42,8 @@ Route::group([
     Route::get('/teams/{tag}/destroy', 'AdminTeamsController@destroy')->name('teams.destroy');
 });
 
+// Consider wrapping all routes in google middleware instead of just front-facing routes
+
 // App Routing
 Route::get('/{year?}', 'PaidTimeOffsController@home')->name('home')->middleware('google')->where([
     'year' => '[0-9]{4}'
@@ -69,14 +71,14 @@ Route::post('/ptos/sent_to_calendar/{id}', 'PaidTimeOffsController@sent_to_calen
 Route::get('/ptos/{id}/view', 'PaidTimeOffsController@view')->name('pto.view');
 
 // Team Routes
-Route::get('/{team}/{year?}', 'PaidTimeOffsController@team')->name('team')->middleware('google')->where([
-    'year' => '[0-9]{4}'
-]);
-Route::get('/get/ptos/{team}/{year?}', 'PaidTimeOffsController@get_team_ptos')
-    ->name('pto.team.ajax')
-    ->where([
-        'year' => '[0-9]{4}'
-    ]);
+// Route::get('/{team}/{year?}', 'PaidTimeOffsController@team')->name('team')->middleware('google')->where([
+//     'year' => '[0-9]{4}'
+// ]);
+// Route::get('/get/ptos/{team}/{year?}', 'PaidTimeOffsController@get_team_ptos')
+//     ->name('pto.team.ajax')
+//     ->where([
+//         'year' => '[0-9]{4}'
+//     ]);
 
 Auth::routes();
 
