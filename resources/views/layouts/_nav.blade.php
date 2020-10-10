@@ -35,7 +35,8 @@
 
             <form class="navbar-form navbar-left" method="GET" action="/">
                 <div class="form-group">
-                    <input type="text" name="q" class="form-control" placeholder="Find Employee">
+                    {{ Form::text('q', null, ['placeholder' => 'Find Employee', 'class' => 'form-control']) }}
+                    {{-- <input type="text" name="q" class="form-control" placeholder="Find Employee"> --}}
                 </div>
                 <button type="submit" class="btn btn-default">Find</button>
             </form>
