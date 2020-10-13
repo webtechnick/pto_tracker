@@ -22,10 +22,6 @@
                 <currentday :year="year" :admin="admin" :ptos="ptos" :holidays="holidays"></currentday>
             </div>
 
-            {{-- <div class="row">
-                @include('pto._teams')
-            </div> --}}
-
             <div class="row">
                 @include('pto._employee_key')
                 <!-- <employeekey :employees="employees"></employeekey> -->
