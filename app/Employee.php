@@ -152,7 +152,7 @@ class Employee extends Model
     {
         $employee = new self($data);
 
-        DB::transaction(function() use ($thread, $data) {
+        DB::transaction(function() use ($employee, $data) {
             $employee->save(); // Concrete employee now
 
             if (!empty($data['tag_string'])) {
