@@ -83,7 +83,17 @@ const app = new Vue({
                  });
         },
         getPtos() {
-            axios.get('/get/ptos/' + this.year)
+            var url = '/get/ptos/' + this.year + window.location.search;
+            // if (this.team) {
+            //     url += '?team=' + this.team;
+            // }
+            // if (this.filter) {
+            //     url += '&q=' + this.filter;
+            // }
+            // console.log(window.location.search);
+            // console.log(url);
+            // console.log(this.team);
+            axios.get(url)
                  .then(function(response) {
                     this.ptos = response.data;
                     Events.$emit('finishedLoading');

@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
-class WorkingWithEmployees extends TestCase
+class WorkingWithEmployeesTest extends TestCase
 {
     use DatabaseMigrations;
 

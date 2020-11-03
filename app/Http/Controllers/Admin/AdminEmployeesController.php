@@ -81,6 +81,7 @@ class AdminEmployeesController extends Controller
     public function delete(Employee $employee)
     {
         $employee->delete();
+
         $this->goodFlash('Employee and all related PTO removed.');
 
         return redirect()->route('admin.employees');
@@ -94,7 +95,8 @@ class AdminEmployeesController extends Controller
      */
     public function store(EmployeeRequest $request)
     {
-        $employee = Employee::create($request->all());
+        $employee = Employee::createFromRequest($request->all());
+
         $this->goodFlash($employee->name . ' Created.');
 
         return redirect()->route('admin.employees');
@@ -109,8 +111,7 @@ class AdminEmployeesController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-        $employee->fill($request->all());
-        $employee->save();
+        $employee->updateFromRequest($request->all());
 
         $this->goodFlash($employee->name . ' Updated.');
 

@@ -33,6 +33,14 @@ $factory->define(App\Employee::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Tag::class, function (Faker\Generator $faker) {
+    $name = $faker->word;
+    return [
+        'name' => $name,
+        'slug' => str_slug($name)
+    ];
+});
+
 $factory->define(App\Holiday::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->sentence,

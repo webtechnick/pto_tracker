@@ -16,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\EmployeeDeleting' => [
             'App\Listeners\RemoveEmployeePTO',
         ],
+        'App\Events\TagDeleting' => [
+            'App\Listeners\RemoveTeamFromTaggables',
+        ],
     ];
 
     /**

@@ -27,7 +27,8 @@
 <title>{{ config('app.name', 'Laravel') }}</title>
 
 <!-- Styles -->
-<link href="/css/app.css" rel="stylesheet">
+<link href="{{ elixir('css/app.css') }}" rel="stylesheet" crossorigin="use-credentials">
+{{-- <link href="/css/app.css" rel="stylesheet"> --}}
 <link href="/css/jquery-ui.min.css" rel="stylesheet">
 
 <!-- Scripts -->
