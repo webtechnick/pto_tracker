@@ -1,0 +1,90 @@
+version: '3.8'
+
+networks:
+  pto:
+    name: pto
+
+services:
+  nginx:
+    container_name: pto_nginx
+    build:
+      context: ./.docker/
+      dockerfile: nginx.dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html:cached
+    depends_on:
+      - phpfpm
+    ports:
+      - 443
+    networks:
+      pto:
+
+  phpfpm:
+    container_name: pto_phpfpm
+    build:
+      context: ./.docker/
+      dockerfile: phpfpm.dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html:cached
+    depends_on:
+      - mysql
+    networks:
+      pto:
+
+  mysql:
+    container_name: pto_mysql
+    build:
+      context: ./.docker
+      dockerfile: mysql.dockerfile
+    ports:
+      - 33061:3306
+    restart: unless-stopped
+    volumes:
+      - ./.mysql/databases:/var/lib/mysql:delegated
+    environment:
+      - MYSQL_DATABASE=pto
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=xUW%skM*S2&XcesQ
+      - MYSQL_USER_PASSWORD=xUW%skM*S2&XcesQ
+    networks:
+      pto:
+
+  composer:
+    container_name: pto_composer
+    build:
+      context: ./.docker
+      dockerfile: composer.dockerfile
+    restart: "no"
+    volumes:
+      - ./:/var/www/html:delegated
+    working_dir: /var/www/html
+    networks:
+      pto:
+
+  artisan:
+    container_name: pto_artisan
+    build:
+      context: ./.docker
+      dockerfile: phpfpm.dockerfile
+    restart: "no"
+    volumes:
+      - ./:/var/www/html:delegated
+    working_dir: /var/www/html
+    entrypoint: [ 'php', 'artisan' ]
+    depends_on:
+      - mysql
+    networks:
+      pto:
+
+  npm:
+    container_name: pto_npm
+    build:
+      context: ./.docker
+      dockerfile: npm.dockerfile
+    restart: "no"
+    volumes:
+      - ./:/var/www/html:delegated
+      - ./.logs/npm:/root/.npm/_logs:delegated
+    working_dir: /var/www/html

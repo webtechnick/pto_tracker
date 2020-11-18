@@ -8,3 +8,4 @@ Homestead.yaml
 .env
 .DS_Store
 .vagrant
+.docker/nginx/*.pem
