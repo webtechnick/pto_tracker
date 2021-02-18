@@ -111,7 +111,7 @@ export default {
                 'trp': 'true',
                 'dates': start + '/' + end
             };
-            window.open('http://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
+            window.open('https://calendar.google.com/calendar/u/0/r/eventedit?' + $.param(options));
         },
         sentToCalendar(event) {
             event.pto.is_sent_to_calendar = true;
