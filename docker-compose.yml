@@ -16,7 +16,7 @@ services:
     depends_on:
       - phpfpm
     ports:
-      - 443
+      - 443:443
     networks:
       pto:
 
