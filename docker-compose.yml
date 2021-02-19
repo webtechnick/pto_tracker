@@ -88,3 +88,4 @@ services:
       - ./:/var/www/html:delegated
       - ./.logs/npm:/root/.npm/_logs:delegated
     working_dir: /var/www/html
+    entrypoint: [ 'npm' ]
