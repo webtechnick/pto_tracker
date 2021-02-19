@@ -43,7 +43,8 @@ docker-compose run --rm npm npm ci
 echo -e "###############################################################"
 echo -e "Setting up database"
 echo -e "###############################################################"
-touch database/database.sqlite
+docker-compose run --rm artisan key:generate
+sleep 30 #Sleeping to ensure the DB is ready
 docker-compose run --rm artisan migrate
 
 echo -e "###############################################################"
