@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         Commands\DisplayOnCall::class,
         Commands\SendOnCallDigest::class,
         Commands\ClearProratedPtoLimit::class,
+        Commands\ClearOldPto::class,
     ];
 
     /**
@@ -32,6 +33,8 @@ class Kernel extends ConsoleKernel
 
         // Clear Prorated PTO limit for new employees yearly on the first
         $schedule->command('employee:clear-pto-limit')->yearly();
+        // Clear old PTO to keep database lean.
+        $schedule->command('employee:clear-old-pto')->yearly();
     }
 
     /**

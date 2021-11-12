@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Http\EmployeeSearch;
+use App\Http\PaidTimeOffSearch;
 use App\Http\Requests\PaidTimeOffRequest;
 use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
+use App\Tag;
 use App\Traits\Flashes;
 use App\User;
 use Illuminate\Http\Request;
@@ -20,15 +23,36 @@ class PaidTimeOffsController extends Controller
         $this->middleware(['auth', 'admin'])->only(['approve', 'deny', 'destroy']);
     }
 
-    public function home($year = null)
+    /**
+     * Show the calendar
+     *
+     * @param  [type] $year [description]
+     * @param  [type] $team [description]
+     * @return [type]       [description]
+     */
+    public function home(Request $request, $year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
-        $employees = Employee::orderBy('name', 'ASC')->get();
-        return view('pto.index', compact('employees', 'year'));
+
+        $search = new EmployeeSearch($request);
+        $employees = $search->get();
+
+        // Pass team to view
+        $team = $search->field('team');
+        $selectedteam = Tag::byName($team)->first();
+        $old = $search->old();
+
+        return view('pto.index', compact('employees', 'year', 'selectedteam', 'old'));
     }
 
+    /**
+     * Submit PTO
+     *
+     * @param  PaidTimeOffRequest $request [description]
+     * @return [type]                      [description]
+     */
     public function store(PaidTimeOffRequest $request)
     {
         $pto = PaidTimeOff::saveForm($request->all());
@@ -45,6 +69,12 @@ class PaidTimeOffsController extends Controller
         return redirect()->route('home');
     }
 
+    /**
+     * Admin approve the PTO, protected by middleware
+     *
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function approve($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
@@ -52,6 +82,12 @@ class PaidTimeOffsController extends Controller
         return $pto;
     }
 
+    /**
+     * Admin deny the PTO, protected by middleware
+     *
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function deny($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
@@ -59,6 +95,12 @@ class PaidTimeOffsController extends Controller
         return $pto;
     }
 
+    /**
+     * Delete the PTO, protected by middleware
+     *
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function destroy($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
@@ -66,6 +108,12 @@ class PaidTimeOffsController extends Controller
         return 1;
     }
 
+    /**
+     * Admin Send PTO to OOO calendar, protected by middleware
+     *
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function sent_to_calendar($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
@@ -73,15 +121,21 @@ class PaidTimeOffsController extends Controller
         return 1;
     }
 
-    public function get_ptos($year = null)
+
+    /**
+     * Ajax load of PTOs
+     *
+     * @param  [type] $year [description]
+     * @param  [type] $team [description]
+     * @return [type]       [description]
+     */
+    public function get_ptos(Request $request, $year = null)
     {
         if ($year === null) {
             $year = date('Y');
         }
 
-        $ptos = PaidTimeOff::whereYear('end_time', $year)->with(['employee' => function ($query) {
-            $query->select(['id', 'name', 'color', 'bgcolor']);
-        }])->get();
-        return $ptos;
+        $request->merge(['year' => $year]);
+        return (new PaidTimeOffSearch($request))->get();
     }
 }

@@ -20,7 +20,26 @@
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
                 <li><a href="/oncall">On Call</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Team @if(isset($selectedteam) && $selectedteam) :: {{ $selectedteam->name }} @endif <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/">All</a></li>
+                        @foreach(\App\Tag::orderBy('name', 'asc')->get() as $t)
+                            <li><a href="{{ $t->link() }}">{{ $t->name }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
             </ul>
+
+            <form class="navbar-form navbar-left" method="GET" action="/">
+                <div class="form-group">
+                    {{ Form::text('q', null, ['placeholder' => 'Find Employee', 'class' => 'form-control']) }}
+                    {{-- <input type="text" name="q" class="form-control" placeholder="Find Employee"> --}}
+                </div>
+                <button type="submit" class="btn btn-default">Find</button>
+            </form>
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right">
@@ -36,7 +55,8 @@
 
                         <ul class="dropdown-menu" role="menu">
                             @if (Auth::user()->isAdmin())
-                                <li><a href="/admin">Admin</a></li>
+                                <li><a href="/admin">Employees</a></li>
+                                <li><a href="/admin/teams">Teams</a></li>
                             @endif
                             <li>
                                 <a href="{{ url('/logout') }}"

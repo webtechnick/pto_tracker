@@ -4,11 +4,14 @@ namespace App;
 
 use App\Employee;
 use App\Holiday;
+use App\Traits\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class PaidTimeOff extends Model
 {
+    use Filterable;
+
     protected $fillable = [
         'employee_id', 'start_time', 'end_time', 'description', 'notes',
     ];
@@ -25,6 +28,13 @@ class PaidTimeOff extends Model
         'is_half_day' => 'boolean',
         'is_sent_to_calendar' => 'boolean',
     ];
+
+    public function getFilters()
+    {
+        return [
+            'employee.name'
+        ];
+    }
 
     public static function boot()
     {

@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         render(employee) {
-            return `<span class="employee" style="background-color:${employee.bgcolor}; color: ${employee.color};">${employee.name}</span>`;
+            return `<a href="?q=${employee.name}"><span class="employee" style="background-color:${employee.bgcolor}; color: ${employee.color};">${employee.name}</span></a>`;
         },
         daysLeft(employee) {
             let retval = `<span class="pto-left"><strong>${employee.days_left}</strong> PTO day(s) left.`;
