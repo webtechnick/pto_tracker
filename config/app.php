@@ -32,6 +32,11 @@ return [
      */
     'max_days_off' => env('MAX_DAYS_OFF_IN_YEAR', 21),
 
+    /**
+     * Department
+     */
+    'department' => env('APP_DEPARTMENT', 'IT'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
