@@ -65,6 +65,7 @@
                         <ul class="dropdown-menu" role="menu">
                             @if (Auth::user()->isAdmin())
                                 <li><a href="/admin">Employees</a></li>
+                                <li><a href="/admin/holidays">Holidays</a></li>
                                 <li><a href="/admin/teams">Teams</a></li>
                             @endif
                             <li>

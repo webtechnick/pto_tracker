@@ -23,4 +23,30 @@ class Holiday extends Model
         }
         return self::where('date', $date->toDateString())->exists();
     }
+
+    /**
+     * Create a Holiday from the incomming request
+     *
+     * @return [type] [description]
+     */
+    public static function createFromRequest($data)
+    {
+        $holiday = new self($data);
+        $holiday->date = Carbon::parse($holiday->date)->toDateString();
+        $holiday->save();
+
+        return $holiday;
+    }
+
+    /**
+     * Update a Holiday from the incomming request
+     *
+     * @return [type] [description]
+     */
+    public function updateFromRequest($data)
+    {
+        $this->update($data);
+
+        return $this;
+    }
 }

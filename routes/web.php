@@ -22,15 +22,23 @@ Route::group([
 
     Route::get('/', 'AdminEmployeesController@index')->name('employees');
 
+    // Employee
     Route::get('/employees/create', 'AdminEmployeesController@create')->name('employees.create');
     Route::get('/employees/{employee}/edit', 'AdminEmployeesController@edit')->name('employees.edit');
     Route::get('/employees/{employee}/delete', 'AdminEmployeesController@delete')->name('employees.delete');
     Route::post('/employees/store', 'AdminEmployeesController@store')->name('employees.store');
     Route::post('/employees/{employee}/update', 'AdminEmployeesController@update')->name('employees.update');
     Route::get('/employees/{employee}/destroy', 'AdminEmployeesController@destroy')->name('employees.destroy');
-
     Route::get('/employees/oncall/clear', 'AdminEmployeesController@clear_on_call')->name('employees.clearoncall');
     Route::get('/employees/oncall/set/{employee}', 'AdminEmployeesController@set_on_call')->name('employees.setoncall');
+
+    // Holiday
+    Route::get('/holidays', 'AdminHolidaysController@index')->name('holidays');
+    Route::get('/holidays/create', 'AdminHolidaysController@create')->name('holidays.create');
+    Route::get('/holidays/{holiday}/edit', 'AdminHolidaysController@edit')->name('holidays.edit');
+    Route::get('/holidays/{holiday}/delete', 'AdminHolidaysController@delete')->name('holidays.delete');
+    Route::post('/holidays/store', 'AdminHolidaysController@store')->name('holidays.store');
+    Route::post('/holidays/{holiday}/update', 'AdminHolidaysController@update')->name('holidays.update');
 
     // Teams
     Route::get('/teams', 'AdminTeamsController@index')->name('teams');
