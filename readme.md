@@ -1,10 +1,10 @@
-## PTO Tracker
+# PTO Tracker
 
 Help Keep Track of Paid Time Off (PTO)
 
-### Local Setup
+## Local Setup
 
-New way (recommended, requires composer, vagrant and virtualbox installed)
+### New way (recommended, requires composer, vagrant and virtualbox installed)
 
 ```
 composer install
@@ -21,7 +21,7 @@ php artisan tinker
 ```
 
 
-Old way (requires composer, and npm)
+### Old way (requires composer, and npm)
 
 ```
 composer install
@@ -32,7 +32,7 @@ gulp
 php artisan serve
 ```
 
-### Production Setup
+## Production Setup
 
 You'll need a google SSO app to connect to or use the one setup already for Continued LLC.
 
@@ -52,7 +52,7 @@ Make sure to authorize the redirect URL in your google SSO app.
 https://console.developers.google.com/apis
 
 
-### Creating First Admin
+## Creating First Admin
 
 1. Regsiter a user via the registration feature http://localhost:8000/register
 2. SSH into your vagrant/production box `vagrant ssh && cd code`
