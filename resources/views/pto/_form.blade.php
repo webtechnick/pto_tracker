@@ -41,8 +41,19 @@
 @section('scripts')
 <script>
 $( function() {
-    $(".datepicker").datepicker({
-        'dateFormat': 'yy-mm-dd'
+    $("#start_time").datepicker({
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        onSelect: function(date) {
+            $("#end_time").datepicker("option", "minDate", date);
+        }
+    });
+    $("#end_time").datepicker({
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        onSelect: function(date) {
+            $("#start_time").datepicker("option", "maxDate", date);
+        }
     });
 });
 </script>
