@@ -50,4 +50,18 @@ class PaidTimeOffTest extends TestCase
 
         $this->assertTrue($pto->fresh()->is_sent_to_calendar);
     }
+
+    /** @test */
+    public function it_should_calculate_days_excluding_half_day_holidays()
+    {
+        factory(Holiday::class)->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday Half Day
+        factory(Holiday::class)->create(['date' => '2017-02-21']); // Tuesday
+        $pto = factory(PaidTimeOff::class)->create([
+            'start_time' => '2017-02-17', // Friday
+            'end_time' => '2017-02-23', // Thursday
+        ]);
+
+        $pto->save(); // Should have Friday, Wednesday and Thursday PTO. 3
+        $this->assertEquals(3.5, $pto->days);
+    }
 }

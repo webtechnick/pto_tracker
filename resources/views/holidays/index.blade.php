@@ -4,7 +4,11 @@
         @foreach($holidays as $holiday)
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <span class="name">{{ $holiday->title }}</span> <small>{{ $holiday->date }}</small>
+                    <span class="name">{{ $holiday->title }}</span>
+                    <small>{{ $holiday->date }}</small>
+                    @if ($holiday->isHalfDay())
+                        <span class="glyphicon glyphicon-adjust"></span>
+                    @endif
                     <div class="pull-right">
                         <div class="btn-group" role="group" aria-label="...">
                             <a href="{{ route('admin.holidays.edit', [$holiday]) }}" class="btn btn-default">Edit</a>

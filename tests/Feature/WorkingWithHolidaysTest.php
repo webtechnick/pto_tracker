@@ -49,6 +49,7 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals(1, Holiday::count());
         $this->assertEquals($data['title'], $holiday->title);
         $this->assertEquals($data['date'], $holiday->date);
+        $this->assertEquals(false,$holiday->isHalfDay());
     }
 
     /** @test */
@@ -62,5 +63,29 @@ class WorkingWithHolidaysTest extends TestCase
         $response = $this->get(route('admin.holidays.delete', $holiday, false));
 
         $this->assertEquals(0, Holiday::count());
+    }
+
+    /** @test */
+    public function it_should_create_half_holiday_from_request()
+    {
+        $this->assertEquals(0, Holiday::count());
+
+        $user = $this->signInAdmin();
+
+        $data = [
+            'title' => 'New Year',
+            'date' => '2022-01-01',
+            'is_half_day' => true,
+        ];
+
+        $response = $this->post('/admin/holidays/store', $data);
+
+        $this->assertEquals(1, Holiday::count());
+
+        $holiday = Holiday::first();
+
+        $this->assertEquals($data['title'],$holiday->title);
+        $this->assertEquals($data['date'],$holiday->date);
+        $this->assertEquals(true,$holiday->isHalfDay());
     }
 }
