@@ -9,6 +9,8 @@ use App\Traits\Taggable;
 use App\Traits\UtilityScopes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class Employee extends Model
 {
@@ -180,5 +182,32 @@ class Employee extends Model
         }
 
         return $this;
+    }
+
+    /**
+     * Decides if someone can view this employee's PTO
+     *
+     * Check if Authenticated User is admin, otherwise check Google
+     * If they are the same name.
+     *
+     * NOTE: This (should) be a policy (see EmployeePolicy) However
+     *       Laravel 5.4 cannot use policies without a user attached
+     *       And we use google to authenticate instead of user
+     * @return [type] [description]
+     */
+    public function canViewPto()
+    {
+        // If user is registered and an admin.
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return true;
+        }
+
+        // If google session user is the employee
+        $google = Session::get('GoogleUser');
+        if ($google && $google->name == $this->name) {
+            return true;
+        }
+
+        return false;
     }
 }

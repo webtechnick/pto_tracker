@@ -61,4 +61,25 @@ class EmployeeTest extends TestCase
 
         $this->assertCount(2, $employees);
     }
+
+    /** @test */
+    public function it_can_know_if_user_can_view_pto_because_admin()
+    {
+        $user = $this->signInAdmin();
+        $employee = $this->create('App\Employee');
+
+        $this->assertTrue($employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_can_see_pto_because_google_user_is_employee()
+    {
+        $employee = $this->create('App\Employee', ['name' => 'Nick Baker']);
+        $google = new \stdClass;
+        $google->name = 'Nick Baker';
+
+        session(['GoogleUser' => $google]);
+
+        $this->assertTrue($employee->canViewPto());
+    }
 }
