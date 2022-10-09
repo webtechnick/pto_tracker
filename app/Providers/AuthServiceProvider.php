@@ -25,6 +25,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('view-pto', 'App\Policies\EmployeePolicy@viewpto');
     }
 }

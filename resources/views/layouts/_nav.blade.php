@@ -55,7 +55,7 @@
                 <!-- Authentication Links -->
                 @if (Auth::guest())
                     @if (isset($user))
-                        <li> {{ $user->name }} | </li>
+                        <li> <a href="/">{{ $user->name }} |</a> </li>
                     @endif
                     <li><a href="{{ url('/login') }}">Login</a></li>
                     <li><a href="{{ url('/register') }}">Register</a></li>

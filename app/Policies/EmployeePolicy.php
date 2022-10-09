@@ -21,19 +21,19 @@ class EmployeePolicy
         //
     }
 
+    /**
+     * This would be awesome to be able to use this
+     * Unforunately Laravel 5.4 doesn't allow null users
+     * to be able to be defined in any policy
+     *
+     * See App\Employee::canViewPto
+     *
+     * @param  User|null $user     [description]
+     * @param  Employee  $employee [description]
+     * @return [type]              [description]
+     */
     public function viewpto(User $user = null, Employee $employee)
     {
-        // If user is registered and an admin.
-        if ($user && $user->isAdmin()) {
-            return true;
-        }
-
-        // If google session user is the employee
-        $google = Session::get('GoogleUser');
-        if ($google->name == $employee->name) {
-            return true;
-        }
-
-        return false;
+        return $employee->canViewPto();
     }
 }

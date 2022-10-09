@@ -13,15 +13,16 @@
                 <span class="employee" style="background-color: {{ $employee->bgcolor }}; color: {{ $employee->color }};">{{ $employee->name }}</span>
 
                 {{-- @if ( (Auth::check() && Auth::user()->isAdmin()) || (isset($user) && $user->name == $employee->name) ) --}}
-                @can('viewpto', $employee)
+                {{-- @can('view-pto', $employee) Can't use policy because it HAS to have a user object *sad face* --}}
+                @if ($employee->canViewPto())
                     <span class="badge"><strong>{{ $employee->daysLeft($year) }}</strong></span>
                     <span>
                         @if($employee->daysLeft($year) != $employee->pendingDaysLeft($year))
                             <small>(Pending Left: {{ $employee->pendingDaysLeft($year) }})</small>
                         @endif
                     </span>
-                @endcan
-                {{-- @endif --}}
+                {{-- @endcan --}}
+                @endif
                 <!-- <div class="row">
                     <div class="col-md-8">
 
