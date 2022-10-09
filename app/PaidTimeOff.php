@@ -94,9 +94,27 @@ class PaidTimeOff extends Model
         $current_day = Carbon::parse($this->start_time);
         $this->days = 0;
         while ($current_day->timestamp <= $this->end_time->timestamp) {
-            if (!$current_day->isWeekend() && !Holiday::isHoliday($current_day)) {
-                $this->days += 1;
+            // If it's a weekend, don't add a day and move onto next day
+            if ($current_day->isWeekend()) {
+                $current_day->addDay();
+                continue;
             }
+
+            // If it's a half day holiday, add a half day and move onto next day
+            if (Holiday::isHalfDayHoliday($current_day)) {
+                $this->days += .5;
+                $current_day->addDay();
+                continue;
+            }
+
+            // If it's a holiday, don't add a day, and move onto next day
+            if (Holiday::isHoliday($current_day)) {
+                $current_day->addDay();
+                continue;
+            }
+
+            // If we're here, add a day and move onto next day
+            $this->days += 1;
             $current_day->addDay();
         }
 
