@@ -82,4 +82,15 @@ class EmployeeTest extends TestCase
 
         $this->assertTrue($employee->canViewPto());
     }
+
+    /** @test */
+    public function it_has_a_manager()
+    {
+        $user = $this->signInAdmin();
+        $employee = $this->create('App\Employee', ['name' => 'Nick Baker', 'manager_id' => $user->id]);
+
+        $manager = $employee->manager()->first();
+
+        $this->assertEquals($user->id, $manager->id);
+    }
 }

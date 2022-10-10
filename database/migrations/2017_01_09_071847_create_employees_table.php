@@ -19,6 +19,7 @@ class CreateEmployeesTable extends Migration
             $table->string('title')->nullable();
             $table->string('color')->default('white');
             $table->string('bgcolor')->default('green');
+            // $table->integer('manager_id')->unsigned()->index()->nullable(); // User ID
             $table->timestamps();
         });
     }
