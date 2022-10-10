@@ -42,7 +42,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="manager_id">Manager: <small>If manager is not in list, please ask manager to create a PTO account</small></label>
-            {{ Form::select('manager_id', App\User::pluck('name','id'), null, ['class' => 'form-control', 'placeholder' => 'Select One..']) }}
+            {{ Form::select('manager_id', App\User::where('role', 'admin')->orderBy('name','ASC')->pluck('name','id'), null, ['class' => 'form-control', 'placeholder' => 'Select One..']) }}
         </div>
     </div>
 </div>
