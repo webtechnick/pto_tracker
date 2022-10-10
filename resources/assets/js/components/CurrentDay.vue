@@ -12,7 +12,7 @@
                             <span v-html="isHalfDay(event)"></span>
                             <span v-html="isSentToCalendar(event)"></span>
                         </div>
-                        <h4 v-text="event.title"></h4>
+                        <h4 v-html="event.title"></h4>
                         <p v-text="event.description"></p>
                         <div class="btn-group">
                             <button v-if="showButton(event)" class="btn btn-success btn-sm" @click="approve(event)">Approve</button>
@@ -138,8 +138,12 @@ export default {
             for (let i in this.holidays) {
                 let holiday = this.holidays[i];
                 if (this.currentday.isSame(holiday.date, 'day')) {
+                    let title = 'HOLIDAY';
+                    if (holiday.is_half_day) {
+                        title = 'HALF DAY HOLIDAY <span class="glyphicon glyphicon-adjust"></span>';
+                    }
                     this.events.push({
-                        'title': 'HOLIDAY',
+                        'title': title,
                         'description': holiday.title,
                         'approved': true,
                         'holiday': holiday,
