@@ -119,7 +119,7 @@ export default {
             if (this.isWeekend(currentday)) {
                 return day;
             }
-            if (this.isHoliday(currentday)) {
+            if (this.isFullDayHoliday(currentday)) {
                 return day;
             }
             day += ' ';
@@ -144,6 +144,24 @@ export default {
             for (let i in this.holidays) {
                 let holiday = this.holidays[i];
                 if (moment_day.isSame(holiday.date, 'day')) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        isFullDayHoliday(moment_day) {
+            for (let i in this.holidays) {
+                let holiday = this.holidays[i];
+                if (!holiday.is_half_day && moment_day.isSame(holiday.date, 'day')) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        isHalfDayHoliday(moment_day) {
+            for (let i in this.holidays) {
+                let holiday = this.holidays[i];
+                if (holiday.is_half_day && moment_day.isSame(holiday.date, 'day')) {
                     return true;
                 }
             }
@@ -190,6 +208,9 @@ export default {
             for (let i in this.holidays) {
                 let holiday = this.holidays[i];
                 if (currentday.isSame(holiday.date, 'day')) {
+                    if (holiday.is_half_day) {
+                        return 'half-holiday';
+                    }
                     return 'holiday';
                 }
             }
@@ -227,6 +248,9 @@ export default {
 }
 .holiday {
     background-color: lightpink;
+}
+.half-holiday {
+    background-color: blanchedalmond;
 }
 .today {
     background-color: lightblue;
