@@ -21,6 +21,7 @@
             <div class="panel-body">
                 <div class="pull-right">
                     <a href="/admin/holidays/create" class="btn btn-primary btn-lg">Create New Holiday</a>
+                    <a href="/admin/holidays/bulk" class="btn btn-primary btn-lg">Bulk Holiday</a>
                 </div>
             </div>
         </div>
