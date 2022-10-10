@@ -109,9 +109,9 @@ class AdminHolidaysController extends Controller
      */
     public function bulk_store(Request $request)
     {
-        $this->goodFlash('Holidays bulk added.');
+        $count = Holiday::bulkFromRequest($request->all());
 
-        Holiday::bulkFromRequest($request->all());
+        $this->goodFlash("$count Holiday(s) bulk added.");
 
         return redirect()->route('admin.holidays');
     }
