@@ -11,6 +11,10 @@ class Holiday extends Model
         'title', 'date', 'is_half_day',
     ];
 
+    protected $casts = [
+        'is_half_day' => 'boolean',
+    ];
+
     /**
      * Check if a date exists
      * @param  date string or Carbon
