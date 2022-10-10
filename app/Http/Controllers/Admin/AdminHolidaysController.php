@@ -90,4 +90,29 @@ class AdminHolidaysController extends Controller
 
         return redirect()->route('admin.holidays');
     }
+
+    /**
+     * Show the bulk add feature
+     *
+     * @return [type] [description]
+     */
+    public function bulk()
+    {
+        return view('holidays.bulk');
+    }
+
+    /**
+     * Store the bulk holidays
+     *
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function bulk_store(Request $request)
+    {
+        $count = Holiday::bulkFromRequest($request->all());
+
+        $this->goodFlash("$count Holiday(s) bulk added.");
+
+        return redirect()->route('admin.holidays');
+    }
 }

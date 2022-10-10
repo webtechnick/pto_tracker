@@ -88,4 +88,27 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals($data['date'],$holiday->date);
         $this->assertEquals(true,$holiday->isHalfDay());
     }
+
+    /** @test */
+    public function it_should_be_able_to_create_holidays_in_bulk()
+    {
+        $this->assertEquals(0, Holiday::count());
+
+        $user = $this->signInAdmin();
+
+        $bulk =
+"Holiday 1, 2022-01-02
+Holiday 2, 2022-07-04
+Holiday Half, 2022-08-14, 1
+Holiday 4, 2022-12-25
+Holiday 5, 2022-12-26
+";
+        $data = ['bulk' => $bulk];
+
+        $response = $this->post('/admin/holidays/bulk', $data);
+
+        $this->assertEquals(5, Holiday::count());
+        $this->assertEquals(1, Holiday::halfDay()->count());
+        $this->assertEquals(4, Holiday::fullDay()->count());
+    }
 }

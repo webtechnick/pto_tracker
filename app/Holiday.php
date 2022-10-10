@@ -54,6 +54,26 @@ class Holiday extends Model
     }
 
     /**
+     * Scope Half Day
+     *
+     * @return [type] [description]
+     */
+    public function scopeHalfDay($query)
+    {
+        return $query->where('is_half_day', true);
+    }
+
+    /**
+     * Scope Full Day
+     *
+     * @return [type] [description]
+     */
+    public function scopeFullDay($query)
+    {
+        return $query->where('is_half_day', false);
+    }
+
+    /**
      * Create a Holiday from the incomming request
      *
      * @return [type] [description]
@@ -77,5 +97,47 @@ class Holiday extends Model
         $this->update($data);
 
         return $this;
+    }
+
+    /**
+     * Bulk create holidays
+     *
+     * Example:
+
+Holiday 1,2022-01-02
+Holiday 2,2022-07-04
+Holiday Half,2022-08-14,1
+Holiday 4,2022-12-25
+Holiday 5,2022-12-26
+
+     *
+     * @param  [type] $data [description]
+     *
+     * @return $count of holidays created
+     */
+    public static function bulkFromRequest($bulk)
+    {
+        $count = 0;
+        $rows = explode(PHP_EOL,$bulk['bulk']);
+
+        foreach ($rows as $row) {
+            $parsed = str_getcsv($row);
+
+            $half_day = false;
+            if (isset($parsed[2])) {
+                $half_day = !!trim($parsed[2]);
+            }
+
+            $data = [
+                'title' => trim($parsed[0]),
+                'date' => trim($parsed[1]),
+                'is_half_day' => $half_day,
+            ];
+
+            Holiday::createFromRequest($data);
+            $count++;
+        }
+
+        return $count;
     }
 }
