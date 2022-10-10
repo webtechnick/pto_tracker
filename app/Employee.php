@@ -18,7 +18,15 @@ class Employee extends Model
         Filterable,
         Taggable;
 
-    protected $fillable = ['name', 'title', 'color', 'bgcolor', 'phone', 'max_days_off'];
+    protected $fillable = [
+        'name',
+        'title',
+        'color',
+        'bgcolor',
+        'phone',
+        'max_days_off',
+        'manager_id',
+    ];
 
     protected $events = [
         'deleting' => EmployeeDeleting::class,
@@ -45,6 +53,16 @@ class Employee extends Model
     public function ptos()
     {
         return $this->hasMany(PaidTimeOff::class);
+    }
+
+    /**
+     * Return a user object
+     *
+     * @return [type] [description]
+     */
+    public function manager()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getPendingDaysLeftAttribute()

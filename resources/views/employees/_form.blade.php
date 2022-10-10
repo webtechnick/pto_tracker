@@ -33,10 +33,16 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="form-group">
             <label for="tag_string">Teams: <small>Separate by comma, if team doesn't exist it will be created</small></label>
             {{ Form::text('tag_string', null, ['class' => 'form-control', 'placeholder' => 'Backend, Frontend, Billing, Simucase, etc...']) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="manager_id">Manager: <small>If manager is not in list, please ask manager to create a PTO account</small></label>
+            {{ Form::select('manager_id', App\User::pluck('name','id'), null, ['class' => 'form-control', 'placeholder' => 'Select One..']) }}
         </div>
     </div>
 </div>

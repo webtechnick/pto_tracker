@@ -57,8 +57,15 @@ class PaidTimeOffsController extends Controller
     {
         $pto = PaidTimeOff::saveForm($request->all());
 
+        // Figure out manager to email.
+        if ($pto->employee->manager) {
+            $managers = $pto->employee->manager;
+        } else {
+            $managers = User::admins();
+        }
+
         // Send Mail
-        Mail::to(User::admins())->send(new PaidTimeOffRequested($pto));
+        Mail::to($managers)->send(new PaidTimeOffRequested($pto));
 
         if ($request->ajax()) {
             return $pto;
