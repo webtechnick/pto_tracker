@@ -17,8 +17,8 @@ class ClearOldPtoTest extends TestCase
     public function it_should_clear_old_pto_but_keep_the_new()
     {
         $pto = $this->create('App\PaidTimeOff', [
-            'start_time' => '2025-01-01',
-            'end_time' => '2025-01-04'
+            'start_time' => '2035-01-01',
+            'end_time' => '2035-01-04'
         ]);
         $this->create('App\PaidTimeOff', [
             'start_time' => '2017-01-01',
