@@ -9,9 +9,18 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    /**
+     * User Roles
+     *   A User's role defines it's permissions on the site.
+     *
+     * Admin: All permissions.
+     * User: No permissions. (default)
+     *
+     * @var [type]
+     */
     public static $roles = [
         'admin' => 'Admin',
-        'user' => 'User',
+        'user' => 'User', // Default
     ];
 
     /**
