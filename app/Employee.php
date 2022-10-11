@@ -215,8 +215,9 @@ class Employee extends Model
      */
     public function canViewPto()
     {
-        // If user is registered and an admin.
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        $user = Auth::user();
+        // If user is registered and an admin or planner
+        if ($user && ($user->isAdmin() || $user->isPlanner()) ) {
             return true;
         }
 
