@@ -14,12 +14,14 @@ class User extends Authenticatable
      *   A User's role defines it's permissions on the site.
      *
      * Admin: All permissions.
+     * Planner: Can see PTO days remaining.
      * User: No permissions. (default)
      *
      * @var [type]
      */
     public static $roles = [
         'admin' => 'Admin',
+        'planner' => 'Planner', // Can see PTO remaining
         'user' => 'User', // Default
     ];
 
@@ -42,7 +44,8 @@ class User extends Authenticatable
     ];
 
     /**
-     * Check if user is logged in.
+     * Check if user is an admin.
+     *
      * @return boolean [description]
      */
     public function isAdmin()
@@ -51,12 +54,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Retrieve a list of user accounts
-     * @return [type] [description]
+     * Check if user is a planner
+     *
+     * @return boolean [description]
      */
-    public static function getAdmins()
+    public function isPlanner()
     {
-        return self::admins()->get();
+        return $this->role == 'planner';
     }
 
     /**
@@ -67,6 +71,16 @@ class User extends Authenticatable
     public function scopeAdmins($query)
     {
         return $query->where('role','admin');
+    }
+
+    /**
+     * Scope to get admins
+     *
+     * @return [type] [description]
+     */
+    public function scopePlanners($query)
+    {
+        return $query->where('role','planner');
     }
 
     /**

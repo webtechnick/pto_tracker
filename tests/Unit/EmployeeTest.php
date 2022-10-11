@@ -84,6 +84,24 @@ class EmployeeTest extends TestCase
     }
 
     /** @test */
+    public function it_can_see_pto_because_planner()
+    {
+        $user = $this->signInPlanner();
+        $employee = $this->create('App\Employee');
+
+        $this->assertTrue($employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_cannot_see_pto_because_not_planner_or_admin_or_google_user()
+    {
+        $user = $this->signIn();
+        $employee = $this->create('App\Employee', ['name' => 'No Match']);
+
+        $this->assertFalse($employee->canViewPto());
+    }
+
+    /** @test */
     public function it_has_a_manager()
     {
         $user = $this->signInAdmin();

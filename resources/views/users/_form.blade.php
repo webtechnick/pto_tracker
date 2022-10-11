@@ -9,6 +9,7 @@
             <label for="role">Role: </label>
             {{ Form::select('role', App\User::$roles, null, ['class' => 'form-control', 'placeholder' => 'Select One..', 'required']) }}
             <span class="help-text">Admin: <small>Manage all PTO, Users, Employees, Holidays, and Teams</small></span><br>
+            <span class="help-text">Planner: <small>Can see PTO days remaining</small></span><br>
             <span class="help-text">User: <small>No permissions (Default)</small></span>
         </div>
     </div>
