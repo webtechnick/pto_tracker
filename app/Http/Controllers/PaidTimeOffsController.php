@@ -61,7 +61,7 @@ class PaidTimeOffsController extends Controller
         if ($pto->employee->manager) {
             $managers = $pto->employee->manager;
         } else {
-            $managers = User::admins();
+            $managers = User::admins()->get();
         }
 
         // Send Mail

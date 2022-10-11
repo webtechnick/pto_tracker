@@ -18,11 +18,10 @@ Route::group([
     'namespace' => 'Admin',
 ], function() {
     //Route::get('/', 'AdminsController@index')->name('admin.dashboard');
-    Route::get('/ptos', 'AdminPaidTimeOffsController@index')->name('ptos');
-
-    Route::get('/', 'AdminEmployeesController@index')->name('employees');
+    // Route::get('/ptos', 'AdminPaidTimeOffsController@index')->name('ptos');
 
     // Employee
+    Route::get('/', 'AdminEmployeesController@index')->name('employees');
     Route::get('/employees/create', 'AdminEmployeesController@create')->name('employees.create');
     Route::get('/employees/{employee}/edit', 'AdminEmployeesController@edit')->name('employees.edit');
     Route::get('/employees/{employee}/delete', 'AdminEmployeesController@delete')->name('employees.delete');
@@ -31,6 +30,16 @@ Route::group([
     Route::get('/employees/{employee}/destroy', 'AdminEmployeesController@destroy')->name('employees.destroy');
     Route::get('/employees/oncall/clear', 'AdminEmployeesController@clear_on_call')->name('employees.clearoncall');
     Route::get('/employees/oncall/set/{employee}', 'AdminEmployeesController@set_on_call')->name('employees.setoncall');
+
+    // User
+    Route::get('/users', 'AdminUsersController@index')->name('users');
+    Route::get('/users/create', 'AdminUsersController@create')->name('users.create');
+    Route::get('/users/{user}/edit', 'AdminUsersController@edit')->name('users.edit');
+    Route::get('/users/{user}/delete', 'AdminUsersController@delete')->name('users.delete');
+    Route::post('/users/store', 'AdminUsersController@store')->name('users.store');
+    Route::post('/users/{user}/update', 'AdminUsersController@update')->name('users.update');
+    Route::get('/users/{user}/destroy', 'AdminUsersController@destroy')->name('users.destroy');
+
 
     // Holiday
     Route::get('/holidays', 'AdminHolidaysController@index')->name('holidays');

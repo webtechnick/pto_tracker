@@ -70,7 +70,9 @@
                                 <li><a href="/admin">Employees</a></li>
                                 <li><a href="/admin/holidays">Holidays</a></li>
                                 <li><a href="/admin/teams">Teams</a></li>
+                                <li><a href="/admin/users">Users</a></li>
                             @endif
+                            <li class="divider"></li>
                             <li>
                                 <a href="{{ url('/logout') }}"
                                     onclick="event.preventDefault();
