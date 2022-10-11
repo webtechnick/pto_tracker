@@ -66,11 +66,20 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Sign in a manager user.
+     * Sign in a planner user.
      * @return [type] [description]
      */
     public function signInPlanner()
     {
         return $this->signIn($this->create('App\User', ['role' => 'planner']));
+    }
+
+    /**
+     * Sign in a manager user.
+     * @return [type] [description]
+     */
+    public function signInManager()
+    {
+        return $this->signIn($this->create('App\User', ['role' => 'manager']));
     }
 }

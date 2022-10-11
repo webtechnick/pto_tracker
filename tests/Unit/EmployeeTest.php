@@ -111,4 +111,49 @@ class EmployeeTest extends TestCase
 
         $this->assertEquals($user->id, $manager->id);
     }
+
+    /** @test */
+    public function it_can_see_pto_because_user_is_manager()
+    {
+        $user = $this->signInManager();
+        $employee = $this->create('App\Employee', ['manager_id' => $user->id]);
+
+        $this->assertTrue($employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_cannot_see_pto_because_user_is_manager_but_not_employee_manager()
+    {
+        $user = $this->signInManager();
+        $employee = $this->create('App\Employee');
+
+        $this->assertFalse($employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_can_be_managed_by_manager()
+    {
+        $user = $this->signInManager();
+        $employee = $this->create('App\Employee', ['manager_id' => $user->id]);
+
+        $this->assertTrue($employee->can_manage);
+    }
+
+    /** @test */
+    public function it_can_be_managed_by_admin_or_manager()
+    {
+        $user = $this->signInAdmin();
+        $employee = $this->create('App\Employee');
+
+        $this->assertTrue($employee->can_manage);
+    }
+
+    /** @test */
+    public function it_cannot_be_managed_by_user_or_planner()
+    {
+        $user = $this->signInPlanner();
+        $employee = $this->create('App\Employee');
+
+        $this->assertFalse($employee->can_manage);
+    }
 }

@@ -37,6 +37,9 @@ class Employee extends Model
     ];
 
     //protected $appends = ['pending_days_left', 'days_left'];
+    protected $appends = [
+        'can_manage'
+    ];
 
 
     public function getFilters()
@@ -73,6 +76,30 @@ class Employee extends Model
     public function getDaysLeftAttribute()
     {
         return $this->daysLeft();
+    }
+
+    /**
+     * Can the current user approve/deny/delete their PTO
+     * This boolean will be appended to the employee which
+     * will be passed to the PTO vue application.
+     *
+     * @return boolean user can approve/deny/delete $this->ptos
+     */
+    public function getCanManageAttribute()
+    {
+        $user = Auth::user(); // Get logged in user (or null if no user)
+
+        // If user is registered and an admin or planner
+        if ($user && $user->isAdmin()) {
+            return true;
+        }
+
+        // If user is employee's manager
+        if ($user && $user->isManagerOf($this)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function scopeOnCall($query)
@@ -215,9 +242,15 @@ class Employee extends Model
      */
     public function canViewPto()
     {
-        $user = Auth::user();
+        $user = Auth::user(); // Get logged in user (or null if no user)
+
         // If user is registered and an admin or planner
         if ($user && ($user->isAdmin() || $user->isPlanner()) ) {
+            return true;
+        }
+
+        // If user is employee's manager
+        if ($user && $user->isManagerOf($this)) {
             return true;
         }
 

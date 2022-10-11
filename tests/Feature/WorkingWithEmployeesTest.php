@@ -53,4 +53,44 @@ class WorkingWithEmployeesTest extends TestCase
             return true;
         });
     }
+
+    /** @test */
+    public function managers_can_and_manage_all_employees()
+    {
+        $user = $this->signInManager();
+        $employee1 = $this->create('App\Employee');
+
+        $data = [
+            'name' => 'New Name',
+            'max_days_off' => '30'
+        ];
+
+        $response = $this->post('/manager/employees/1/update', $data);
+        $response->assertRedirect('/manager');
+
+        $employee = Employee::first();
+        $this->assertEquals(1, Employee::count());
+        $this->assertEquals($data['name'], $employee->name);
+        $this->assertEquals($data['max_days_off'], $employee->max_days_off);
+    }
+
+    /** @test */
+    public function it_should_not_be_able_to_manage_employees()
+    {
+        $user = $this->signIn();
+        $employee1 = $this->create('App\Employee');
+
+        $data = [
+            'name' => 'New Name',
+            'max_days_off' => '30'
+        ];
+
+        $response = $this->post('/manager/employees/1/update', $data);
+        $response->assertRedirect('/login'); // not allowed
+
+        $employee = Employee::first();
+        $this->assertEquals(1, Employee::count());
+        $this->assertNotEquals($data['name'], $employee->name);
+        $this->assertNotEquals($data['max_days_off'], $employee->max_days_off);
+    }
 }

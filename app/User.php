@@ -2,8 +2,9 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use App\Employee;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
      */
     public static $roles = [
         'admin' => 'Admin',
+        'manager' => 'Manager', // Can see/approve/delete direct report PTO, Add/update/create Employees
         'planner' => 'Planner', // Can see PTO remaining
         'user' => 'User', // Default
     ];
@@ -64,6 +66,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is a manager
+     *
+     * @return boolean [description]
+     */
+    public function isManager()
+    {
+        return $this->role == 'manager';
+    }
+
+    /**
+     * Return if user is a manager or admin
+     *
+     * @return boolean [description]
+     */
+    public function isManagerOrAdmin()
+    {
+        return $this->isAdmin() || $this->isManager();
+    }
+
+    /**
      * Scope to get admins
      *
      * @return [type] [description]
@@ -81,6 +103,41 @@ class User extends Authenticatable
     public function scopePlanners($query)
     {
         return $query->where('role','planner');
+    }
+
+    /**
+     * Scope to get admins
+     *
+     * @return [type] [description]
+     */
+    public function scopeManagers($query)
+    {
+        return $query->where('role','manager');
+    }
+
+    /**
+     * Scope to return all admin or managers
+     *
+     * @param  [type] $query [description]
+     * @return [type]        [description]
+     */
+    public function scopeAllManagers($query)
+    {
+        return $query->where(function ($q) {
+            $q->orWhere('role', 'admin');
+            $q->orWhere('role', 'manager');
+        });
+    }
+
+    /**
+     * Is the user the manager of this employee?
+     *
+     * @param  Employee $employee [description]
+     * @return boolean            [description]
+     */
+    public function isManagerOf(Employee $employee)
+    {
+        return $this->id == $employee->manager_id;
     }
 
     /**
