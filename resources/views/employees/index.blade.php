@@ -10,11 +10,11 @@
                     <div class="pull-right">
                         <div class="btn-group" role="group" aria-label="...">
                             {{-- @if ($employee->isOnCall())
-                                <a href="/admin/employees/oncall/clear" class="btn btn-danger">Clear On Call</a>
+                                <a href="/manager/employees/oncall/clear" class="btn btn-danger">Clear On Call</a>
                             @else
-                                <a href="/admin/employees/oncall/set/{{ $employee->id }}" class="btn btn-success">Set On Call</a>
+                                <a href="/manager/employees/oncall/set/{{ $employee->id }}" class="btn btn-success">Set On Call</a>
                             @endif --}}
-                            <a href="{{ route('admin.employees.edit', [$employee]) }}" class="btn btn-default">Edit</a>
+                            <a href="{{ route('manager.employees.edit', [$employee]) }}" class="btn btn-default">Edit</a>
                         </div>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="pull-right">
-                    <a href="/admin/employees/create" class="btn btn-primary btn-lg">Create New Employee</a>
+                    <a href="/manager/employees/create" class="btn btn-primary btn-lg">Create New Employee</a>
                 </div>
             </div>
         </div>

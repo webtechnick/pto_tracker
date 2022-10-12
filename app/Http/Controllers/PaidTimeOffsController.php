@@ -20,7 +20,7 @@ class PaidTimeOffsController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth', 'admin'])->only(['approve', 'deny', 'destroy']);
+        $this->middleware(['auth', 'manager'])->only(['approve', 'deny', 'destroy']);
     }
 
     /**
@@ -61,7 +61,7 @@ class PaidTimeOffsController extends Controller
         if ($pto->employee->manager) {
             $managers = $pto->employee->manager;
         } else {
-            $managers = User::admins()->get();
+            $managers = User::allManagers()->get();
         }
 
         // Send Mail
@@ -77,7 +77,7 @@ class PaidTimeOffsController extends Controller
     }
 
     /**
-     * Admin approve the PTO, protected by middleware
+     * Admin/Manager approve the PTO, protected by middleware
      *
      * @param  [type] $id [description]
      * @return [type]     [description]
@@ -90,7 +90,7 @@ class PaidTimeOffsController extends Controller
     }
 
     /**
-     * Admin deny the PTO, protected by middleware
+     * Admin/Manager deny the PTO, protected by middleware
      *
      * @param  [type] $id [description]
      * @return [type]     [description]
@@ -103,7 +103,7 @@ class PaidTimeOffsController extends Controller
     }
 
     /**
-     * Delete the PTO, protected by middleware
+     * Admin/Manager Delete the PTO, protected by middleware
      *
      * @param  [type] $id [description]
      * @return [type]     [description]

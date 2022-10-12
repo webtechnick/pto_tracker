@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Manager;
 
 use App\Employee;
 use App\Http\Controllers\Controller;
@@ -8,7 +8,7 @@ use App\Http\Requests\EmployeeRequest;
 use App\Traits\Flashes;
 use Illuminate\Http\Request;
 
-class AdminEmployeesController extends Controller
+class ManagerEmployeesController extends Controller
 {
     use Flashes;
 
@@ -35,7 +35,7 @@ class AdminEmployeesController extends Controller
         $employee->setOnCall()->save();
         $this->goodFlash($employee->name . ' set to on call.');
 
-        return redirect()->route('admin.employees');
+        return redirect()->route('manager.employees');
     }
 
     /**
@@ -48,7 +48,7 @@ class AdminEmployeesController extends Controller
         Employee::clearOnCall();
         $this->goodFlash('All employees cleared of on call status.');
 
-        return redirect()->route('admin.employees');
+        return redirect()->route('manager.employees');
     }
 
     /**
@@ -84,7 +84,7 @@ class AdminEmployeesController extends Controller
 
         $this->goodFlash('Employee and all related PTO removed.');
 
-        return redirect()->route('admin.employees');
+        return redirect()->route('manager.employees');
     }
 
     /**
@@ -99,7 +99,7 @@ class AdminEmployeesController extends Controller
 
         $this->goodFlash($employee->name . ' Created.');
 
-        return redirect()->route('admin.employees');
+        return redirect()->route('manager.employees');
     }
 
     /**
@@ -115,6 +115,6 @@ class AdminEmployeesController extends Controller
 
         $this->goodFlash($employee->name . ' Updated.');
 
-        return redirect()->route('admin.employees');
+        return redirect()->route('manager.employees');
     }
 }

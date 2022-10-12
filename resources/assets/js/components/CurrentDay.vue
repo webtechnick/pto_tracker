@@ -64,9 +64,15 @@ export default {
     },
     methods: {
         showButton(event) {
+            // If employee can be managed by signed in.
+            if (event.pto && event.pto.employee && event.pto.employee.can_manage) {
+                return true;
+            }
+            // if not admin
             if (!this.admin) {
                 return false;
             }
+            // if event is a holiday
             if (event.holiday) {
                 return false;
             }
@@ -74,31 +80,31 @@ export default {
         },
         remove(event) {
             axios.post('/ptos/destroy/' + event.pto.id)
-                .then()
+                .then(response => this.reloadData())
                 .catch(function(error) {
                     console.log(error);
                 });
-            this.reloadPage();
+            // this.reloadPage();
         },
         deny(event) {
             event.approved = false;
             axios.post('/ptos/deny/' + event.pto.id)
-                .then()
+                .then(response => this.reloadData())
                 .catch(function(error) {
                     console.log(error);
                 });
             console.log(event);
-            this.reloadData();
+            // this.reloadData();
         },
         approve(event) {
             event.approved = true;
             axios.post('/ptos/approve/' + event.pto.id)
-                .then()
+                .then(response => this.reloadData())
                 .catch(function(error) {
                     console.log(error);
                 });
             console.log(event);
-            this.reloadData();
+            // this.reloadData();
         },
         addToGoogle(event) {
             this.sentToCalendar(event);
