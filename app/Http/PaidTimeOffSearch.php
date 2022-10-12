@@ -25,7 +25,7 @@ class PaidTimeOffSearch extends ModelSearch
     public function startQuery()
     {
         $this->query = PaidTimeOff::with(['employee' => function($query) {
-            $query->select(['id', 'name', 'color', 'bgcolor']);
+            $query->select(['id', 'name', 'color', 'bgcolor', 'manager_id']);
         }]);
 
         // Force a year scope
