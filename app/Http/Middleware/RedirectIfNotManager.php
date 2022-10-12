@@ -16,7 +16,7 @@ class RedirectIfNotManager
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isManager())) {
+        if (Auth::check() && Auth::user()->isManagerOrAdmin()) {
             return $next($request);
         }
         return redirect('/login');
