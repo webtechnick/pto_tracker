@@ -84,12 +84,47 @@ class EmployeeTest extends TestCase
     }
 
     /** @test */
-    public function it_can_see_pto_because_planner()
+    public function it_can_see_pto_because_planner_in_team()
     {
-        $user = $this->signInPlanner();
-        $employee = $this->create('App\Employee');
+        $user_employee = $this->create('App\Employee');
+        $other_employee = $this->create('App\Employee');
 
-        $this->assertTrue($employee->canViewPto());
+        $user = $this->signInPlanner(['employee_id' => $user_employee->id]);
+
+        $user_employee->teams = 'Team A, Team C';
+        $other_employee->teams = 'Team B, Team A';
+
+        $this->assertTrue($user_employee->hasTag('Team A')); // Same Team
+        $this->assertTrue($other_employee->hasTag('Team A')); // Same Team
+        $this->assertTrue($other_employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_can_not_see_pto_because_planner_not_in_team()
+    {
+        $user_employee = $this->create('App\Employee');
+        $other_employee = $this->create('App\Employee');
+
+        $user = $this->signInPlanner(['employee_id' => $user_employee->id]);
+
+        $user_employee->teams = 'Team A, Team B';
+        $other_employee->teams = 'Team C, Team D';
+
+        $this->assertTrue($user_employee->hasTag('Team A'));
+        $this->assertFalse($other_employee->hasTag('Team A')); // Nope
+        $this->assertFalse($other_employee->canViewPto());
+    }
+
+    /** @test */
+    public function it_can_see_own_pto_because_they_are_the_employee()
+    {
+        $employee = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee);
+
+        $employee2 = $this->create('App\Employee');
+
+        $this->assertTrue($employee->canViewPto()); // Their PTO
+        $this->assertFalse($employee2->canViewPto()); // Not Their PTO
     }
 
     /** @test */

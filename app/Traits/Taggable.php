@@ -125,6 +125,25 @@ trait Taggable
     }
 
     /**
+     * Determine if we have any tags
+     *
+     * @param  [type]  $tag_string [description]
+     * @return boolean             [description]
+     */
+    public function hasAnyTag($tagstring)
+    {
+        $tags = $this->tagStringToTagArray($tagstring);
+
+        foreach($tags as $tag) {
+            if ($this->hasTag($tag)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Takes in a tags CSV string of slugs
      * @param  [type] $query [description]
      * @param  [type] $tags  [description]
@@ -132,9 +151,8 @@ trait Taggable
      */
     public function scopeByInputTags($query, $tagstring = null, $matchAll = false)
     {
-        $tagstring = trim($tagstring);
-        $tagstring = str_replace(' ', '', $tagstring);
-        $tags = explode(',', $tagstring);
+        $tags = $this->tagStringToTagArray($tagstring);
+
         if (count($tags)) {
             return $query->byTags($tags, $matchAll);
         }
@@ -163,5 +181,18 @@ trait Taggable
             }, '=', count($tags));
         }
         return $query;
+    }
+
+    /**
+     * Take in a tag string and return a tag array
+     * @return [type] [description]
+     */
+    protected function tagStringToTagArray($tagstring)
+    {
+        // Convert to Array
+        $tags = explode(',', $tagstring);
+
+        // Trim every item
+        return array_map('trim', $tags);
     }
 }

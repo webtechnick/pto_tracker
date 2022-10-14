@@ -33,7 +33,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role'
+        'name',
+        'email',
+        'password',
+        'role',
+        'employee_id', // nullable optional
     ];
 
     /**
@@ -44,6 +48,18 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * User belongs to Employee
+     *
+     * This relationship is entirely optional and controlled by admin.
+     *
+     * @return [type] [description]
+     */
+    public function employee()
+    {
+        return $this->belongsTo('App\Employee');
+    }
 
     /**
      * Check if user is an admin.
@@ -73,6 +89,16 @@ class User extends Authenticatable
     public function isManager()
     {
         return $this->role == 'manager';
+    }
+
+    /**
+     * Check if user is an employee
+     *
+     * @return boolean [description]
+     */
+    public function isEmployee()
+    {
+        return $this->role == 'user';
     }
 
     /**
