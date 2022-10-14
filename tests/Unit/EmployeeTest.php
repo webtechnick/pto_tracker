@@ -91,8 +91,8 @@ class EmployeeTest extends TestCase
 
         $user = $this->signInPlanner(['employee_id' => $user_employee->id]);
 
-        $user_employee->tag_string = 'Team A, Team C';
-        $other_employee->tag_string = 'Team B, Team A';
+        $user_employee->teams = 'Team A, Team C';
+        $other_employee->teams = 'Team B, Team A';
 
         $this->assertTrue($user_employee->hasTag('Team A')); // Same Team
         $this->assertTrue($other_employee->hasTag('Team A')); // Same Team
@@ -107,8 +107,8 @@ class EmployeeTest extends TestCase
 
         $user = $this->signInPlanner(['employee_id' => $user_employee->id]);
 
-        $user_employee->tag_string = 'Team A, Team B';
-        $other_employee->tag_string = 'Team C, Team D';
+        $user_employee->teams = 'Team A, Team B';
+        $other_employee->teams = 'Team C, Team D';
 
         $this->assertTrue($user_employee->hasTag('Team A'));
         $this->assertFalse($other_employee->hasTag('Team A')); // Nope

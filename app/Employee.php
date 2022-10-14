@@ -97,7 +97,7 @@ class Employee extends Model
      *
      * @param [type] $value [description]
      */
-    public function setTeamStringAttribute($value)
+    public function setTeamsAttribute($value)
     {
         return $this->tag_string = $value;
     }
