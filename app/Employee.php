@@ -322,9 +322,14 @@ class Employee extends Model
             return $this->id == $user->employee_id;
         }
 
-        // If planner and this employee has the same team as the user.
-        if ($user && $user->isPlanner() && $user->employee) {
-            return $this->hasAnyTag($user->employee->teams);
+        // If user is planner
+        if ($user && $user->isPlanner()) {
+            // If planner has teams, only view PTO of team members.
+            if ($user->employee_id) { // faster database trick
+                return $this->hasAnyTag($user->employee->teams);
+            }
+            // Otherwise default true, planner may not track PTO with this app.
+            return true;
         }
 
         // If google session user is the employee

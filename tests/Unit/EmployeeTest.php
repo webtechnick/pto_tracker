@@ -116,6 +116,22 @@ class EmployeeTest extends TestCase
     }
 
     /** @test */
+    public function it_can_see_all_pto_because_planner_without_employee()
+    {
+        $user = $this->signInPlanner();
+
+        $some_employee = $this->create('App\Employee');
+        $other_employee = $this->create('App\Employee');
+
+        $some_employee->teams = 'Team A, Team B';
+        $other_employee->teams = 'Team C, Team D';
+
+        $this->assertNull($user->employee);
+        $this->assertTrue($some_employee->canViewPto());
+        $this->assertTrue($other_employee->canViewPto());
+    }
+
+    /** @test */
     public function it_can_see_own_pto_because_they_are_the_employee()
     {
         $employee = $this->create('App\Employee');
