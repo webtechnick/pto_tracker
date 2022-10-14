@@ -21,8 +21,9 @@
         </div>
 
         <div class="form-group">
-            <label for="employee">Employee: (optional) <small>Required for 'Planner' role, optional otherwise.</small></label>
+            <label for="employee">Employee: (optional) </label>
             {{ Form::select('employee_id', App\Employee::orderBy('name', 'ASC')->pluck('name','id'), null, ['class' => 'form-control', 'type' => 'email', 'placeholder' => 'Select one..']) }}
+            <span class="help-text">Suggested for 'Planner' role (User can only see PTO of other team members of Employee specified).</span><br>
         </div>
     </div>
 </div>
