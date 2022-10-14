@@ -57,29 +57,42 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Sign in an employee user
+     * @param  [type] $employee [description]
+     * @return [type]           [description]
+     */
+    public function signInEmployee($employee = null, $data = [])
+    {
+        $employee = $employee ?: $this->create('App\Employee');
+        $user = $this->create('App\User', array_merge($data, ['employee_id' => $employee->id, 'role' => 'user']));
+
+        return $this->signIn($user);
+    }
+
+    /**
      * Sign in an admin user.
      * @return [type] [description]
      */
-    public function signInAdmin()
+    public function signInAdmin($data = [])
     {
-        return $this->signIn($this->create('App\User', ['role' => 'admin']));
+        return $this->signIn($this->create('App\User', array_merge($data, ['role' => 'admin'])));
     }
 
     /**
      * Sign in a planner user.
      * @return [type] [description]
      */
-    public function signInPlanner()
+    public function signInPlanner($data = [])
     {
-        return $this->signIn($this->create('App\User', ['role' => 'planner']));
+        return $this->signIn($this->create('App\User', array_merge($data, ['role' => 'planner'])));
     }
 
     /**
      * Sign in a manager user.
      * @return [type] [description]
      */
-    public function signInManager()
+    public function signInManager($data = [])
     {
-        return $this->signIn($this->create('App\User', ['role' => 'manager']));
+        return $this->signIn($this->create('App\User', array_merge($data, ['role' => 'manager'])));
     }
 }

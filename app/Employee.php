@@ -68,11 +68,55 @@ class Employee extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Employee has a user (optional)
+     *
+     * @return [type] [description]
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    /**
+     * Get the Employee's Teams as a string
+     *
+     * This is an alias of tag_string as Teams are just Tags.
+     *
+     * @return [type] [description]
+     */
+    public function getTeamsAttribute()
+    {
+        return $this->tag_string;
+    }
+
+    /**
+     * Set the Employee Teams as a string.
+     *
+     * This is an alias of the tag_string as Teams are just Tags.
+     *
+     * @param [type] $value [description]
+     */
+    public function setTeamStringAttribute($value)
+    {
+        return $this->tag_string = $value;
+    }
+
+    /**
+     * Get the pending days left as an attribute
+     *
+     * @return [type] [description]
+     */
     public function getPendingDaysLeftAttribute()
     {
         return $this->pendingDaysLeft();
     }
 
+    /**
+     * Get the days left as an attibute
+     *
+     * @return [type] [description]
+     */
     public function getDaysLeftAttribute()
     {
         return $this->daysLeft();
@@ -102,22 +146,41 @@ class Employee extends Model
         return false;
     }
 
+    /**
+     * Scope of on Call (deprecated)
+     *
+     * @param  [type] $query [description]
+     * @return [type]        [description]
+     */
     public function scopeOnCall($query)
     {
         return $query->where('is_on_call', true);
     }
 
+    /**
+     * Boolean is on call (deprecated)
+     *
+     * @return boolean [description]
+     */
     public function isOnCall()
     {
-        return $this->is_on_call;
+        return !!$this->is_on_call;
     }
 
+    /**
+     * Set the employee to oncall status (deprecated)
+     */
     public function setOnCall()
     {
         $this->is_on_call = true;
         return $this;
     }
 
+    /**
+     * Clear all oncall status (deprecated)
+     *
+     * @return [type] [description]
+     */
     static public function clearOnCall()
     {
         Employee::where('is_on_call', true)->update(['is_on_call' => false]);
@@ -245,7 +308,7 @@ class Employee extends Model
         $user = Auth::user(); // Get logged in user (or null if no user)
 
         // If user is registered and an admin or planner
-        if ($user && ($user->isAdmin() || $user->isPlanner()) ) {
+        if ($user && $user->isAdmin()) {
             return true;
         }
 
@@ -254,12 +317,23 @@ class Employee extends Model
             return true;
         }
 
+        // This user is employee! No need to check google
+        if ($user && $user->isEmployee() && $user->employee_id) {
+            return $this->id == $user->employee_id;
+        }
+
+        // If planner and this employee has the same team as the user.
+        if ($user && $user->isPlanner() && $user->employee) {
+            return $this->hasAnyTag($user->employee->teams);
+        }
+
         // If google session user is the employee
         $google = Session::get('GoogleUser');
         if ($google && $google->name == $this->name) {
             return true;
         }
 
+        // Default state
         return false;
     }
 }
