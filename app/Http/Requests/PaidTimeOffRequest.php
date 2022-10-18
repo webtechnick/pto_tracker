@@ -10,6 +10,9 @@ class PaidTimeOffRequest extends FormRequest
 {
     use Flashes;
 
+    public $carbonStart;
+    public $carbonEnd;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -53,8 +56,13 @@ class PaidTimeOffRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // Must be same year
             if (!$this->isSameYear()) {
-                $validator->errors()->add('end_time', 'Error: Start and end date must be in the same year.');
+                $validator->errors()->add('end_time', 'Error: Start and End must be in the same year.');
+            }
+            // Must not be a weekend
+            if ($this->isWeekendRequest()) {
+                $validator->errors()->add('end_time', 'Error: Start and/or End is a weekend.');
             }
         });
 
@@ -64,13 +72,34 @@ class PaidTimeOffRequest extends FormRequest
     }
 
     /**
+     * Look at the start and end date, if they are both weekends, return true
+     *
+     * @return boolean [description]
+     */
+    private function isWeekendRequest()
+    {
+        $this->setupCarbonTime();
+        return $this->carbonStart->isWeekend() && $this->carbonEnd->isWeekend();
+    }
+
+    /**
      * Private function to check if start_time and end_time are the same year
      * @return boolean success
      */
     private function isSameYear()
     {
-        $start_time = Carbon::parse($this->input('start_time'));
-        $end_time = Carbon::parse($this->input('end_time'));
-        return $start_time->year == $end_time->year;
+        $this->setupCarbonTime();
+        return $this->carbonStart->year == $this->carbonEnd->year;
+    }
+
+    /**
+     * Setup carbon time so we don't have to parse carbon twice.
+     *
+     * @return [type] [description]
+     */
+    private function setupCarbonTime()
+    {
+        $this->carbonStart = $this->carbonStart ?: Carbon::parse($this->input('start_time'));
+        $this->carbonEnd   = $this->carbonEnd   ?: Carbon::parse($this->input('end_time'));
     }
 }
