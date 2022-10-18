@@ -79,6 +79,26 @@ class PaidTimeOff extends Model
     }
 
     /**
+     * Is the PTO approved?
+     *
+     * @return boolean [description]
+     */
+    public function isApproved()
+    {
+        return !!$this->is_approved;
+    }
+
+    /**
+     * Is the PTO pending?
+     *
+     * @return boolean [description]
+     */
+    public function isPending()
+    {
+        return !$this->isApproved();
+    }
+
+    /**
      * PaidTimeOff belongs to an employee
      * @return [type] [description]
      */

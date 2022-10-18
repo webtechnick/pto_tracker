@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Events\PaidTimeOffApproved;
+use App\Events\PaidTimeOffDeleted;
+use App\Events\PaidTimeOffRequested;
 use App\Http\EmployeeSearch;
 use App\Http\PaidTimeOffSearch;
 use App\Http\Requests\PaidTimeOffRequest;
-use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
 use App\Tag;
 use App\Traits\Flashes;
@@ -55,17 +57,11 @@ class PaidTimeOffsController extends Controller
      */
     public function store(PaidTimeOffRequest $request)
     {
+        // Save PTO
         $pto = PaidTimeOff::saveForm($request->all());
 
-        // Figure out manager to email.
-        if ($pto->employee->manager) {
-            $managers = $pto->employee->manager;
-        } else {
-            $managers = User::allManagers()->get();
-        }
-
-        // Send Mail
-        Mail::to($managers)->send(new PaidTimeOffRequested($pto));
+        // Trigger Event
+        event(new PaidTimeOffRequested($pto));
 
         if ($request->ajax()) {
             return $pto;
@@ -86,6 +82,7 @@ class PaidTimeOffsController extends Controller
     {
         $pto = PaidTimeOff::findOrFail($id);
         $pto->approve()->save();
+        event(new PaidTimeOffApproved($pto));
         return $pto;
     }
 
@@ -111,6 +108,7 @@ class PaidTimeOffsController extends Controller
     public function destroy($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
+        event(new PaidTimeOffDeleted($pto));
         $pto->delete();
         return 1;
     }
