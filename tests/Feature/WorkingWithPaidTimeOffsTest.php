@@ -63,4 +63,25 @@ class WorkingWithPaidTimeOffsTest extends TestCase
             return $mail->hasTo($user->email) && $mail->hasTo($admin->email);
         });
     }
+
+    /** @test */
+    public function it_cannot_request_pto_on_single_weekend()
+    {
+        Mail::fake();
+
+        $admin = $this->signInAdmin();
+        $employee = $this->create('App\Employee');
+
+        $data = [
+            'employee_id' => $employee->id,
+            'start_time' => '2022-10-16', // Sunday
+            'end_time' => '2022-10-16', // Sunday
+        ];
+
+        $response = $this->post('/ptos/store', $data);
+
+        $this->assertEquals(0, PaidTimeOff::count());
+
+        Mail::assertNotSent(PaidTimeOffRequested::class);
+    }
 }
