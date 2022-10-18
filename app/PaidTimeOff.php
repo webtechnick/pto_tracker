@@ -68,6 +68,17 @@ class PaidTimeOff extends Model
     }
 
     /**
+     * Pending scope
+     *
+     * @param  [type] $query [description]
+     * @return [type]        [description]
+     */
+    public function scopePending($query)
+    {
+        return $query->where('is_approved', false);
+    }
+
+    /**
      * PaidTimeOff belongs to an employee
      * @return [type] [description]
      */
