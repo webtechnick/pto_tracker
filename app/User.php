@@ -173,11 +173,23 @@ class User extends Authenticatable
      */
     public static function createFromRequest($data)
     {
+        $data['employee_id'] = null;
+
+        // If we have an employee that is not already claimed
+        // by a user, assign it to this newly created user.
+        $employee = Employee::select(['id','name'])
+                            ->where('name', $data['name'])
+                            ->first();
+        if ($employee && !$employee->user) {
+            $data['employee_id'] = $employee->id;
+        }
+
         return self::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'role' => $data['role'],
-            'password' => bcrypt($data['password']),
+            'name'        => $data['name'],
+            'email'       => $data['email'],
+            'role'        => $data['role'],
+            'employee_id' => $data['employee_id'],
+            'password'    => bcrypt($data['password']),
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Employee;
 use App\Mail\OnCallDigest;
 use App\PaidTimeOff;
+use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -92,5 +93,52 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(1, Employee::count());
         $this->assertNotEquals($data['name'], $employee->name);
         $this->assertNotEquals($data['max_days_off'], $employee->max_days_off);
+    }
+
+    /** @test */
+    public function it_should_automatically_sync_to_employee_account_if_unclaimed_employee_with_same_name_exists()
+    {
+        $employee = $this->create('App\Employee', ['name' => 'John Smith']);
+
+        $data = [
+            'name' => 'John Smith',
+            'email' => 'john.smith@example.com',
+            'password' => 'changeme',
+            'password_confirmation' => 'changeme',
+        ];
+
+        $this->assertEquals(0, User::count());
+
+        $response = $this->post('/register', $data);
+
+        $user = User::first();
+
+        $this->assertEquals(1, User::count());
+        $this->assertEquals($user->employee_id, $employee->id);
+    }
+
+    /** @test */
+    public function it_should_not_overwrite_already_claimed_employee_with_same_name()
+    {
+        $employee = $this->create('App\Employee', ['name' => 'John Smith']);
+        $user = $this->create('App\User', ['employee_id' => $employee->id]);
+
+        $data = [
+            'name' => 'John Smith',
+            'email' => 'john.smith@example.com',
+            'password' => 'changeme',
+            'password_confirmation' => 'changeme',
+        ];
+
+        $this->assertEquals(1, User::count());
+        $this->assertEquals($user->employee_id, $employee->id);
+
+        $response = $this->post('/register', $data);
+
+        $new_user = User::orderBy('id','DESC')->first();
+
+        $this->assertEquals(2, User::count());
+        $this->assertEquals($user->employee_id, $employee->id);
+        $this->assertNotEquals($new_user->employee_id, $employee->id);
     }
 }
