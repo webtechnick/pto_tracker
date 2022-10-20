@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Commands\ClearProratedPtoLimit::class,
         Commands\ClearOldPto::class,
         Commands\ClearOldHoliday::class,
+        Commands\EmployeeUserSync::class,
     ];
 
     /**
@@ -32,6 +33,8 @@ class Kernel extends ConsoleKernel
         // Shuffle the on call weekly on mondays at 1AM.
         // $schedule->command('oncall:shuffle')->weekly()->mondays()->at('14:00');
 
+        // Attempt to Sync employees daily at 2AM
+        $schedule->command('employee:user-sync')->dailyAt('15:00');
         // Clear Prorated PTO limit for new employees yearly on the first
         $schedule->command('employee:clear-pto-limit')->yearly();
         // Clear old PTO to keep database lean.
