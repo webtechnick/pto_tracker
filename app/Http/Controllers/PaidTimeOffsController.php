@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Events\PaidTimeOffApproved;
+use App\Events\PaidTimeOffDeleted;
+use App\Events\PaidTimeOffRequested;
 use App\Http\EmployeeSearch;
 use App\Http\PaidTimeOffSearch;
 use App\Http\Requests\PaidTimeOffRequest;
-use App\Mail\PaidTimeOffRequested;
 use App\PaidTimeOff;
 use App\Tag;
 use App\Traits\Flashes;
@@ -55,17 +57,14 @@ class PaidTimeOffsController extends Controller
      */
     public function store(PaidTimeOffRequest $request)
     {
+        // Save PTO
         $pto = PaidTimeOff::saveForm($request->all());
 
-        // Figure out manager to email.
-        if ($pto->employee->manager) {
-            $managers = $pto->employee->manager;
-        } else {
-            $managers = User::allManagers()->get();
-        }
-
-        // Send Mail
-        Mail::to($managers)->send(new PaidTimeOffRequested($pto));
+        // Trigger Event.
+        // This could be a PaidTimeOffCreated event, but I wanted to be explicit
+        // that this event only gets triggered when a PTO is requested not
+        // just created.
+        event(new PaidTimeOffRequested($pto));
 
         if ($request->ajax()) {
             return $pto;
@@ -86,6 +85,10 @@ class PaidTimeOffsController extends Controller
     {
         $pto = PaidTimeOff::findOrFail($id);
         $pto->approve()->save();
+
+        // Trigger Approved Event
+        event(new PaidTimeOffApproved($pto));
+
         return $pto;
     }
 
@@ -111,6 +114,11 @@ class PaidTimeOffsController extends Controller
     public function destroy($id = null)
     {
         $pto = PaidTimeOff::findOrFail($id);
+
+        // Trigger Deleted Event. This likely should be a model listener, but
+        // following the pattern of other events being triggered in controller.
+        event(new PaidTimeOffDeleted($pto));
+
         $pto->delete();
         return 1;
     }

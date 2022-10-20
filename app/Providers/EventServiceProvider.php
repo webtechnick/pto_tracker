@@ -19,6 +19,15 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\TagDeleting' => [
             'App\Listeners\RemoveTeamFromTaggables',
         ],
+        'App\Events\PaidTimeOffRequested' => [
+            'App\Listeners\NotifyManagerOfPTORequest',
+        ],
+        'App\Events\PaidTimeOffApproved' => [
+            'App\Listeners\NotifyEmployeeOfPTOApproval',
+        ],
+        'App\Events\PaidTimeOffDeleted' => [
+            'App\Listeners\NotifyEmployeeOfPTODelete',
+        ],
     ];
 
     /**

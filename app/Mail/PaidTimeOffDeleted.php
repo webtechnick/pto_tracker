@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PaidTimeOffApproved extends Mailable
+class PaidTimeOffDeleted extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,7 +31,7 @@ class PaidTimeOffApproved extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->pto->simpleSubject())
-                    ->view('emails.pto.approved');
+        return $this->subject($this->pto->simpleSubject(false) . ' removed.')
+                    ->view('emails.pto.deleted');
     }
 }
