@@ -9,7 +9,7 @@
         <li>Days: {{ $pto->days }}</li>
     </ul>
 
-    <p>was approved by the tall foreheads! Enjoy your well deserved time off! <small>(You'll have to let me know what it feels like to get time off.)</small></p>
+    <p>was approved by the tall foreheads! Enjoy your well deserved time off! <small>(I wonder what it feels like to get time off... PTO Tracker ponders.)</small></p>
 
     <p><a href="{{ config('app.url') }}">PTO Tracker</a></p>
 
