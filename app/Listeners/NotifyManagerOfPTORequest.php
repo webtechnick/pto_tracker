@@ -32,11 +32,7 @@ class NotifyManagerOfPTORequest
         $pto = $event->pto;
 
         // Figure out manager to email.
-        if ($pto->employee->manager) {
-            $managers = $pto->employee->manager;
-        } else {
-            $managers = User::allManagers()->get();
-        }
+        $managers = $pto->employee->manager ?: User::allManagers()->get();
 
         // Send Mail
         Mail::to($managers)->send(new MailPTORequest($pto));
