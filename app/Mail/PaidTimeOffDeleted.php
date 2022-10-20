@@ -31,7 +31,7 @@ class PaidTimeOffDeleted extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->pto->simpleSubject(false))
+        return $this->subject($this->pto->simpleSubject(false) . ' removed.')
                     ->view('emails.pto.deleted');
     }
 }
