@@ -30,6 +30,11 @@ class NotifyEmployeeOfPTODelete
     {
         $pto = $event->pto;
 
+        // If PTO is in the past, do nothing.
+        if ($pto->isPast()) {
+            return;
+        }
+
         // If employee is assigned to a user, send mail
         if ($pto->employee->user) {
             Mail::to($pto->employee->user)->send(new MailDeleted($pto));

@@ -31,6 +31,7 @@ class PaidTimeOffApproved extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.pto.approved');
+        return $this->subject($this->pto->simpleSubject())
+                    ->view('emails.pto.approved');
     }
 }

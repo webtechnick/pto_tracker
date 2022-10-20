@@ -48,6 +48,12 @@ class PaidTimeOff extends Model
         });
     }
 
+    /**
+     * Save PTO from request
+     *
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     */
     public static function saveForm($data)
     {
         $pto = new PaidTimeOff($data);
@@ -62,6 +68,12 @@ class PaidTimeOff extends Model
         return $pto;
     }
 
+    /**
+     * Approved scope
+     *
+     * @param  [type] $query [description]
+     * @return [type]        [description]
+     */
     public function scopeApproved($query)
     {
         return $query->where('is_approved', true);
@@ -96,6 +108,37 @@ class PaidTimeOff extends Model
     public function isPending()
     {
         return !$this->isApproved();
+    }
+
+    /**
+     * Paid Time Off is in the past
+     * Carbon\Carbon wrapper
+     *
+     * @return boolean [description]
+     */
+    public function isPast()
+    {
+        return $this->end_time->isPast();
+    }
+
+    /**
+     * PTO is in the future
+     *
+     * @return boolean [description]
+     */
+    public function isFuture()
+    {
+        return $this->start_time->isFuture();
+    }
+
+    /**
+     * PTO is active now
+     *
+     * @return boolean [description]
+     */
+    public function isCurrent()
+    {
+        return $this->start_time->isPast() && $this->end_time->isFuture();
     }
 
     /**
@@ -210,10 +253,7 @@ class PaidTimeOff extends Model
     public function simpleString()
     {
         $format = 'D, M jS Y';
-        $approvedText = 'Pending';
-        if ($this->is_approved) {
-            $approvedText = 'Approved';
-        }
+        $approvedText = $this->approvedText();
         return $this->start_time->format($format) .
                 ' to ' .
                 $this->end_time->format($format) .
@@ -222,5 +262,27 @@ class PaidTimeOff extends Model
                 ' (' . $approvedText . ') ' .
                 $this->days .
                 ' day(s).';
+    }
+
+    /**
+     * Get the approved text
+     *
+     * @return [type] [description]
+     */
+    public function approvedText()
+    {
+        return $this->isApproved() ? 'Approved' : 'Pending';
+    }
+
+    /**
+     * Represent the PTO as a subject line
+     *
+     * @param  boolean: will append current status to end.
+     * @return [type] [description]
+     */
+    public function simpleSubject($status = true)
+    {
+        $approvedText = $status ? ' ' . $this->approvedText() : '';
+        return 'Paid Time Off starting ' . $this->start_time->toFormattedDateString() . ' for ' . $this->days . ' days(s)' . $approvedText;
     }
 }
