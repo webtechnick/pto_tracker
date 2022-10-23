@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Employee;
 use App\Traits\Flashes;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -64,6 +65,10 @@ class PaidTimeOffRequest extends FormRequest
             if ($this->isWeekendRequest()) {
                 $validator->errors()->add('end_time', 'Error: Start and/or End is a weekend.');
             }
+            // Cannot re-request same day
+            // if ($this->hasPtoAlready()) {
+            //     $validator->errors()->add('end_time', 'Error: One or more requested days is already requested.');
+            // }
         });
 
         if ($validator->fails()) {
@@ -101,5 +106,29 @@ class PaidTimeOffRequest extends FormRequest
     {
         $this->carbonStart = $this->carbonStart ?: Carbon::parse($this->input('start_time'));
         $this->carbonEnd   = $this->carbonEnd   ?: Carbon::parse($this->input('end_time'));
+    }
+
+    /**
+     * Go through the days requested,
+     * if any of them have PTO requested already, throw validation error
+     *
+     * @return boolean [description]
+     */
+    private function hasPTOAlready()
+    {
+        // Build carbon times
+        $this->setupCarbonTime();
+
+        $current_day = $this->carbonStart;
+        $employee = Employee::findOrFail($this->input('employee_id'));
+
+        while($current_day->timestamp <= $this->end_time->timestamp) {
+            if ($employee->hasPTOon($current_day)) {
+                return true;
+            }
+            $current_day->addDay();
+        }
+
+        return false;;
     }
 }

@@ -35,6 +35,8 @@ class WorkingWithPaidTimeOffsTest extends TestCase
 
         $response = $this->post('/ptos/store', $data);
 
+        dd($response);
+
         $this->assertEquals(1, PaidTimeOff::count());
 
         Mail::assertSent(PaidTimeOffRequested::class, function ($mail) use ($user, $admin) {
@@ -208,5 +210,33 @@ class WorkingWithPaidTimeOffsTest extends TestCase
 
         // Assert Mail Sent
         Mail::assertNotSent(PaidTimeOffDeleted::class);
+    }
+
+    /** @test */
+    public function it_should_now_allow_same_day_pto_request()
+    {
+        Mail::fake();
+
+        // Create user, employee, and pto
+        $employee = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee);
+        $pto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => '2022-03-01', // Friday
+            'end_time' => '2022-03-04', // Thursday
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        $data = [
+            'employee_id' => $employee->id,
+            'start_time' => '2022-03-01', // Friday
+            'end_time' => '2022-03-01', // Friday
+        ];
+
+        $response = $this->post('/ptos/store', $data);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+        Mail::assertNotSent(PaidTimeOffRequested::class);
     }
 }

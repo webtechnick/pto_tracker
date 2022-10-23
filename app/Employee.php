@@ -7,6 +7,7 @@ use App\PaidTimeOff;
 use App\Traits\Filterable;
 use App\Traits\Taggable;
 use App\Traits\UtilityScopes;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -340,5 +341,23 @@ class Employee extends Model
 
         // Default state
         return false;
+    }
+
+    /**
+     * Employee has at least one PTO day on a specific date
+     *
+     * @param  DateString|Carbon  $date
+     * @return boolean            PaidTimeOff exists for that day for this employee
+     */
+    public function hasPTOon($date)
+    {
+        if (!($date instanceof Carbon)) {
+            $date = Carbon::parse($date);
+        }
+
+        return $this->ptos()
+                    ->where('start_time', '<=', $date->toDateTimeString())
+                    ->where('end_time', '>=', $date->toDateTimeString())
+                    ->exists();
     }
 }
