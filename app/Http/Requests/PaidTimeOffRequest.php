@@ -66,9 +66,9 @@ class PaidTimeOffRequest extends FormRequest
                 $validator->errors()->add('end_time', 'Error: Start and/or End is a weekend.');
             }
             // Cannot re-request same day
-            // if ($this->hasPtoAlready()) {
-            //     $validator->errors()->add('end_time', 'Error: One or more requested days is already requested.');
-            // }
+            if ($this->hasPTOAlready()) {
+                $validator->errors()->add('start_time', 'Error: One or more requested days is already requested.');
+            }
         });
 
         if ($validator->fails()) {
@@ -116,19 +116,25 @@ class PaidTimeOffRequest extends FormRequest
      */
     private function hasPTOAlready()
     {
+        $employee = Employee::find($this->input('employee_id'));
+
+        // Early exit, no employee, no reason to do anything more.
+        if (!$employee) {
+            return false;
+        }
+
         // Build carbon times
         $this->setupCarbonTime();
+        $current_day = Carbon::parse($this->carbonStart); // Recreate Carbon to walk
 
-        $current_day = $this->carbonStart;
-        $employee = Employee::findOrFail($this->input('employee_id'));
-
-        while($current_day->timestamp <= $this->end_time->timestamp) {
+        // Walk through requested days, checking if we have PTO already.
+        while($current_day->timestamp <= $this->carbonEnd->timestamp) {
             if ($employee->hasPTOon($current_day)) {
                 return true;
             }
             $current_day->addDay();
         }
 
-        return false;;
+        return false;
     }
 }
