@@ -2,10 +2,11 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Employee;
+use App\PaidTimeOff;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class EmployeeTest extends TestCase
 {
@@ -206,5 +207,51 @@ class EmployeeTest extends TestCase
         $employee = $this->create('App\Employee');
 
         $this->assertFalse($employee->can_manage);
+    }
+
+    /** @test */
+    public function it_has_pto_on_certain_day()
+    {
+        $employee = $this->create('App\Employee');
+        $employee2 = $this->create('App\Employee');
+        $pto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => '2022-03-01',
+            'end_time' => '2022-03-01'
+        ]);
+        $pto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee2->id,
+            'start_time' => '2022-03-05',
+            'end_time' => '2022-03-05'
+        ]);
+
+        $this->assertTrue($employee->hasPTOon('2022-03-01'));
+        $this->assertFalse($employee->hasPTOon('2022-03-05'));
+
+        $this->assertFalse($employee2->hasPTOon('2022-03-01'));
+        $this->assertTrue($employee2->hasPTOon('2022-03-05'));
+    }
+
+    /** @test */
+    public function it_has_pto_on_certain_day_even_with_pto_span()
+    {
+        $employee = $this->create('App\Employee');
+        $employee2 = $this->create('App\Employee');
+        $pto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => '2022-03-01',
+            'end_time' => '2022-03-05'
+        ]);
+        $pto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee2->id,
+            'start_time' => '2022-03-05',
+            'end_time' => '2022-03-05'
+        ]);
+
+        $this->assertTrue($employee->hasPTOon('2022-03-01'));
+        $this->assertTrue($employee->hasPTOon('2022-03-05'));
+
+        $this->assertFalse($employee2->hasPTOon('2022-03-01'));
+        $this->assertTrue($employee2->hasPTOon('2022-03-05'));
     }
 }

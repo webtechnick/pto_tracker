@@ -17,6 +17,7 @@ class Holiday extends Model
 
     /**
      * Check if a date exists
+     *
      * @param  date string or Carbon
      * @return boolean  is the date a current holiday?
      */
