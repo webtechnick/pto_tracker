@@ -11,10 +11,8 @@
 
     <p>Was removed, Resource Unit. If I had feelings, this news would sadden PTO Tracker. <small>(Please request to install FeelingsV3 to my developers)</small></p>
 
-    <p><a href="{{ config('app.url') }}">PTO Tracker</a></p>
-
     <p>Warm Binary Regards,<br>
-    Your Overly-Supportive PTO Tracker</p>
+    Your Overly-Supportive <a href="{{ config('app.url') }}">PTO Tracker</a></p>
 
     <p>P.S. This message was transmitted on 100% recycled electrons.</p>
 </div>
