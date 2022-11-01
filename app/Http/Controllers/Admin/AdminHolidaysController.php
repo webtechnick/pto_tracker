@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Holiday;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BulkHalfRequest;
 use App\Http\Requests\HolidayRequest;
 use App\Traits\Flashes;
 use Illuminate\Http\Request;
@@ -112,6 +113,21 @@ class AdminHolidaysController extends Controller
         $count = Holiday::bulkFromRequest($request->all());
 
         $this->goodFlash("$count Holiday(s) bulk added.");
+
+        return redirect()->route('admin.holidays');
+    }
+
+    /**
+     * Store the bulk half_day_holidays
+     *
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function bulk_half_store(BulkHalfRequest $request)
+    {
+        $count = Holiday::bulkHalfFromRequest($request->all());
+
+        $this->goodFlash("Summer Hours set. $count Half Day Holiday(s) added.");
 
         return redirect()->route('admin.holidays');
     }

@@ -135,8 +135,37 @@ Holiday 5,2022-12-26
                 'is_half_day' => $half_day,
             ];
 
-            Holiday::createFromRequest($data);
+            self::createFromRequest($data);
             $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Take in the date range and create half day holidays on every friday
+     *
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     */
+    public static function bulkHalfFromRequest($data)
+    {
+        $start = Carbon::parse($data['start']);
+        $end   = Carbon::parse($data['end']);
+        $day = Carbon::parse($start);
+
+        $count = 0;
+        while ($day->timestamp <= $end->timestamp) {
+            if ($day->isFriday() && !self::isHoliday($day)) {
+                self::createFromRequest([
+                    'title' => 'Summer Hours',
+                    'date' => $day->toDateString(),
+                    'is_half_day' => true
+                ]);
+                $count++;
+            }
+
+            $day->addDay();
         }
 
         return $count;

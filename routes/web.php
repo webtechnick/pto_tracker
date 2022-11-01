@@ -53,6 +53,7 @@ Route::group([
     Route::get('/holidays/create', 'AdminHolidaysController@create')->name('holidays.create');
     Route::get('/holidays/bulk', 'AdminHolidaysController@bulk')->name('holidays.bulk');
     Route::post('/holidays/bulk', 'AdminHolidaysController@bulk_store')->name('holidays.bulkstore');
+    Route::post('/holidays/bulk_half', 'AdminHolidaysController@bulk_half_store')->name('holidays.halfstore');
     Route::get('/holidays/{holiday}/edit', 'AdminHolidaysController@edit')->name('holidays.edit');
     Route::get('/holidays/{holiday}/delete', 'AdminHolidaysController@delete')->name('holidays.delete');
     Route::post('/holidays/store', 'AdminHolidaysController@store')->name('holidays.store');
