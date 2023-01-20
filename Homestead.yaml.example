@@ -1,0 +1,20 @@
+ip: 192.168.10.50
+version: 8.2.1
+memory: 2048
+cpus: 1
+provider: virtualbox
+authorize: ~/.ssh/id_rsa.pub
+keys:
+    - ~/.ssh/id_rsa
+folders:
+    -
+        map: /Users/nurvzy/Websites/pto_tracker
+        to: /home/vagrant/code
+sites:
+    -
+        map: pto-it.alliedhealthmedia.test
+        to: /home/vagrant/code/public
+databases:
+    - homestead
+name: pto-tracker
+hostname: pto-tracker
