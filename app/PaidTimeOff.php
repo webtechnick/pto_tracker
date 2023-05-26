@@ -187,19 +187,14 @@ class PaidTimeOff extends Model
                 continue;
             }
 
-            // If we're here, add a day and move onto next day
-            $this->days += 1;
+            // If we're here, add the day/half-day and move onto next day
+            if ($this->is_half_day) {
+                $this->days += .5;
+            } else {
+                $this->days += 1;
+            }
             $current_day->addDay();
         }
-
-        // // Handle special cases
-        // if ($this->days <= 1) {
-        //     if ($this->is_half_day) {
-        //         $this->days = .5;
-        //     } else {
-        //         $this->days = 1;
-        //     }
-        // }
 
         return $this;
     }
