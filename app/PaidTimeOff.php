@@ -192,14 +192,14 @@ class PaidTimeOff extends Model
             $current_day->addDay();
         }
 
-        // Handle special cases
-        if ($this->days <= 1) {
-            if ($this->is_half_day) {
-                $this->days = .5;
-            } else {
-                $this->days = 1;
-            }
-        }
+        // // Handle special cases
+        // if ($this->days <= 1) {
+        //     if ($this->is_half_day) {
+        //         $this->days = .5;
+        //     } else {
+        //         $this->days = 1;
+        //     }
+        // }
 
         return $this;
     }
