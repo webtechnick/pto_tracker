@@ -23,6 +23,9 @@ php artisan tinker
 
 ### Old way (requires composer, and npm)
 
+**Note**: requires older versions of node than you probably have or you will get compilation errors.
+If you get errors running `npm install`, you can install nvm (`brew install nvm`) and then install a lower node version such as `nvm install 10`
+You may also need to run `npm install` with the `--legacy-peer-deps` flag.
 ```
 composer install
 npm install
