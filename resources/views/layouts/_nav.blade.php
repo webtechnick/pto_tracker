@@ -26,7 +26,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="https://pto-it.alliedhealthmedia.com">IT</a></li>
-                        <li><a href="https://pto-product.alliedhealthmedia.com">Product</a></li>
+                        <li><a href="https://pto-product.alliedhealthmedia.com">Product / Content</a></li>
                         <!-- <li><a href="https://pto-simucase.alliedhealthmedia.com">Simucase</a></li> -->
                     </ul>
                 </li>
