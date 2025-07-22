@@ -28,7 +28,6 @@ This document explains how to run the PTO Tracker application using Docker.
 
 3. **Access the application:**
    - Web application: http://localhost:8000
-   - Database: localhost:3306
    - Redis: localhost:6379
 
 ## Manual Setup
@@ -42,11 +41,8 @@ If you prefer to set up manually:
 
 2. **Update the `.env` file with Docker settings:**
    ```env
-   DB_HOST=db
-   DB_PORT=3306
-   DB_DATABASE=pto_tracker
-   DB_USERNAME=pto_user
-   DB_PASSWORD=root
+   DB_CONNECTION=sqlite
+   DB_DATABASE=database/database.sqlite
    REDIS_HOST=redis
    ```
 
@@ -80,9 +76,8 @@ If you prefer to set up manually:
 
 The application consists of the following services:
 
-- **app**: PHP 7.2-FPM with Laravel application
+- **app**: PHP 7.2-FPM with Laravel application (includes SQLite)
 - **webserver**: Nginx web server
-- **db**: MySQL 5.7 database
 - **redis**: Redis cache server
 
 ## Useful Commands
@@ -115,8 +110,8 @@ docker-compose exec app php artisan route:list
 
 ### Database
 ```bash
-# Access MySQL
-docker-compose exec db mysql -u pto_user -p pto_tracker
+# Access SQLite database
+docker-compose exec app sqlite3 database/database.sqlite
 
 # Run migrations
 docker-compose exec app php artisan migrate
@@ -143,7 +138,6 @@ docker-compose exec app npm run dev
 - `Dockerfile`: PHP application container definition
 - `docker/nginx/conf.d/app.conf`: Nginx configuration
 - `docker/php/local.ini`: PHP configuration
-- `docker/mysql/my.cnf`: MySQL configuration
 
 ## Troubleshooting
 
@@ -155,11 +149,11 @@ docker-compose exec app npm run dev
    ```
 
 2. **Database connection issues:**
-   - Ensure the database container is running: `docker-compose ps`
-   - Check database logs: `docker-compose logs db`
+   - Ensure the SQLite database file exists: `ls -la database/database.sqlite`
+   - Check database permissions: `chmod 664 database/database.sqlite`
 
 3. **Port conflicts:**
-   - Change ports in `docker-compose.yml` if 8000, 3306, or 6379 are in use
+   - Change ports in `docker-compose.yml` if 8000 or 6379 are in use
 
 4. **Container won't start:**
    - Check logs: `docker-compose logs [service-name]`

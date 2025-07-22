@@ -28,26 +28,6 @@ services:
     networks:
       - pto_tracker_network
 
-  # MySQL Service
-  db:
-    image: mysql:5.7
-    container_name: pto_tracker_db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-pto_tracker}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_USER: ${DB_USERNAME:-pto_user}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./docker/mysql/data:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
-    networks:
-      - pto_tracker_network
-
   # Redis Service
   redis:
     image: redis:alpine

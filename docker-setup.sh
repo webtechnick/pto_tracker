@@ -15,12 +15,8 @@ APP_DEBUG=true
 APP_LOG_LEVEL=debug
 APP_URL=http://localhost:8000
 
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=pto_tracker
-DB_USERNAME=pto_user
-DB_PASSWORD=root
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file
@@ -51,9 +47,11 @@ fi
 echo "Building and starting Docker containers..."
 docker-compose up -d --build
 
-# Wait for database to be ready
-echo "Waiting for database to be ready..."
-sleep 30
+# Create SQLite database file if it doesn't exist
+echo "Setting up SQLite database..."
+mkdir -p database
+touch database/database.sqlite
+chmod 664 database/database.sqlite
 
 # Generate application key
 echo "Generating application key..."
