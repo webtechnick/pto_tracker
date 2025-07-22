@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pto_tracker_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - pto_tracker_network
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: pto_tracker_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - pto_tracker_network
+
+  # MySQL Service
+  db:
+    image: mysql:5.7
+    container_name: pto_tracker_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-pto_tracker}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_USER: ${DB_USERNAME:-pto_user}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - pto_tracker_network
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    container_name: pto_tracker_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - pto_tracker_network
+
+networks:
+  pto_tracker_network:
+    driver: bridge 
