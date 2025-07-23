@@ -4,7 +4,12 @@ Help Keep Track of Paid Time Off (PTO)
 
 ## Local Setup
 
-### New way (recommended, requires composer, vagrant and virtualbox installed)
+### Docker way (recommended)
+```
+docker-compose up -d
+```
+
+### Vagrant way (requires composer, vagrant and virtualbox installed)
 
 ```
 composer install
