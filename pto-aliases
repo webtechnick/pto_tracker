@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PTO Tracker Docker Aliases
-# Source this file in your shell: source aliases
+# Source this file in your shell: source pto-aliases
 
 # Main Docker commands
 alias doc='docker-compose'
@@ -60,4 +60,4 @@ echo "💡 Examples:"
 echo "  docart migrate"
 echo "  docphpunit --filter testMethodName"
 echo "  docbuild"
-echo "  docshell"
+echo "  docshell" 
