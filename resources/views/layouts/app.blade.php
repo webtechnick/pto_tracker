@@ -14,8 +14,7 @@
     </div>
 
     <!-- Scripts -->
-    <!-- <script src="{{ elixir('js/app.js') }}"></script> -->
-    <script src="/js/app.js"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
     <script src="/js/libs/jquery-ui.min.js"></script>
     @yield('scripts')
 </body>
