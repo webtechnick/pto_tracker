@@ -7,6 +7,7 @@ Help Keep Track of Paid Time Off (PTO)
 ### Docker way (recommended)
 ```
 docker-compose up -d
+source pto-aliases
 ```
 
 ### Vagrant way (requires composer, vagrant and virtualbox installed)
