@@ -5,19 +5,21 @@
  * code may be modified to fit the specific needs of your application.
  */
 
-window.$ = window.jQuery = require('jquery');
-require('bootstrap-sass');
+import $ from 'jquery';
+import Vue from 'vue';
+import moment from 'moment';
+import axios from 'axios';
 
-/**
- * Vue is a modern JavaScript library for building interactive web interfaces
- * using reactive data binding and reusable components. Vue's API is clean
- * and simple, leaving you to focus on building your next great project.
- */
+// Set jQuery on window first
+window.$ = window.jQuery = $;
 
-window.Vue = require('vue');
-require('vue-resource');
-window.moment = require('moment');
-window.axios = require('axios');
+// Now import Bootstrap after jQuery is available
+// Use a more explicit approach to ensure jQuery is available
+const bootstrap = require('bootstrap-sass');
+
+window.Vue = Vue;
+window.moment = moment;
+window.axios = axios;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Events = new Vue({});
 

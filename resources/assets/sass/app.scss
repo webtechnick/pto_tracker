@@ -5,7 +5,8 @@
 // Variables
 @import "variables";
 
-// Bootstrap
+// Bootstrap with custom font paths
+$icon-font-path: "/fonts/bootstrap/";
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 .level {

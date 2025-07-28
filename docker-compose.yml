@@ -1,0 +1,54 @@
+# version: '3.8' # deprecated
+
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pto_tracker_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - pto_tracker_network
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: pto_tracker_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - pto_tracker_network
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    container_name: pto_tracker_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - pto_tracker_network
+
+  # Node.js Service for Modern Build Tools
+  node:
+    image: node:18-alpine
+    container_name: pto_tracker_node
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    command: sh -c "apk add --no-cache git && npm install && npm run watch"
+    networks:
+      - pto_tracker_network
+
+networks:
+  pto_tracker_network:
+    driver: bridge 
