@@ -54,9 +54,9 @@ export default {
             this.months = this.renderYear();
         }
     },*/
-            mounted() {
-            Events.$on('loading', this.startLoading.bind(this));
-            Events.$on('finishedLoading', this.finishLoading.bind(this));
+    mounted() {
+        Events.$on('loading', this.startLoading.bind(this));
+        Events.$on('finishedLoading', this.finishLoading.bind(this));
     },
     methods: {
         finishedLoading() {
