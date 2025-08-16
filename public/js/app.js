@@ -5160,8 +5160,8 @@ __webpack_require__.r(__webpack_exports__);
         'trp': 'true',
         'dates': start + '/' + end
       };
-      window.open('http://www.google.com/calendar/hosted/continued.com/event?' + $.param(options));
-      // window.open('http://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
+      window.open('https://www.google.com/calendar/hosted/continued.com/event?' + $.param(options));
+      // window.open('https://www.google.com/calendar/hosted/alliedhealthmedia.com/event?' + $.param(options));
     },
     sentToCalendar: function sentToCalendar(event) {
       event.pto.is_sent_to_calendar = true;
