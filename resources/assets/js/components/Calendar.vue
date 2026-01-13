@@ -4,18 +4,22 @@
             <bounce-loader :loading="loading" color="blue" size="175px"></bounce-loader>
         </div>
 
-        <div class="row">
-            <div class="col-md-4" v-for="month in months">
-                <table class="month">
-                    <tr><td colspan='7' class="center">{{ month.name }}</td></tr>
-                    <tr><th class="center">Su</th><th class="center">Mo</th><th class="center">Tu</th><th class="center">We</th><th class="center">Tr</th><th class="center">Fr</th><th class="center">Sa</th></tr>
-                    <tr v-for="week in month.weeks">
-                        <td class="center day" v-bind:class="dayClass(month.num, day)" v-bind:id="dayId(month.num, day)" @click.prevent="selectDay(month.num, day, $event)" v-for="day in week">
+        <div class="calendar-grid">
+            <table class="month" v-for="month in months" :key="month.num">
+                <thead>
+                    <tr><th colspan="7" class="month-title">{{ month.name }}</th></tr>
+                    <tr class="weekday-header">
+                        <th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(week, weekIndex) in month.weeks" :key="weekIndex">
+                        <td class="day" v-bind:class="dayClass(month.num, day)" v-bind:id="dayId(month.num, day)" @click.prevent="selectDay(month.num, day, $event)" v-for="(day, dayIndex) in week" :key="dayIndex">
                             <a href="#" class="day-link" v-html="renderDay(month.num, day)" @click.prevent></a>
                         </td>
                     </tr>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -116,29 +120,25 @@ export default {
                 return '';
             }
             let currentday = this.getDay(month, day);
+            let html = `<span class="day-number">${day}</span>`;
+
             if (this.isWeekend(currentday)) {
-                return day;
+                return html;
             }
             if (this.isFullDayHoliday(currentday)) {
-                return day;
+                return html;
             }
-            day += ' ';
-            let count = 0;
 
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
                 if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
-                    if (count % 3 === 0) {
-                        day += ' ';
-                    }
-                    day += this.renderPto(pto);
-                    count++;
+                    html += this.renderPto(pto);
                 }
             }
             if (month == 12 && day == 31) {
                 this.finishedLoading();
             }
-            return day;
+            return html;
         },
         isHoliday(moment_day) {
             for (let i in this.holidays) {
@@ -229,49 +229,134 @@ export default {
 }
 </script>
 <style>
+/* Loading spinner */
 .ajax-loader {
     position: fixed;
     top: 35%;
     left: 35%;
     z-index: 9999;
 }
+
+/* CSS Grid layout for 4x3 month grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 20px;
+    align-items: start;
+}
+
+/* Month table */
 .month {
     width: 100%;
-    height: 400px;
+    min-height: 280px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-.center {
+
+.month-title {
     text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 0;
+    background: #f8f9fa;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
 }
-.pto-day {
-    border-radius: 3px;
-    padding: 1px;
+
+.weekday-header th {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #868e96;
+    padding: 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
-.holiday {
-    background-color: lightpink;
-}
-.half-holiday {
-    background-color: blanchedalmond;
-}
-.today {
-    background-color: lightblue;
-}
-.selectedday {
-    background-color: lightgreen;
-}
-.pending {
-    opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
-}
-.day-link {
-    color: grey;
-    word-wrap: break-word;
-}
+
+/* Day cells */
 .day {
     cursor: pointer;
-    border: 1px solid black;
-    width: 43px;
-    height: 50px;
+    border: 1px solid #e9ecef;
+    min-height: 48px;
+    vertical-align: top;
+    padding: 3px;
+    transition: background-color 0.15s ease;
 }
+
+.day:hover {
+    background-color: #f8f9fa;
+}
+
+.day-link {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.day-link:hover {
+    text-decoration: none;
+}
+
+/* Day number */
+.day-number {
+    font-weight: 500;
+    color: #495057;
+    min-width: 16px;
+}
+
+/* PTO indicators */
+.pto-day {
+    border-radius: 3px;
+    padding: 0 3px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    display: inline-block;
+}
+
+.pending {
+    opacity: 0.45;
+}
+
+/* Special day states */
+.holiday {
+    background-color: #ffe0e6;
+}
+
+.half-holiday {
+    background-color: #fff3cd;
+}
+
+.today {
+    background-color: #d4edfc;
+}
+
+.selectedday {
+    background-color: #d4edda;
+}
+
+/* Responsive: 2 columns on tablets */
+@media (max-width: 992px) {
+    .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsive: 1 column on mobile */
+@media (max-width: 600px) {
+    .calendar-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .clear {
     clear: both;
 }

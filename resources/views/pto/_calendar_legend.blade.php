@@ -3,24 +3,22 @@
         <strong>Calendar Legend</strong>
     </div>
     <div class="panel-body">
-        <div class="row">
-            <div class="col-xs-6 text-center">
-                <div class="center-block holiday day"></div>
-                Holiday
+        <div class="legend-grid">
+            <div class="legend-item">
+                <div class="day holiday legend-size"></div>
+                <span class="legend-label">Holiday</span>
             </div>
-            <div class="col-xs-6 text-center">
-                <div class="center-block half-holiday day"></div>
-                Half Holiday
+            <div class="legend-item">
+                <div class="day half-holiday legend-size"></div>
+                <span class="legend-label">Half Holiday</span>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 text-center">
-                <div class="center-block today day"></div>
-                Today
+            <div class="legend-item">
+                <div class="day today legend-size"></div>
+                <span class="legend-label">Today</span>
             </div>
-            <div class="col-xs-6 text-center">
-                <div class="center-block selectedday day"></div>
-                Selected
+            <div class="legend-item">
+                <div class="day selectedday legend-size"></div>
+                <span class="legend-label">Selected</span>
             </div>
         </div>
     </div>
