@@ -7,10 +7,10 @@
         <div class="col-md-9">
             <input id="inputyear" name="inputyear" type="hidden" value="{{ $year }}">
 
-            <div class="center">
-                <a class="pull-left" href="/{{ $year - 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-backward"></span></a>
-                <a class="pull-right" href="/{{ $year + 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-forward"></span></a>
+            <div class="year-nav">
+                <a href="/{{ $year - 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-backward"></span></a>
                 <h1 v-text="year"></h1>
+                <a href="/{{ $year + 1 }}@if($old)?{{ http_build_query($old)}}@endif"><span class="glyphicon glyphicon-forward"></span></a>
             </div>
 
             <calendar :year="year" :ptos="ptos" :holidays="holidays"></calendar>

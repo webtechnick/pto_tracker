@@ -14,6 +14,18 @@ COMPOSE="docker compose"
 # Container name for the app service
 APP_CONTAINER="app"
 
+# Get the directory where this script lives
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load environment variables from .env file
+load_env() {
+    if [ -f "$SCRIPT_DIR/.env" ]; then
+        set -a
+        source "$SCRIPT_DIR/.env"
+        set +a
+    fi
+}
+
 # Display help message
 show_help() {
     echo -e "${GREEN}PTO Tracker Docker CLI${NC}"
@@ -34,6 +46,10 @@ show_help() {
     echo -e "  ${YELLOW}test${NC}       Run PHPUnit tests"
     echo -e "  ${YELLOW}build${NC}      Build front-end assets for production"
     echo -e "  ${YELLOW}rebuild${NC}    Rebuild Docker containers"
+    echo ""
+    echo -e "${GREEN}Production (Teleport):${NC}"
+    echo -e "  ${YELLOW}tsh${NC}        SSH into production server via Teleport"
+    echo -e "  ${YELLOW}tsh-ls${NC}     List available PTO servers in Teleport"
     echo ""
     echo "Examples:"
     echo "  ./pto up"
@@ -124,6 +140,19 @@ case "$1" in
         $COMPOSE build --no-cache
         $COMPOSE up -d
         echo -e "${GREEN}Containers rebuilt and started! App available at http://localhost:8000${NC}"
+        ;;
+    tsh)
+        load_env
+        if [ -z "$PROD_USERNAME" ] || [ -z "$PROD_HOST" ]; then
+            echo -e "${RED}Error: PROD_USERNAME and PROD_HOST must be set in .env${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}Connecting to production server via Teleport...${NC}"
+        tsh ssh "${PROD_USERNAME}@${PROD_HOST}"
+        ;;
+    tsh-ls)
+        echo -e "${GREEN}Listing PTO servers in Teleport...${NC}"
+        tsh ls | grep -i pto
         ;;
     help|-h|--help)
         show_help
