@@ -281,9 +281,8 @@ export default {
 .day {
     cursor: pointer;
     border: 1px solid #e9ecef;
-    min-height: 48px;
     vertical-align: top;
-    padding: 3px;
+    padding: 4px;
     transition: background-color 0.15s ease;
 }
 
@@ -294,11 +293,13 @@ export default {
 .day-link {
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
     gap: 2px;
     color: #495057;
     text-decoration: none;
     font-size: 12px;
     line-height: 1.3;
+    min-height: 62px;
 }
 
 .day-link:hover {
