@@ -20,9 +20,14 @@ class Tag extends Model
         'description',
     ];
 
-    protected $events = [
-        'deleting' => TagDeleting::class,
-    ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($tag) {
+            event(new TagDeleting($tag));
+        });
+    }
 
     public function getFilters()
     {

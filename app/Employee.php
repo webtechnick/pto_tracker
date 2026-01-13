@@ -29,13 +29,18 @@ class Employee extends Model
         'manager_id',
     ];
 
-    protected $events = [
-        'deleting' => EmployeeDeleting::class,
-    ];
-
     protected $casts = [
         'is_on_call' => 'boolean'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($employee) {
+            event(new EmployeeDeleting($employee));
+        });
+    }
 
     //protected $appends = ['pending_days_left', 'days_left'];
     protected $appends = [

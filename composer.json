@@ -62,6 +62,9 @@
         "audit": {
             "abandoned": "ignore",
             "block-insecure": false
+        },
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
         }
     },
     "extra": {
