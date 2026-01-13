@@ -7,6 +7,7 @@ use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use WebTechNick\LaravelGlow\Traits\ToggleActivatable;
 
 class Tag extends Model
@@ -98,7 +99,7 @@ class Tag extends Model
     {
         $retval = self::byName($name)->first();
         if (!$retval) {
-            $retval = self::create(['name' => $name, 'slug' => str_slug($name)]);
+            $retval = self::create(['name' => $name, 'slug' => Str::slug($name)]);
         }
         return $retval;
     }

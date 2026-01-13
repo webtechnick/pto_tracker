@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -19,7 +21,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret'),
-        'remember_token' => str_random(10),
+        'remember_token' => Str::random(10),
         'employee_id' => null,
     ];
 });
@@ -39,7 +41,7 @@ $factory->define(App\Tag::class, function (Faker\Generator $faker) {
     $name = $faker->word;
     return [
         'name' => $name,
-        'slug' => str_slug($name)
+        'slug' => Str::slug($name)
     ];
 });
 

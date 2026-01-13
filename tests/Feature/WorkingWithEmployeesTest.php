@@ -72,7 +72,7 @@ class WorkingWithEmployeesTest extends TestCase
         $employee = Employee::first();
         $this->assertEquals(1, Employee::count());
         $this->assertEquals($data['name'], $employee->name);
-        $this->assertEquals($data['max_days_off'], $employee->max_days_off);
+        $this->assertEquals((float) $data['max_days_off'], (float) $employee->max_days_off);
     }
 
     /** @test */
