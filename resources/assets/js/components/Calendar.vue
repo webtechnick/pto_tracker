@@ -299,7 +299,7 @@ export default {
     text-decoration: none;
     font-size: 12px;
     line-height: 1.3;
-    min-height: 62px;
+    min-height: 55px;
 }
 
 .day-link:hover {
