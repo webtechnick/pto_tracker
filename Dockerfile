@@ -1,7 +1,13 @@
-FROM php:7.4-fpm
+FROM php:7.2-fpm
 
 # Set working directory
 WORKDIR /var/www
+
+# Fix Debian Buster repositories (moved to archive since EOL)
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i '/buster-updates/d' /etc/apt/sources.list && \
+    sed -i 's|archive.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -26,8 +32,8 @@ RUN curl -fsSL https://nodejs.org/dist/v14.21.3/node-v14.21.3-linux-x64.tar.xz -
 # Install PHP extensions
 RUN docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd zip
 
-# Get Composer 1.x (compatible with composer-plugin-api ^1.1)
-COPY --from=composer:1.10 /usr/bin/composer /usr/bin/composer
+# Get Composer 2.x
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy existing application directory contents
 COPY . /var/www
@@ -36,7 +42,8 @@ COPY . /var/www
 COPY --chown=www-data:www-data . /var/www
 
 # Install PHP dependencies (as root to avoid permission issues)
-RUN composer install --no-dev --optimize-autoloader
+# Using 'update' instead of 'install' to regenerate lock file during upgrades
+RUN composer update --no-dev --optimize-autoloader
 
 # Skip npm steps for now due to architecture issues
 # TODO: Fix Node.js architecture compatibility
