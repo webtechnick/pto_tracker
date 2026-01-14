@@ -11,7 +11,7 @@ PTO Tracker is a Laravel application for managing employee Paid Time Off request
 | Component | Version | Notes |
 |-----------|---------|-------|
 | PHP | 7.2 | **Production constraint** - cannot upgrade yet |
-| Laravel | 5.6 | Limited by PHP 7.2 |
+| Laravel | 6.x | LTS version compatible with PHP 7.2 |
 | Database | SQLite | Simple file-based DB |
 | Frontend | Vue 2 + Bootstrap 3 | Legacy stack |
 | Asset Build | Laravel Mix 6 | Webpack-based |
@@ -62,7 +62,7 @@ All Docker operations use the `./pto` CLI script:
 ## Known Constraints
 
 1. **PHP 7.2** - Production server runs 7.2.34, cannot upgrade without DevOps
-2. **Laravel 5.6** - Highest version supporting PHP 7.2 that's stable
+2. **Laravel 6.x** - LTS version, last to support PHP 7.2
 3. **Debian Buster** - Docker base image uses archived repos (EOL)
 4. **All Laravel 5.x/6.x/7.x are EOL** - Security patches not available
 

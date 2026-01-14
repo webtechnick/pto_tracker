@@ -35,12 +35,12 @@ class Kernel extends ConsoleKernel
 
         // Attempt to Sync employees daily at 2AM
         $schedule->command('employee:user-sync')->dailyAt('15:00');
-        // Clear Prorated PTO limit for new employees yearly on the first
-        $schedule->command('employee:clear-pto-limit')->yearly();
-        // Clear old PTO to keep database lean.
-        $schedule->command('employee:clear-old-pto')->yearly();
-        // Clear old PTO to keep database lean.
-        $schedule->command('holiday:clear-old')->yearly();
+        // Clear Prorated PTO limit for new employees yearly on Jan 1st at 1 AM
+        $schedule->command('employee:clear-pto-limit')->yearly()->at('01:00');
+        // Clear old PTO to keep database lean - Jan 1st at 2 AM
+        $schedule->command('employee:clear-old-pto')->yearly()->at('02:00');
+        // Clear old holidays to keep database lean - Jan 1st at 3 AM
+        $schedule->command('holiday:clear-old')->yearly()->at('03:00');
     }
 
     /**

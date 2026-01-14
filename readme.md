@@ -44,7 +44,7 @@ Then visit http://localhost:8000
 ## Environment
 
 - **PHP**: 7.2 (matches production)
-- **Laravel**: 5.6
+- **Laravel**: 6.x
 - **Database**: SQLite
 - **Web Server**: Nginx
 - **Node**: 18 (for asset compilation)
