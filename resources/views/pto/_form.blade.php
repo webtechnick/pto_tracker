@@ -42,6 +42,7 @@
                     <input type="checkbox" name="half_day" id="half_day" value="1">
                     <span class="glyphicon glyphicon-adjust"></span> Half day only
                 </label>
+                <small class="help-text">Specify AM or PM in Public Note</small>
             </div>
 
             <div class="form-group">
