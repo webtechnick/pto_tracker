@@ -97,3 +97,125 @@ $icon-font-path: "/fonts/bootstrap/";
     max-height: 750px;
     overflow-y: auto;
 }
+
+/* PTO Request Form Panel */
+.pto-request-panel {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-bottom: 20px;
+    
+    .panel-heading {
+        background: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 14px 18px;
+        font-size: 16px;
+        
+        .glyphicon {
+            margin-right: 8px;
+        }
+    }
+    
+    .panel-body {
+        background: white;
+        border-radius: 0 0 8px 8px;
+        padding: 20px;
+    }
+    
+    label {
+        font-weight: 600;
+        color: #444;
+        font-size: 13px;
+        margin-bottom: 6px;
+        
+        .glyphicon {
+            color: #667eea;
+            margin-right: 4px;
+        }
+        
+        .text-muted {
+            font-weight: 400;
+        }
+    }
+    
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        padding: 10px 12px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        
+        &:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+    }
+    
+    .date-range-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        
+        .date-field {
+            flex: 1;
+            margin-bottom: 0;
+            min-width: 0; // Allow flex items to shrink below content size
+            
+            .form-control {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+        }
+        
+        .date-arrow {
+            color: #999;
+            flex-shrink: 0;
+            margin-top: 22px; // Align with inputs (accounting for label height)
+        }
+    }
+    
+    .half-day-toggle {
+        background: #f8f9fa;
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        
+        label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+        
+        .glyphicon {
+            color: #888;
+        }
+    }
+    
+    .pto-submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 6px;
+        margin-top: 10px;
+        transition: transform 0.15s, box-shadow 0.15s;
+        
+        .glyphicon {
+            margin-right: 6px;
+        }
+        
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}

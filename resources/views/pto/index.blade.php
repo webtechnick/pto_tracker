@@ -16,7 +16,9 @@
             <calendar :year="year" :ptos="ptos" :holidays="holidays"></calendar>
         </div>
         <div class="col-md-3">
-            @include('pto._form')
+            <div class="row">
+                @include('pto._form')
+            </div>
 
             <div class="row">
                 <currentday :year="year" :admin="admin" :ptos="ptos" :holidays="holidays"></currentday>
