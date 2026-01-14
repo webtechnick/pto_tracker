@@ -4,7 +4,7 @@
             <div class="panel-heading">
                 Day: {{ currentday.format('l') }}
             </div>
-            <div class="panel-body">
+            <div class="panel-body current-day-body">
                 <ol class="list-group">
                     <li class="list-group-item" v-for="event in events">
                         <div class="pull-right">

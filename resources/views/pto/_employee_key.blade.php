@@ -1,8 +1,9 @@
-<div class="panel panel-default">
+<div class="panel panel-default employee-key-panel">
     <div class="panel-heading">
         <strong>All Resource Units</strong>
+        <span class="badge employee-count">{{ $employees->count() }}</span>
     </div>
-    <div class="panel-body">
+    <div class="panel-body employee-key-body">
         <ul class="list-group">
             <li class="list-group-item">
                 <span class="employee" style="background-color: black; color: white;">Resource Unit</span>
@@ -12,28 +13,12 @@
             <li class="list-group-item">
                 <span class="employee" style="background-color: {{ $employee->bgcolor }}; color: {{ $employee->color }};">{{ $employee->name }}</span>
 
-                {{-- @if ( (Auth::check() && Auth::user()->isAdmin()) || (isset($user) && $user->name == $employee->name) ) --}}
-                {{-- @can('view-pto', $employee) Can't use policy because it HAS to have a user object *sad face* --}}
                 @if ($employee->canViewPto())
                     <span class="badge"><strong>{{ $employee->daysLeft($year) }}</strong></span>
-                    <span>
-                        @if($employee->daysLeft($year) != $employee->pendingDaysLeft($year))
-                            <small>(Pending Left: {{ $employee->pendingDaysLeft($year) }})</small>
-                        @endif
-                    </span>
-                {{-- @endcan --}}
+                    @if($employee->daysLeft($year) != $employee->pendingDaysLeft($year))
+                        <small class="pending-pto">(Pending: {{ $employee->pendingDaysLeft($year) }})</small>
+                    @endif
                 @endif
-                <!-- <div class="row">
-                    <div class="col-md-8">
-
-                    </div>
-                    <div class="col-md-4">
-
-                    </div>
-                </div> -->
-
-
-
             </li>
             @endforeach
         </ul>
