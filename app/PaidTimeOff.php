@@ -29,6 +29,20 @@ class PaidTimeOff extends Model
         'is_sent_to_calendar' => 'boolean',
     ];
 
+    protected $appends = [
+        'can_remove',
+    ];
+
+    /**
+     * Get the can_remove attribute for JSON serialization
+     *
+     * @return boolean
+     */
+    public function getCanRemoveAttribute()
+    {
+        return $this->canRemove();
+    }
+
     public function getFilters()
     {
         return [
@@ -239,6 +253,21 @@ class PaidTimeOff extends Model
     {
         $this->is_sent_to_calendar = true;
         return $this;
+    }
+
+    /**
+     * Determines if the current user can remove this PTO
+     *
+     * The PTO can be removed by its owner if:
+     * - The user is logged in
+     * - The user is associated with the employee who owns this PTO
+     * - The PTO start_time is in the future
+     *
+     * @return boolean
+     */
+    public function canRemove()
+    {
+        return $this->employee->canRemovePto($this);
     }
 
     /**

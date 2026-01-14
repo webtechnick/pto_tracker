@@ -42,6 +42,7 @@ show_help() {
     echo -e "  ${YELLOW}tinker${NC}     Run Laravel Tinker"
     echo -e "  ${YELLOW}artisan${NC}    Run any Artisan command"
     echo -e "  ${YELLOW}composer${NC}   Run any Composer command"
+    echo -e "  ${YELLOW}npm${NC}        Run any npm command"
     echo -e "  ${YELLOW}fresh${NC}      Run migrate:fresh --seed"
     echo -e "  ${YELLOW}test${NC}       Run PHPUnit tests"
     echo -e "  ${YELLOW}build${NC}      Build front-end assets for production"
@@ -55,6 +56,8 @@ show_help() {
     echo "  ./pto up"
     echo "  ./pto artisan make:model Post"
     echo "  ./pto artisan queue:work"
+    echo "  ./pto npm install"
+    echo "  ./pto npm audit"
 }
 
 # Check if Docker is running
@@ -115,6 +118,11 @@ case "$1" in
         check_docker
         shift 1
         $COMPOSE exec $APP_CONTAINER composer "$@"
+        ;;
+    npm)
+        check_docker
+        shift 1
+        $COMPOSE run --rm node npm "$@"
         ;;
     fresh)
         check_docker

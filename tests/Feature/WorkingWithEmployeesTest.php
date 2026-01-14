@@ -141,4 +141,151 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals($user->employee_id, $employee->id);
         $this->assertNotEquals($new_user->employee_id, $employee->id);
     }
+
+    /** @test */
+    public function employee_can_remove_their_own_future_pto()
+    {
+        $employee = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee);
+
+        // Create a future PTO
+        $futurePto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => now()->addDays(7),
+            'end_time' => now()->addDays(10),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Employee can remove their own future PTO
+        $this->assertTrue($employee->canRemovePto($futurePto));
+        $this->assertTrue($futurePto->canRemove());
+
+        // Make the delete request
+        $response = $this->post('/ptos/owner-destroy/' . $futurePto->id);
+        $response->assertStatus(200);
+
+        $this->assertEquals(0, PaidTimeOff::count());
+    }
+
+    /** @test */
+    public function employee_cannot_remove_their_own_past_pto()
+    {
+        $employee = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee);
+
+        // Create a past PTO
+        $pastPto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => now()->subDays(10),
+            'end_time' => now()->subDays(7),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Employee cannot remove their own past PTO
+        $this->assertFalse($employee->canRemovePto($pastPto));
+        $this->assertFalse($pastPto->canRemove());
+
+        // Make the delete request - should be forbidden
+        $response = $this->post('/ptos/owner-destroy/' . $pastPto->id);
+        $response->assertStatus(403);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+    }
+
+    /** @test */
+    public function employee_cannot_remove_someone_elses_pto()
+    {
+        $employee1 = $this->create('App\Employee');
+        $employee2 = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee1);
+
+        // Create a future PTO for employee2
+        $otherPto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee2->id,
+            'start_time' => now()->addDays(7),
+            'end_time' => now()->addDays(10),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Employee1 cannot remove employee2's PTO
+        $this->assertFalse($employee1->canRemovePto($otherPto));
+        $this->assertFalse($otherPto->canRemove());
+
+        // Make the delete request - should be forbidden
+        $response = $this->post('/ptos/owner-destroy/' . $otherPto->id);
+        $response->assertStatus(403);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+    }
+
+    /** @test */
+    public function employee_cannot_remove_current_pto_that_has_started()
+    {
+        $employee = $this->create('App\Employee');
+        $user = $this->signInEmployee($employee);
+
+        // Create a current PTO (started but not ended)
+        $currentPto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => now()->subDays(1),
+            'end_time' => now()->addDays(3),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Employee cannot remove PTO that has already started
+        $this->assertFalse($employee->canRemovePto($currentPto));
+        $this->assertFalse($currentPto->canRemove());
+
+        // Make the delete request - should be forbidden
+        $response = $this->post('/ptos/owner-destroy/' . $currentPto->id);
+        $response->assertStatus(403);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+    }
+
+    /** @test */
+    public function admin_can_still_remove_any_pto_via_manager_route()
+    {
+        $employee = $this->create('App\Employee');
+        $this->signInAdmin();
+
+        // Create a past PTO (admin should still be able to delete it)
+        $pastPto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => now()->subDays(10),
+            'end_time' => now()->subDays(7),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Admin can remove any PTO via the manager route
+        $response = $this->post('/ptos/destroy/' . $pastPto->id);
+        $response->assertStatus(200);
+
+        $this->assertEquals(0, PaidTimeOff::count());
+    }
+
+    /** @test */
+    public function unauthenticated_user_cannot_remove_pto()
+    {
+        $employee = $this->create('App\Employee');
+
+        $futurePto = $this->create('App\PaidTimeOff', [
+            'employee_id' => $employee->id,
+            'start_time' => now()->addDays(7),
+            'end_time' => now()->addDays(10),
+        ]);
+
+        $this->assertEquals(1, PaidTimeOff::count());
+
+        // Unauthenticated user should be redirected to login
+        $response = $this->post('/ptos/owner-destroy/' . $futurePto->id);
+        $response->assertRedirect('/login');
+
+        $this->assertEquals(1, PaidTimeOff::count());
+    }
 }

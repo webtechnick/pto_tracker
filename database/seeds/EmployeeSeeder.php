@@ -1,6 +1,7 @@
 <?php
 
 use App\Employee;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class EmployeeSeeder extends Seeder
@@ -41,12 +42,17 @@ class EmployeeSeeder extends Seeder
             ['name' => 'Oscar Davis', 'bgcolor' => 'chocolate', 'color' => 'white', 'team' => 'Product'],
             ['name' => 'Valerie England', 'bgcolor' => 'orangered', 'team' => 'Product'],
             ['name' => 'Tyler Shaw', 'bgcolor' => 'purple', 'color' => 'white', 'team' => 'Product'],
+
+            // Test Users - Manager and Employee for testing role-based features
+            ['name' => 'Manager', 'bgcolor' => 'darkgoldenrod', 'color' => 'white', 'team' => 'Engineering', 'link_user' => 'manager@continued.com'],
+            ['name' => 'Employee', 'bgcolor' => 'cadetblue', 'color' => 'white', 'team' => 'Engineering', 'link_user' => 'employee@continued.com'],
         ];
 
         foreach ($employees as $data) {
-            // Extract team before creating employee
+            // Extract team and user link before creating employee
             $team = $data['team'] ?? null;
-            unset($data['team']);
+            $linkUser = $data['link_user'] ?? null;
+            unset($data['team'], $data['link_user']);
 
             // Create the employee
             $employee = Employee::create($data);
@@ -54,6 +60,37 @@ class EmployeeSeeder extends Seeder
             // Assign team tag if specified
             if ($team) {
                 $employee->syncTagString($team);
+            }
+
+            // Link to user account if specified
+            if ($linkUser) {
+                $user = User::where('email', $linkUser)->first();
+                if ($user) {
+                    $user->update(['employee_id' => $employee->id]);
+                }
+            }
+        }
+
+        // Also link existing employees to their user accounts by name
+        $this->linkExistingUsersToEmployees();
+    }
+
+    /**
+     * Link existing users to employees with matching names
+     */
+    private function linkExistingUsersToEmployees()
+    {
+        $usersToLink = [
+            'nick.baker@continued.com' => 'Nick Baker',
+            'lyle.smart@continued.com' => 'Lyle Smart',
+        ];
+
+        foreach ($usersToLink as $email => $employeeName) {
+            $user = User::where('email', $email)->first();
+            $employee = Employee::where('name', $employeeName)->first();
+
+            if ($user && $employee && !$user->employee_id) {
+                $user->update(['employee_id' => $employee->id]);
             }
         }
     }

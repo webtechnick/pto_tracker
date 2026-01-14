@@ -299,6 +299,42 @@ class Employee extends Model
     }
 
     /**
+     * Decides if someone can remove a specific PTO
+     *
+     * An employee can remove their own PTO if:
+     * - They are logged in and associated with this employee
+     * - The PTO belongs to this employee
+     * - The PTO start_time is in the future
+     *
+     * Admins and managers can still remove any PTO via the manager middleware.
+     *
+     * @param  PaidTimeOff $pto
+     * @return boolean
+     */
+    public function canRemovePto(PaidTimeOff $pto)
+    {
+        $user = Auth::user();
+
+        // Must be logged in
+        if (!$user) {
+            return false;
+        }
+
+        // User must be associated with this employee
+        if (!$user->employee_id || (int) $user->employee_id !== (int) $this->id) {
+            return false;
+        }
+
+        // PTO must belong to this employee
+        if ((int) $pto->employee_id !== (int) $this->id) {
+            return false;
+        }
+
+        // PTO must be in the future
+        return $pto->isFuture();
+    }
+
+    /**
      * Decides if someone can view this employee's PTO
      *
      * Check if Authenticated User is admin, otherwise check Google

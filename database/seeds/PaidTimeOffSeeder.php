@@ -123,6 +123,21 @@ class PaidTimeOffSeeder extends Seeder
                 ['start' => '11-20', 'end' => '11-22'],
                 ['start' => '12-23', 'end' => '12-31'],
             ],
+            // Test users - Manager has some PTO
+            'Manager' => [
+                ['start' => '03-10', 'end' => '03-14'],
+                ['start' => '07-21', 'end' => '07-25'],
+                ['start' => '12-23', 'end' => '12-31'],
+            ],
+            // Employee user - mix of past and future PTO for testing cancel feature
+            'Employee' => [
+                ['start' => '01-06', 'end' => '01-10', 'approved' => true],  // Past - cannot cancel
+                ['start' => '02-17', 'end' => '02-21', 'approved' => true],  // Future - can cancel
+                ['start' => '04-14', 'end' => '04-18', 'approved' => false], // Future pending - can cancel
+                ['start' => '06-16', 'end' => '06-20', 'approved' => true],  // Future - can cancel
+                ['start' => '08-25', 'end' => '08-29', 'approved' => true],  // Future - can cancel
+                ['start' => '12-22', 'end' => '12-31', 'approved' => true],  // Future - can cancel
+            ],
         ];
 
         foreach ($paidtimeoffs as $employeeName => $ptos) {
@@ -137,7 +152,7 @@ class PaidTimeOffSeeder extends Seeder
                     'employee_id' => $employee->id,
                     'start_time' => "{$year}-{$pto['start']}",
                     'end_time' => "{$year}-{$pto['end']}",
-                    'is_approved' => true,
+                    'is_approved' => $pto['approved'] ?? true,
                 ]);
             }
         }

@@ -19,6 +19,7 @@
                             <button v-if="showButton(event)" class="btn btn-warning btn-sm" @click="deny(event)">Deny</button>
                             <button v-if="showButton(event)" class="btn btn-danger btn-sm" @click="remove(event)"><span class="glyphicon glyphicon-trash"></span></button>
                             <button v-if="showButton(event)" class="btn btn-info btn-sm" @click="addToGoogle(event)"><span class="glyphicon glyphicon-calendar"></span></button>
+                            <button v-if="canOwnerRemove(event)" class="btn btn-danger btn-sm" @click="ownerRemove(event)"><span class="glyphicon glyphicon-trash"></span> Cancel My PTO</button>
                         </div>
                     </li>
                 </ol>
@@ -28,6 +29,8 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
     name: 'currentday',
     props: {
@@ -77,6 +80,46 @@ export default {
                 return false;
             }
             return true;
+        },
+        canOwnerRemove(event) {
+            // Don't show owner remove if admin/manager buttons are already showing
+            if (this.showButton(event)) {
+                return false;
+            }
+            // Check if PTO has the can_remove flag set by backend
+            return event.pto && event.pto.can_remove;
+        },
+        ownerRemove(event) {
+            Swal.fire({
+                title: 'Cancel PTO Request?',
+                text: 'Are you sure you want to cancel this PTO request? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('/ptos/owner-destroy/' + event.pto.id)
+                        .then(response => {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Your PTO request has been cancelled.',
+                                'success'
+                            );
+                            this.reloadData();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            Swal.fire(
+                                'Error!',
+                                error.response?.data?.error || 'Failed to cancel PTO request.',
+                                'error'
+                            );
+                        });
+                }
+            });
         },
         remove(event) {
             axios.post('/ptos/destroy/' + event.pto.id)

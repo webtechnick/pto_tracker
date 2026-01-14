@@ -116,7 +116,36 @@ class PaidTimeOffsController extends Controller
         $pto = PaidTimeOff::findOrFail($id);
 
         // Trigger Deleted Event. This likely should be a model listener, but
-        // following the pattern of other events being triggered in controller.
+        // Sometimes we do some PTO cleanup and we don't want to send emails to employees.
+        event(new PaidTimeOffDeleted($pto));
+
+        $pto->delete();
+        return 1;
+    }
+
+    /**
+     * Owner Delete their own PTO (future PTO only)
+     *
+     * Allows an employee to delete their own PTO request if the start date
+     * is in the future. Protected by auth middleware.
+     *
+     * @param  int $id
+     * @return mixed
+     */
+    public function ownerDestroy($id = null)
+    {
+        $pto = PaidTimeOff::findOrFail($id);
+
+        // Check if the current user can remove this PTO
+        if (!$pto->canRemove()) {
+            return response()->json([
+                'error' => 'You are not authorized to delete this PTO or it has already started.'
+            ], 403);
+        }
+
+        // Trigger Deleted Event
+        // This currently triggers an email to the employee. Might consider updating this to a new event that doesn't send an email.
+        // Or perhaps it sends an email to the manager that the PTO was deleted by owner.
         event(new PaidTimeOffDeleted($pto));
 
         $pto->delete();

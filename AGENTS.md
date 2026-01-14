@@ -27,10 +27,13 @@ All Docker operations use the `./pto` CLI script:
 ./pto ssh         # Shell into app container
 ./pto artisan     # Run artisan commands
 ./pto composer    # Run composer commands
+./pto npm         # Run npm commands (install, update, audit, etc.)
 ./pto fresh       # Reset database with seeds
 ./pto test        # Run PHPUnit tests
 ./pto build       # Compile frontend assets
 ```
+
+> **AI Agent Note:** When running `./pto` commands, always use `required_permissions: ["all"]` to ensure Docker networking and container access work correctly.
 
 ## Architecture
 
