@@ -129,12 +129,29 @@ export default {
                 return html;
             }
 
+            // Collect all PTOs for this day
+            let dayPtos = [];
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
                 if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
-                    html += this.renderPto(pto);
+                    dayPtos.push(pto);
                 }
             }
+
+            // Show up to 10, then "+N more" for overflow
+            const maxVisible = 10; // Set to Infinity if want to disable. const maxVisible = Infinity;
+            const visiblePtos = dayPtos.slice(0, maxVisible);
+            const overflowCount = dayPtos.length - maxVisible;
+
+            for (let pto of visiblePtos) {
+                html += this.renderPto(pto);
+            }
+
+            if (overflowCount > 0) {
+                const allNames = dayPtos.map(p => p.employee.name).join(', ');
+                html += `<span class="pto-overflow" title="${allNames}">+${overflowCount}</span>`;
+            }
+
             if (month == 12 && day == 31) {
                 this.finishedLoading();
             }
@@ -253,7 +270,6 @@ export default {
     border-collapse: collapse;
     background: #fff;
     border-radius: 4px;
-    overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
@@ -284,6 +300,8 @@ export default {
     vertical-align: top;
     padding: 4px;
     transition: background-color 0.15s ease;
+    position: relative;
+    overflow: visible;
 }
 
 .day:hover {
@@ -329,6 +347,27 @@ export default {
 
 .pending {
     opacity: 0.45;
+}
+
+/* Overflow indicator - full width footer button */
+.pto-overflow {
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6c757d;
+    background: #e9ecef;
+    border-radius: 3px;
+    padding: 2px 0;
+    margin-top: 2px;
+    cursor: help;
+    transition: background-color 0.15s ease;
+}
+
+.pto-overflow:hover {
+    background: #dee2e6;
+    color: #495057;
 }
 
 /* Special day states */
