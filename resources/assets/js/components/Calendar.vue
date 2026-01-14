@@ -294,7 +294,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 2px;
+    gap: 1px;
     color: #495057;
     text-decoration: none;
     font-size: 12px;
@@ -310,17 +310,21 @@ export default {
 .day-number {
     font-weight: 500;
     color: #495057;
-    min-width: 16px;
+    width: 100%;
+    display: block;
+    margin-bottom: 2px;
 }
 
 /* PTO indicators */
 .pto-day {
-    border-radius: 3px;
-    padding: 0 3px;
+    border-radius: 2px;
     font-size: 10px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 14px;
     display: inline-block;
+    width: 14px;
+    height: 14px;
+    text-align: center;
 }
 
 .pending {
