@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="panel panel-default" v-if="events.length">
+        <div class="panel panel-default current-day-panel" v-if="events.length">
             <div class="panel-heading">
                 Day: {{ currentday.format('l') }}
             </div>

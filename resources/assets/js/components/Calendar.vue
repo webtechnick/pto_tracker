@@ -231,6 +231,11 @@ export default {
                     return 'holiday';
                 }
             }
+            // Saturday (6) or Sunday (0)
+            let dayOfWeek = currentday.day();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                return 'weekend';
+            }
             return '';
         },
         dayId(month, day) {
@@ -305,7 +310,7 @@ export default {
 }
 
 .day:hover {
-    background-color: #f8f9fa;
+    background-color: #e9e9e9;
 }
 
 .day-link {
@@ -370,22 +375,7 @@ export default {
     color: #495057;
 }
 
-/* Special day states */
-.holiday {
-    background-color: #ffe0e6;
-}
-
-.half-holiday {
-    background-color: #fff3cd;
-}
-
-.today {
-    background-color: #d4edfc;
-}
-
-.selectedday {
-    background-color: #d4edda;
-}
+/* Special day states - defined in app.scss for reuse */
 
 /* Responsive: 2 columns on tablets */
 @media (max-width: 992px) {

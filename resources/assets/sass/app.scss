@@ -9,6 +9,16 @@
 $icon-font-path: "/fonts/bootstrap/";
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+// Calendar day state colors (single source of truth)
+$color-holiday: #ffe0e6;
+$color-half-holiday: #fff3cd;
+$color-today: #d4edfc;
+$color-selected: #d4edda;
+$color-selected-border: #c3e6cb;
+$color-selected-text: #155724;
+$color-weekend: #f9f9f9;
+$color-hover: #e9e9e9;
+
 .level {
     display: flex; align-items: center;
 }
@@ -92,7 +102,32 @@ $icon-font-path: "/fonts/bootstrap/";
     margin-left: 4px;
 }
 
-/* Current Day Panel */
+/* Calendar day states (moved from Calendar.vue for reuse) */
+.holiday {
+    background-color: $color-holiday;
+}
+.half-holiday {
+    background-color: $color-half-holiday;
+}
+.today {
+    background-color: $color-today;
+}
+.selectedday {
+    background-color: $color-selected;
+}
+.weekend {
+    background-color: $color-weekend;
+}
+
+/* Current Day Panel - uses selected day color */
+.current-day-panel {
+    .panel-heading {
+        background-color: $color-selected;
+        border-color: $color-selected-border;
+        color: $color-selected-text;
+        font-weight: 600;
+    }
+}
 .current-day-body {
     max-height: 750px;
     overflow-y: auto;
