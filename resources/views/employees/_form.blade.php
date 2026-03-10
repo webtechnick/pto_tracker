@@ -44,5 +44,12 @@
             <label for="manager_id">Manager: <small>If manager is not in list, please ask manager to create a PTO account</small></label>
             {{ Form::select('manager_id', App\User::allManagers()->orderBy('name','ASC')->pluck('name','id'), null, ['class' => 'form-control', 'placeholder' => 'Select One..']) }}
         </div>
+        <div class="checkbox">
+            <label>
+                {{ Form::hidden('is_contractor', 0) }}
+                {{ Form::checkbox('is_contractor', 1, null) }}
+                Contractor <small>(holidays count as work days)</small>
+            </label>
+        </div>
     </div>
 </div>

@@ -129,6 +129,12 @@ class PaidTimeOffSeeder extends Seeder
                 ['start' => '07-21', 'end' => '07-25'],
                 ['start' => '12-23', 'end' => '12-31'],
             ],
+            // Contractor - PTO overlapping holidays to test contractor behavior
+            'Contractor' => [
+                ['start' => '07-01', 'end' => '07-07'],    // Overlaps Independence Day (Jul 4th)
+                ['start' => '08-18', 'end' => '08-22'],    // Overlaps summer half-day Friday
+                ['start' => '12-23', 'end' => '12-31'],    // Overlaps Christmas holidays
+            ],
             // Employee user - mix of past and future PTO for testing cancel feature
             'Employee' => [
                 ['start' => '01-06', 'end' => '01-10', 'approved' => true],  // Past - cannot cancel

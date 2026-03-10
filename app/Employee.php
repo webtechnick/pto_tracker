@@ -27,10 +27,12 @@ class Employee extends Model
         'phone',
         'max_days_off',
         'manager_id',
+        'is_contractor',
     ];
 
     protected $casts = [
-        'is_on_call' => 'boolean'
+        'is_on_call' => 'boolean',
+        'is_contractor' => 'boolean',
     ];
 
     protected static function boot()
@@ -150,6 +152,27 @@ class Employee extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Scope to contractor employees
+     *
+     * @param  [type] $query [description]
+     * @return [type]        [description]
+     */
+    public function scopeContractor($query)
+    {
+        return $query->where('is_contractor', true);
+    }
+
+    /**
+     * Is the employee a contractor?
+     *
+     * @return boolean
+     */
+    public function isContractor()
+    {
+        return !!$this->is_contractor;
     }
 
     /**

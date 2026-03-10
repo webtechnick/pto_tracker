@@ -179,6 +179,7 @@ class PaidTimeOff extends Model
 
         // Walk through the PTO requested
         // Check for Holidays and weekends
+        $isContractor = $this->employee && $this->employee->isContractor();
         $current_day = Carbon::parse($this->start_time);
         $this->days = 0;
         while ($current_day->timestamp <= $this->end_time->timestamp) {
@@ -188,17 +189,20 @@ class PaidTimeOff extends Model
                 continue;
             }
 
-            // If it's a half day holiday, add a half day and move onto next day
-            if (Holiday::isHalfDayHoliday($current_day)) {
-                $this->days += .5;
-                $current_day->addDay();
-                continue;
-            }
+            // Contractors don't get company holidays -- skip holiday logic for them
+            if (!$isContractor) {
+                // If it's a half day holiday, add a half day and move onto next day
+                if (Holiday::isHalfDayHoliday($current_day)) {
+                    $this->days += .5;
+                    $current_day->addDay();
+                    continue;
+                }
 
-            // If it's a holiday, don't add a day, and move onto next day
-            if (Holiday::isHoliday($current_day)) {
-                $current_day->addDay();
-                continue;
+                // If it's a holiday, don't add a day, and move onto next day
+                if (Holiday::isHoliday($current_day)) {
+                    $current_day->addDay();
+                    continue;
+                }
             }
 
             // If we're here, add the day/half-day and move onto next day
