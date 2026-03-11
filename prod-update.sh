@@ -3,7 +3,17 @@
 # Production Deployment Script for PTO Tracker
 # Run this from within the production server at /var/www/laravel/pto_tracker
 #
-# Usage: ./prod-update.sh
+# Deploying:
+#   ./pto deploy              (runs this script remotely via Teleport SSH)
+#
+# Manual deployment:
+#   1. Authenticate with Teleport (if session expired):
+#        tsh login
+#   2. SSH into the production host:
+#        tsh ssh continued_lead@lcg-east2-pto.lacallegroup.com
+#   3. Navigate to the project and run:
+#        cd /var/www/laravel/pto_tracker
+#        ./prod-update.sh
 #
 
 set -e  # Exit on any error
