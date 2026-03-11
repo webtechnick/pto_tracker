@@ -46,6 +46,9 @@ class EmployeeSeeder extends Seeder
             // Test Users - Manager and Employee for testing role-based features
             ['name' => 'Manager', 'bgcolor' => 'darkgoldenrod', 'color' => 'white', 'team' => 'Engineering', 'link_user' => 'manager@continued.com'],
             ['name' => 'Employee', 'bgcolor' => 'cadetblue', 'color' => 'white', 'team' => 'Engineering', 'link_user' => 'employee@continued.com'],
+
+            // Contractor - for testing contractor PTO on holidays
+            ['name' => 'Contractor', 'bgcolor' => 'darkcyan', 'color' => 'white', 'team' => 'Engineering', 'is_contractor' => true],
         ];
 
         foreach ($employees as $data) {

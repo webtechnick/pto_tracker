@@ -125,16 +125,18 @@ export default {
             if (this.isWeekend(currentday)) {
                 return html;
             }
-            if (this.isFullDayHoliday(currentday)) {
-                return html;
-            }
+
+            let isFullDayHoliday = this.isFullDayHoliday(currentday);
 
             // Collect all PTOs for this day
+            // On full-day holidays, only show contractor PTO
             let dayPtos = [];
             for (let i in this.ptos) {
                 let pto = this.ptos[i];
                 if (currentday.isBetween(pto.start_time, pto.end_time, 'day', '[]')) {
-                    dayPtos.push(pto);
+                    if (!isFullDayHoliday || pto.employee.is_contractor) {
+                        dayPtos.push(pto);
+                    }
                 }
             }
 
