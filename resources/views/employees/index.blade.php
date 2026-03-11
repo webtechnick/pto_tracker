@@ -5,6 +5,9 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <span class="name">{{ $employee->name }}</span>
+                    @if($employee->isContractor())
+                        <span class="label label-info">Contractor</span>
+                    @endif
                     <small>(Teams: {{ $employee->tag_string ?: 'None'}})</small>
                     {{-- <small>(Manager: {{ $employee->manager ? $employee->manager->name : 'None'}})</small> --}}
                     <div class="pull-right">
