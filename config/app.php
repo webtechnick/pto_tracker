@@ -37,6 +37,8 @@ return [
      */
     'department' => env('APP_DEPARTMENT', 'IT'),
 
+    'api_token' => env('API_TOKEN'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

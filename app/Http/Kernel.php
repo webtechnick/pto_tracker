@@ -55,5 +55,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
         'manager' => \App\Http\Middleware\RedirectIfNotManager::class,
         'google' => \App\Http\Middleware\RedirectToGoogleLoginIfNotGoogleAuth::class,
+        'auth.api-token' => \App\Http\Middleware\ApiTokenAuth::class,
     ];
 }

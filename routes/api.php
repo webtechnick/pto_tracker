@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:api');
+
+Route::middleware('auth.api-token')->group(function () {
+    Route::get('/time-off', 'Api\TimeOffController@index');
+    Route::get('/employees', 'Api\EmployeeController@index');
+});

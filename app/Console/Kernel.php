@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         Commands\ClearOldPto::class,
         Commands\ClearOldHoliday::class,
         Commands\EmployeeUserSync::class,
+        Commands\GenerateApiToken::class,
     ];
 
     /**
