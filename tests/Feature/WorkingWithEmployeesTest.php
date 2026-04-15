@@ -47,9 +47,9 @@ class WorkingWithEmployeesTest extends TestCase
 
             $html = view($mail->view, $mail->viewData)->render();
 
-            $this->assertContains($employee1->name, $html);
-            $this->assertContains($employee2->name, $html);
-            $this->assertNotContains($employee3->name, $html);
+            $this->assertContains(e($employee1->name), $html);
+            $this->assertContains(e($employee2->name), $html);
+            $this->assertNotContains(e($employee3->name), $html);
 
             return true;
         });
