@@ -109,3 +109,58 @@ Test database uses SQLite in-memory.
 - Use Eloquent ORM, avoid raw SQL
 - Keep controllers thin, use traits for shared logic
 - Blade templates with minimal PHP logic
+
+## Cursor Cloud specific instructions
+
+### Docker prerequisite
+
+The development environment runs entirely in Docker. Docker must be installed and running before any `./pto` commands work. On Cloud Agent VMs, Docker requires `fuse-overlayfs` storage driver and `iptables-legacy` (see the Dockerfile-in-Docker setup in the system instructions).
+
+Start the Docker daemon in a tmux session before proceeding:
+
+```bash
+# In a tmux session:
+dockerd &
+```
+
+### First-time setup sequence
+
+```bash
+./pto up                       # Build images & start containers
+./pto composer install         # Install PHP dependencies (dev included)
+./pto artisan key:generate     # Generate APP_KEY (only if .env APP_KEY is empty)
+./pto fresh                    # Migrate & seed database
+./pto build                    # Compile frontend assets (Vue 2 + SCSS)
+```
+
+### `.env` configuration gotchas
+
+- `DB_DATABASE` must be an **absolute path** inside the container: `/var/www/database/database.sqlite` (not the relative `database/database.sqlite` from `docker-setup.sh`).
+- `SESSION_DOMAIN` must be `"localhost"` (without port). Setting it to `"localhost:8000"` breaks cookie/session handling and causes 419 CSRF errors.
+- The project was missing `config/logging.php` (required by Laravel 6's LogManager). A standard single-channel config has been added; without it the app returns 500 on every request.
+
+### Running services
+
+| Service | Container | Port | Notes |
+|---------|-----------|------|-------|
+| PHP-FPM (app) | `pto_tracker_app` | 9000 (internal) | Laravel app server |
+| Nginx (webserver) | `pto_tracker_nginx` | 8000 → 80 | App URL: `http://localhost:8000` |
+| Redis | `pto_tracker_redis` | 6379 | Optional (drivers default to file/sync) |
+| Node | `pto_tracker_node` | — | Asset watcher, auto-starts with `./pto up` |
+
+### Storage permissions
+
+After `./pto up`, fix permissions if you see "Permission denied" errors for `storage/logs`:
+
+```bash
+docker exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache
+```
+
+### Test credentials (seeded)
+
+- Admin: `nick.baker@continued.com` / `secret`
+- Regular users are also seeded; check `database/seeds/UserSeeder.php`.
+
+### Known test failure
+
+`Tests\Feature\WorkingWithEmployeesTest::employee_can_remove_their_own_future_pto` fails (pre-existing, not environment-related). 91/92 tests pass.
