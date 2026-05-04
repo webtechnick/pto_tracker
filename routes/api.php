@@ -20,4 +20,5 @@ use Illuminate\Http\Request;
 Route::middleware('auth.api-token')->group(function () {
     Route::get('/time-off', 'Api\TimeOffController@index');
     Route::get('/employees', 'Api\EmployeeController@index');
+    Route::get('/holidays', 'Api\HolidayController@index');
 });
