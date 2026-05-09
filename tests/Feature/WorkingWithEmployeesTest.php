@@ -145,6 +145,8 @@ class WorkingWithEmployeesTest extends TestCase
     /** @test */
     public function employee_can_remove_their_own_future_pto()
     {
+        Mail::fake();
+
         $employee = $this->create('App\Employee');
         $user = $this->signInEmployee($employee);
 
