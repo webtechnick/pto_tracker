@@ -81,6 +81,17 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Normalize storage permissions so the php-fpm user (www-data) can always
+# create the nested cache buckets it needs at runtime. Artisan commands run
+# here as the deploy user, which would otherwise leave deploy-user-owned dirs
+# that www-data can't write into — the cause of intermittent 500s in the
+# rate-limiter/file cache (e.g. the /api/* throttle middleware). The setgid
+# bit makes new subdirectories inherit the www-data group going forward.
+info "Normalizing storage permissions..."
+sudo chgrp -R www-data storage bootstrap/cache
+sudo chmod -R g+rwX storage bootstrap/cache
+sudo find storage bootstrap/cache -type d -exec chmod g+s {} \;
+
 # Bring application back online
 info "Bringing application back online..."
 php artisan up
