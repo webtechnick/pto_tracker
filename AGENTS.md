@@ -112,6 +112,16 @@ Test database uses SQLite in-memory.
 
 ## Cursor Cloud specific instructions
 
+### Automated environment scripts
+
+Install and boot for Cloud Agents are automated and are the source of truth for setup. `.cursor/environment.json` wires them up:
+
+- `scripts/cloud-ensure-docker.sh` — shared bootstrap that installs/starts Docker with the nested-pod settings (`fuse-overlayfs` storage driver + `iptables-legacy`).
+- `scripts/cloud-install.sh` — `install` step: ensures Docker, writes/repairs `.env`, creates the SQLite file, then `./pto up`, `./pto composer install`, `./pto artisan key:generate` (only if `APP_KEY` empty), `./pto fresh`, `./pto build`.
+- `scripts/cloud-start.sh` — `start` step: ensures Docker, repairs the `.env` gotchas, and `./pto up` so `http://localhost:8000` is reachable from the Desktop tab.
+
+The manual steps below document what these scripts do; prefer running the scripts.
+
 ### Docker prerequisite
 
 The development environment runs entirely in Docker. Docker must be installed and running before any `./pto` commands work. On Cloud Agent VMs, Docker requires `fuse-overlayfs` storage driver and `iptables-legacy` (see the Dockerfile-in-Docker setup in the system instructions).
