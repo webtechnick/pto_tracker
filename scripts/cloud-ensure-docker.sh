@@ -85,10 +85,15 @@ ensure_docker_installed() {
 
     _cloud_docker_log "Installing Docker (docker.io + compose plugin + fuse-overlayfs)..."
 
-    export DEBIAN_FRONTEND=noninteractive
-    sudo apt-get update -qq
+    # Pass DEBIAN_FRONTEND *through* sudo (sudo scrubs the caller's env), and
+    # force conffile defaults so a dpkg prompt (e.g. /etc/fuse.conf) can never
+    # block this non-interactive install.
+    sudo env DEBIAN_FRONTEND=noninteractive apt-get update -qq
     # iptables ships the legacy backend that fuse-overlayfs networking needs.
-    sudo apt-get install -y --no-install-recommends \
+    sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        --no-install-recommends \
+        -o Dpkg::Options::=--force-confdef \
+        -o Dpkg::Options::=--force-confold \
         docker.io \
         docker-compose-v2 \
         fuse-overlayfs \

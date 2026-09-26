@@ -145,6 +145,12 @@ main() {
     log "Migrating & seeding database (./pto fresh)..."
     ./pto fresh
 
+    # ./pto build runs a one-off `node` container (docker compose run node npm
+    # run prod). It does not install node_modules first, so install them
+    # explicitly or Laravel Mix ("mix") won't be found.
+    log "Installing frontend dependencies (./pto npm install)..."
+    ./pto npm install
+
     log "Building frontend assets (./pto build)..."
     ./pto build
 
