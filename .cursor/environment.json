@@ -1,4 +1,5 @@
 {
+  "snapshot": "bld-20260928-b1c6789a-6fd0-4b99-9a7a-d08ea83c7e3e",
   "install": "bash scripts/cloud-install.sh",
   "start": "bash scripts/cloud-start.sh"
 }
