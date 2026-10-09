@@ -53,6 +53,12 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" class="theme-toggle" data-theme-toggle role="button" title="Toggle dark mode" aria-label="Toggle dark mode">
+                        <span class="theme-toggle-to-dark">&#9790; Dark</span>
+                        <span class="theme-toggle-to-light">&#9728; Light</span>
+                    </a>
+                </li>
                 <!-- Authentication Links -->
                 @if (Auth::guest())
                     @if (isset($user))

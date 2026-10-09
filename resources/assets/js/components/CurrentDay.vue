@@ -234,9 +234,9 @@ export default {
         },
         isApproved(approved) {
             if (approved) {
-                return `<span class="glyphicon glyphicon-thumbs-up" style="color: green;" aria-hidden="true"></span> Approved`;
+                return `<span class="glyphicon glyphicon-thumbs-up pto-status-approved" aria-hidden="true"></span> Approved`;
             }
-            return `<span class="glyphicon glyphicon-thumbs-down" style="color: red;" aria-hidden="true"></span> Pending`;
+            return `<span class="glyphicon glyphicon-thumbs-down pto-status-pending" aria-hidden="true"></span> Pending`;
         },
         reset() {
             this.events = [];

@@ -1,0 +1,432 @@
+// Dark theme: activated by data-theme="dark" on <html> (set in layouts/_theme.blade.php)
+
+$dark-bg: #16191d;
+$dark-surface: #1f2328;
+$dark-surface-alt: #262b31;
+$dark-hover: #2f353c;
+$dark-border: #363c44;
+$dark-text: #d3d7db;
+$dark-heading: #eceff1;
+$dark-muted: #9aa1a9;
+$dark-link: #6cb8ea;
+$dark-input-bg: #1a1d21;
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --cal-holiday: #4f2632;
+    --cal-half-holiday: #4a3d14;
+    --cal-today: #163b56;
+    --cal-selected: #1c4a2b;
+    --cal-selected-border: #2c6b3f;
+    --cal-selected-text: #b9ebc7;
+    --cal-weekend: #1a1d21;
+    --cal-hover: #{$dark-hover};
+    --cal-month-bg: #{$dark-surface};
+    --cal-month-title-bg: #{$dark-surface-alt};
+    --cal-month-title-text: #{$dark-heading};
+    --cal-weekday-text: #{$dark-muted};
+    --cal-border: #{$dark-border};
+    --cal-day-text: #{$dark-text};
+    --cal-overflow-bg: #{$dark-border};
+    --cal-overflow-hover-bg: #454c55;
+    --cal-overflow-text: #{$dark-text};
+    --muted-text: #{$dark-muted};
+    --link: #{$dark-link};
+    --link-hover: #{lighten($dark-link, 12%)};
+    --status-approved: #5fd38d;
+    --status-pending: #ff8080;
+    --form-panel-bg: #{$dark-surface};
+    --form-panel-label: #{$dark-text};
+    --form-panel-input-border: #{$dark-border};
+    --form-panel-subtle-bg: #{$dark-surface-alt};
+    --form-panel-subtle-text: #{$dark-muted};
+
+    --swal2-background: #{$dark-surface};
+    --swal2-color: #{$dark-text};
+
+    body {
+        background-color: $dark-bg;
+        color: $dark-text;
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .h1, .h2, .h3, .h4, .h5, .h6 {
+        color: $dark-heading;
+    }
+
+    a {
+        color: $dark-link;
+
+        &:hover,
+        &:focus {
+            color: lighten($dark-link, 12%);
+        }
+    }
+
+    hr,
+    .page-header {
+        border-color: $dark-border;
+    }
+
+    .text-muted,
+    .help-block {
+        color: $dark-muted;
+    }
+
+    pre,
+    code {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    // Employee chips keep their own colors; give unset text a dark default and
+    // a faint edge so dark chip colors (navy, slategray) stand off the page.
+    .pto-day,
+    .employee {
+        color: #212529;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .pending {
+        opacity: 0.55;
+    }
+
+    .month {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    // Navbar
+    .navbar-default {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+
+        .navbar-brand,
+        .navbar-nav > li > a {
+            color: $dark-text;
+
+            &:hover,
+            &:focus {
+                color: $dark-heading;
+                background-color: transparent;
+            }
+        }
+
+        .navbar-nav > .open > a,
+        .navbar-nav > .open > a:hover,
+        .navbar-nav > .open > a:focus,
+        .navbar-nav > .active > a {
+            color: $dark-heading;
+            background-color: $dark-surface-alt;
+        }
+
+        .navbar-toggle {
+            border-color: $dark-border;
+
+            &:hover,
+            &:focus {
+                background-color: $dark-surface-alt;
+            }
+
+            .icon-bar {
+                background-color: $dark-text;
+            }
+        }
+
+        .navbar-collapse,
+        .navbar-form {
+            border-color: $dark-border;
+        }
+
+        @media (max-width: $grid-float-breakpoint-max) {
+            .navbar-nav .open .dropdown-menu > li > a {
+                color: $dark-text;
+
+                &:hover,
+                &:focus {
+                    color: $dark-heading;
+                }
+            }
+        }
+    }
+
+    // Dropdowns
+    .dropdown-menu {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+
+        > li > a {
+            color: $dark-text;
+
+            &:hover,
+            &:focus {
+                color: $dark-heading;
+                background-color: $dark-hover;
+            }
+        }
+
+        .divider {
+            background-color: $dark-border;
+        }
+    }
+
+    // Panels, wells, list groups
+    .panel {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        box-shadow: none;
+    }
+
+    .panel-default > .panel-heading {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-heading;
+    }
+
+    .pto-request-panel {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+
+        > .panel-heading {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+    }
+
+    .current-day-panel > .panel-heading {
+        background-color: var(--cal-selected);
+        border-color: var(--cal-selected-border);
+        color: var(--cal-selected-text);
+    }
+
+    .panel-footer {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+    }
+
+    .well {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+    }
+
+    .list-group-item {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    a.list-group-item:hover,
+    button.list-group-item:hover {
+        background-color: $dark-hover;
+    }
+
+    .badge {
+        background-color: #4b535c;
+        color: #fff;
+    }
+
+    .employee-count {
+        background-color: #2f7f99;
+    }
+
+    // Tables
+    .table {
+        color: $dark-text;
+
+        > thead > tr > th,
+        > tbody > tr > th,
+        > tbody > tr > td,
+        > tfoot > tr > td {
+            border-color: $dark-border;
+        }
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: $dark-surface-alt;
+    }
+
+    .table-hover > tbody > tr:hover {
+        background-color: $dark-hover;
+    }
+
+    .table-bordered {
+        border-color: $dark-border;
+    }
+
+    // Forms
+    .form-control,
+    .input-group-addon {
+        background-color: $dark-input-bg;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .form-control {
+        &:focus {
+            border-color: $dark-link;
+            box-shadow: 0 0 0 3px rgba(108, 184, 234, 0.2);
+        }
+
+        &::placeholder {
+            color: #737b84;
+        }
+
+        &[disabled],
+        &[readonly] {
+            background-color: $dark-surface-alt;
+        }
+    }
+
+    .control-label,
+    label {
+        color: $dark-text;
+    }
+
+    .has-error {
+        .form-control {
+            border-color: #e06c75;
+        }
+
+        .help-block,
+        .control-label {
+            color: #ff8a8a;
+        }
+    }
+
+    // Buttons
+    .btn-default {
+        background-color: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-text;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: $dark-hover;
+            border-color: #4a525b;
+            color: $dark-heading;
+        }
+    }
+
+    .btn-link {
+        color: $dark-link;
+    }
+
+    // Alerts
+    .alert-success {
+        background-color: #183b27;
+        border-color: #23573a;
+        color: #b9ebc7;
+    }
+
+    .alert-info {
+        background-color: #16364a;
+        border-color: #1f4f6b;
+        color: #b6dcf2;
+    }
+
+    .alert-warning {
+        background-color: #43391a;
+        border-color: #635425;
+        color: #f2e3a8;
+    }
+
+    .alert-danger {
+        background-color: #4a2121;
+        border-color: #6b2f2f;
+        color: #f5bcbc;
+    }
+
+    // Modals
+    .modal-content {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: $dark-border;
+    }
+
+    .close {
+        color: #fff;
+        text-shadow: none;
+        opacity: 0.6;
+    }
+
+    // Pagination
+    .pagination > li > a,
+    .pagination > li > span {
+        background-color: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-link;
+    }
+
+    .pagination > .disabled > span,
+    .pagination > .disabled > a {
+        background-color: $dark-surface;
+        color: $dark-muted;
+    }
+
+    // jQuery UI datepicker
+    .ui-widget-content {
+        background: $dark-surface;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .ui-widget-header {
+        background: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-heading;
+    }
+
+    .ui-datepicker th {
+        color: $dark-muted;
+    }
+
+    .ui-datepicker .ui-datepicker-prev span,
+    .ui-datepicker .ui-datepicker-next span {
+        filter: invert(1);
+    }
+
+    .ui-state-default,
+    .ui-widget-content .ui-state-default {
+        background: $dark-surface-alt;
+        border-color: $dark-border;
+        color: $dark-text;
+    }
+
+    .ui-state-hover,
+    .ui-widget-content .ui-state-hover,
+    .ui-datepicker .ui-datepicker-prev-hover,
+    .ui-datepicker .ui-datepicker-next-hover {
+        background: $dark-hover;
+        border-color: #4a525b;
+        color: $dark-heading;
+    }
+
+    .ui-state-highlight,
+    .ui-widget-content .ui-state-highlight {
+        background: #163b56;
+        border-color: #1f5a82;
+        color: #d9efff;
+    }
+
+    .ui-state-active,
+    .ui-widget-content .ui-state-active {
+        background: #2a6fa1;
+        border-color: #2a6fa1;
+        color: #fff;
+    }
+
+    .ui-state-disabled {
+        opacity: 0.4;
+    }
+}

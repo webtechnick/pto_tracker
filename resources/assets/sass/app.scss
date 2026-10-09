@@ -19,6 +19,57 @@ $color-selected-text: #155724;
 $color-weekend: #f9f9f9;
 $color-hover: #e9e9e9;
 
+// Theme tokens; dark values live in _dark.scss
+:root {
+    color-scheme: light;
+    --cal-holiday: #{$color-holiday};
+    --cal-half-holiday: #{$color-half-holiday};
+    --cal-today: #{$color-today};
+    --cal-selected: #{$color-selected};
+    --cal-selected-border: #{$color-selected-border};
+    --cal-selected-text: #{$color-selected-text};
+    --cal-weekend: #{$color-weekend};
+    --cal-hover: #{$color-hover};
+    --cal-month-bg: #fff;
+    --cal-month-title-bg: #f8f9fa;
+    --cal-month-title-text: #495057;
+    --cal-weekday-text: #868e96;
+    --cal-border: #e9ecef;
+    --cal-day-text: #495057;
+    --cal-overflow-bg: #e9ecef;
+    --cal-overflow-hover-bg: #dee2e6;
+    --cal-overflow-text: #6c757d;
+    --muted-text: #6c757d;
+    --link: #{$brand-primary};
+    --link-hover: #{darken($brand-primary, 15%)};
+    --status-approved: green;
+    --status-pending: red;
+    --form-panel-bg: #fff;
+    --form-panel-label: #444;
+    --form-panel-input-border: #ddd;
+    --form-panel-subtle-bg: #f8f9fa;
+    --form-panel-subtle-text: #888;
+}
+
+.theme-toggle-to-light {
+    display: none;
+}
+html[data-theme="dark"] {
+    .theme-toggle-to-dark {
+        display: none;
+    }
+    .theme-toggle-to-light {
+        display: inline;
+    }
+}
+
+.pto-status-approved {
+    color: var(--status-approved);
+}
+.pto-status-pending {
+    color: var(--status-pending);
+}
+
 .level {
     display: flex; align-items: center;
 }
@@ -46,11 +97,11 @@ $color-hover: #e9e9e9;
     text-align: center;
 }
 .year-nav a {
-    color: #3097D1;
+    color: var(--link);
     font-size: 1.5em;
     padding: 10px 15px;
     &:hover {
-        color: darken(#3097D1, 15%);
+        color: var(--link-hover);
     }
 }
 
@@ -73,7 +124,7 @@ $color-hover: #e9e9e9;
 }
 .legend-label {
     font-size: 12px;
-    color: #6c757d;
+    color: var(--muted-text);
 }
 
 /* Employee Key Panel */
@@ -98,33 +149,33 @@ $color-hover: #e9e9e9;
     }
 }
 .pending-pto {
-    color: #777;
+    color: var(--muted-text);
     margin-left: 4px;
 }
 
 /* Calendar day states (moved from Calendar.vue for reuse) */
 .holiday {
-    background-color: $color-holiday;
+    background-color: var(--cal-holiday);
 }
 .half-holiday {
-    background-color: $color-half-holiday;
+    background-color: var(--cal-half-holiday);
 }
 .today {
-    background-color: $color-today;
+    background-color: var(--cal-today);
 }
 .selectedday {
-    background-color: $color-selected;
+    background-color: var(--cal-selected);
 }
 .weekend {
-    background-color: $color-weekend;
+    background-color: var(--cal-weekend);
 }
 
 /* Current Day Panel - uses selected day color */
 .current-day-panel {
     .panel-heading {
-        background-color: $color-selected;
-        border-color: $color-selected-border;
-        color: $color-selected-text;
+        background-color: var(--cal-selected);
+        border-color: var(--cal-selected-border);
+        color: var(--cal-selected-text);
         font-weight: 600;
     }
 }
@@ -155,14 +206,14 @@ $color-hover: #e9e9e9;
     }
     
     .panel-body {
-        background: white;
+        background: var(--form-panel-bg);
         border-radius: 0 0 8px 8px;
         padding: 20px;
     }
     
     label {
         font-weight: 600;
-        color: #444;
+        color: var(--form-panel-label);
         font-size: 13px;
         margin-bottom: 6px;
         
@@ -178,7 +229,7 @@ $color-hover: #e9e9e9;
     
     .form-control {
         border-radius: 6px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--form-panel-input-border);
         padding: 10px 12px;
         transition: border-color 0.2s, box-shadow 0.2s;
         
@@ -206,14 +257,14 @@ $color-hover: #e9e9e9;
         }
         
         .date-arrow {
-            color: #999;
+            color: var(--form-panel-subtle-text);
             flex-shrink: 0;
             margin-top: 22px; // Align with inputs (accounting for label height)
         }
     }
     
     .half-day-toggle {
-        background: #f8f9fa;
+        background: var(--form-panel-subtle-bg);
         padding: 10px 12px;
         border-radius: 6px;
         margin-bottom: 15px;
@@ -224,12 +275,12 @@ $color-hover: #e9e9e9;
         }
         
         .glyphicon {
-            color: #888;
+            color: var(--form-panel-subtle-text);
         }
         
         .help-text {
             display: block;
-            color: #888;
+            color: var(--form-panel-subtle-text);
             font-size: 11px;
             margin-top: 4px;
             margin-left: 20px;
@@ -262,3 +313,5 @@ $color-hover: #e9e9e9;
         }
     }
 }
+
+@import "dark";

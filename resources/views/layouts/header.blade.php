@@ -26,6 +26,8 @@
 
 <title>{{ config('app.name', 'Laravel') }}</title>
 
+@include('layouts._theme')
+
 <!-- Styles -->
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="/css/jquery-ui.min.css" rel="stylesheet">
