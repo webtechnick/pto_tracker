@@ -171,6 +171,6 @@ docker exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cac
 - Admin: `nick.baker@continued.com` / `secret`
 - Regular users are also seeded; check `database/seeds/UserSeeder.php`.
 
-### Known test failure
+### Test mail driver
 
-`Tests\Feature\WorkingWithEmployeesTest::employee_can_remove_their_own_future_pto` fails (pre-existing, not environment-related). 91/92 tests pass.
+`phpunit.xml` forces `MAIL_DRIVER=array`, so tests never send real mail regardless of `.env` (which may use `smtp`). Use `Mail::fake()` in tests that need to assert on sent mail. All 100 tests are expected to pass.
