@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Employee;
 use App\Mail\OnCallDigest;
+use App\Mail\PaidTimeOffDeleted as PaidTimeOffDeletedMail;
 use App\PaidTimeOff;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -168,6 +169,10 @@ class WorkingWithEmployeesTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertEquals(0, PaidTimeOff::count());
+
+        Mail::assertSent(PaidTimeOffDeletedMail::class, function ($mail) use ($user, $futurePto) {
+            return $mail->hasTo($user->email) && $mail->pto->is($futurePto);
+        });
     }
 
     /** @test */
