@@ -275,7 +275,7 @@ export default {
     min-height: 280px;
     table-layout: fixed;
     border-collapse: collapse;
-    background: #fff;
+    background: var(--cal-month-bg);
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -285,16 +285,16 @@ export default {
     font-size: 15px;
     font-weight: 600;
     padding: 10px 0;
-    background: #f8f9fa;
-    color: #495057;
-    border-bottom: 1px solid #e9ecef;
+    background: var(--cal-month-title-bg);
+    color: var(--cal-month-title-text);
+    border-bottom: 1px solid var(--cal-border);
 }
 
 .weekday-header th {
     text-align: center;
     font-size: 11px;
     font-weight: 500;
-    color: #868e96;
+    color: var(--cal-weekday-text);
     padding: 8px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -303,7 +303,7 @@ export default {
 /* Day cells */
 .day {
     cursor: pointer;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--cal-border);
     vertical-align: top;
     padding: 4px;
     transition: background-color 0.15s ease;
@@ -312,7 +312,7 @@ export default {
 }
 
 .day:hover {
-    background-color: #e9e9e9;
+    background-color: var(--cal-hover);
 }
 
 .day-link {
@@ -320,7 +320,7 @@ export default {
     flex-wrap: wrap;
     align-content: flex-start;
     gap: 1px;
-    color: #495057;
+    color: var(--cal-day-text);
     text-decoration: none;
     font-size: 12px;
     line-height: 1.3;
@@ -334,7 +334,7 @@ export default {
 /* Day number */
 .day-number {
     font-weight: 500;
-    color: #495057;
+    color: var(--cal-day-text);
     width: 100%;
     display: block;
     margin-bottom: 2px;
@@ -363,8 +363,8 @@ export default {
     text-align: center;
     font-size: 11px;
     font-weight: 600;
-    color: #6c757d;
-    background: #e9ecef;
+    color: var(--cal-overflow-text);
+    background: var(--cal-overflow-bg);
     border-radius: 3px;
     padding: 2px 0;
     margin-top: 2px;
@@ -373,8 +373,8 @@ export default {
 }
 
 .pto-overflow:hover {
-    background: #dee2e6;
-    color: #495057;
+    background: var(--cal-overflow-hover-bg);
+    color: var(--cal-day-text);
 }
 
 /* Special day states - defined in app.scss for reuse */
