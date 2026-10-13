@@ -63,11 +63,6 @@ export default {
         Events.$on('finishedLoading', this.finishLoading.bind(this));
     },
     methods: {
-        finishedLoading() {
-            if (this.ptos.length) {
-                this.loading = false;
-            }
-        },
         startLoading() {
             this.loading = true;
         },
@@ -154,9 +149,6 @@ export default {
                 html += `<span class="pto-overflow" title="${allNames}">+${overflowCount}</span>`;
             }
 
-            if (month == 12 && day == 31) {
-                this.finishedLoading();
-            }
             return html;
         },
         isHoliday(moment_day) {
