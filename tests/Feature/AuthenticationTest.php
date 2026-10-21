@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -88,5 +90,34 @@ class AuthenticationTest extends TestCase
     public function password_reset_request_page_renders()
     {
         $this->get('/password/reset')->assertOk();
+    }
+
+    #[Test]
+    public function password_reset_link_is_sent()
+    {
+        Notification::fake();
+        $user = $this->create(User::class);
+
+        $this->from('/password/reset')
+            ->post('/password/email', ['email' => $user->email])
+            ->assertRedirect('/password/reset')
+            ->assertSessionHas('status');
+
+        Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    #[Test]
+    public function laravel_6_cost_10_password_hashes_still_log_in_and_are_rehashed()
+    {
+        $legacyHash = password_hash('secret', PASSWORD_BCRYPT, ['cost' => 10]);
+        $user = $this->create(User::class, ['password' => $legacyHash]);
+
+        $this->post('/login', ['email' => $user->email, 'password' => 'secret'])->assertRedirect('/');
+
+        $this->assertAuthenticatedAs($user);
+        $rehashed = $user->fresh()->password;
+        $this->assertNotSame($legacyHash, $rehashed);
+        $this->assertSame((int) config('hashing.bcrypt.rounds'), password_get_info($rehashed)['options']['cost']);
+        $this->assertTrue(password_verify('secret', $rehashed));
     }
 }
