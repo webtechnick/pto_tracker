@@ -6,7 +6,7 @@
 
         <div class="panel panel-default">
             <div class="panel-body">
-                <span class="name">{{ env('ALWAYS_ON_CALL_NAME') }}</span> <span class="number pull-right">{{ env('ALWAYS_ON_CALL_NUMBER') }}</span>
+                <span class="name">{{ config('app.always_on_call_name') }}</span> <span class="number pull-right">{{ config('app.always_on_call_number') }}</span>
             </div>
         </div>
 

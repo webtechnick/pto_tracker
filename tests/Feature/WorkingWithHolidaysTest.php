@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Holiday;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -13,7 +14,7 @@ class WorkingWithHolidaysTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_create_a_holiday_from_request()
     {
         $this->assertEquals(0, Holiday::count());
@@ -30,7 +31,7 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals(1, Holiday::count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_update_a_holiday_from_request()
     {
         $holiday = $this->create('App\Holiday');
@@ -52,7 +53,7 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals(false,$holiday->isHalfDay());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_delete_a_holiday()
     {
         $holiday = $this->create('App\Holiday');
@@ -65,7 +66,7 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals(0, Holiday::count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_create_half_holiday_from_request()
     {
         $this->assertEquals(0, Holiday::count());
@@ -89,7 +90,7 @@ class WorkingWithHolidaysTest extends TestCase
         $this->assertEquals(true,$holiday->isHalfDay());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_be_able_to_create_holidays_in_bulk()
     {
         $this->assertEquals(0, Holiday::count());
@@ -112,7 +113,7 @@ Holiday 5, 2022-12-26
         $this->assertEquals(4, Holiday::fullDay()->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_be_able_to_create_holidays_in_bulk_from_asher_post()
     {
         $this->assertEquals(0, Holiday::count());
@@ -142,7 +143,7 @@ Christmas Holiday , Tuesday December 26 2023
         $this->assertEquals(12, Holiday::fullDay()->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_be_able_to_create_half_day_friday_span()
     {
         $this->assertEquals(0, Holiday::count());
@@ -161,7 +162,7 @@ Christmas Holiday , Tuesday December 26 2023
         $this->assertEquals(0, Holiday::fullDay()->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_allow_bulk_half_days_with_different_years()
     {
         $this->assertEquals(0, Holiday::count());
@@ -180,7 +181,7 @@ Christmas Holiday , Tuesday December 26 2023
         $this->assertEquals(0, Holiday::fullDay()->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_duplicate_half_hour_days_on_bulk()
     {
         $holiday = $this->create('App\Holiday', ['title' => 'Half', 'date' => '2023-07-07', 'is_half_day' => true]); // Friday

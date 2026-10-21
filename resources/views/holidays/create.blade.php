@@ -4,11 +4,11 @@
     <div class="container">
         <h1>New Holiday</h1>
 
-        {{ Form::open(['route' => 'admin.holidays.store']) }}
+        {{ html()->form('POST', route('admin.holidays.store'))->open() }}
             @include('holidays/_form')
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Create Holiday</button>
             </div>
-        {{ Form::close() }}
+        {{ html()->form()->close() }}
     </div>
 @endsection

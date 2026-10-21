@@ -6,11 +6,11 @@
 
         <h1>Update Team</h1>
 
-        {{ Form::model($team, ['route' => ['admin.teams.update', $team], 'method' => 'POST']) }}
+        {{ html()->modelForm($team, 'POST', route('admin.teams.update', $team))->open() }}
             @include('teams/_form')
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Update Team</button>
             </div>
-        {{ Form::close() }}
+        {{ html()->closeModelForm() }}
     </div>
 @endsection

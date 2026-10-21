@@ -4,15 +4,19 @@ namespace App;
 
 use App\Events\TagDeleting;
 use App\Traits\Filterable;
+use App\Traits\SerializesDatesAsDateTimeStrings;
+use App\Traits\ToggleActivatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use WebTechNick\LaravelGlow\Traits\ToggleActivatable;
 
 class Tag extends Model
 {
     use Filterable,
+        HasFactory,
+        SerializesDatesAsDateTimeStrings,
         ToggleActivatable;
 
     public $fillable = [

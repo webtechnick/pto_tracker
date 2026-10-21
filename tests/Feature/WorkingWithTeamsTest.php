@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\Mail\OnCallDigest;
 use App\PaidTimeOff;
@@ -16,7 +17,7 @@ class WorkingWithTeamsTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_remove_taggable_when_tag()
     {
         $employee = $this->create('App\Employee');

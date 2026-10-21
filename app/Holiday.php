@@ -2,11 +2,16 @@
 
 namespace App;
 
+use App\Traits\SerializesDatesAsDateTimeStrings;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Holiday extends Model
 {
+    use HasFactory,
+        SerializesDatesAsDateTimeStrings;
+
     protected $fillable = [
         'title', 'date', 'is_half_day',
     ];
@@ -122,7 +127,7 @@ Holiday 5,2022-12-26
         $rows = explode(PHP_EOL,$bulk['bulk']);
 
         foreach ($rows as $row) {
-            $parsed = str_getcsv($row);
+            $parsed = str_getcsv($row, ',', '"', '\\');
 
             $half_day = false;
             if (isset($parsed[2])) {

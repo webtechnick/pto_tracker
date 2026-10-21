@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\Mail\OnCallDigest;
 use App\Mail\PaidTimeOffDeleted as PaidTimeOffDeletedMail;
@@ -17,7 +18,7 @@ class WorkingWithEmployeesTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_remove_pto_when_deleting_employee()
     {
         $employee = $this->create('App\Employee');
@@ -32,7 +33,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(0, PaidTimeOff::count());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_know_oncall_digest()
     {
         Mail::fake();
@@ -48,15 +49,15 @@ class WorkingWithEmployeesTest extends TestCase
 
             $html = view($mail->view, $mail->viewData)->render();
 
-            $this->assertContains(e($employee1->name), $html);
-            $this->assertContains(e($employee2->name), $html);
-            $this->assertNotContains(e($employee3->name), $html);
+            $this->assertStringContainsString(e($employee1->name), $html);
+            $this->assertStringContainsString(e($employee2->name), $html);
+            $this->assertStringNotContainsString(e($employee3->name), $html);
 
             return true;
         });
     }
 
-    /** @test */
+    #[Test]
     public function managers_can_and_manage_all_employees()
     {
         $user = $this->signInManager();
@@ -76,7 +77,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals((float) $data['max_days_off'], (float) $employee->max_days_off);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_be_able_to_manage_employees()
     {
         $user = $this->signIn();
@@ -96,7 +97,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertNotEquals($data['max_days_off'], $employee->max_days_off);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_automatically_sync_to_employee_account_if_unclaimed_employee_with_same_name_exists()
     {
         $employee = $this->create('App\Employee', ['name' => 'John Smith']);
@@ -118,7 +119,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals($user->employee_id, $employee->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_overwrite_already_claimed_employee_with_same_name()
     {
         $employee = $this->create('App\Employee', ['name' => 'John Smith']);
@@ -143,7 +144,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertNotEquals($new_user->employee_id, $employee->id);
     }
 
-    /** @test */
+    #[Test]
     public function employee_can_remove_their_own_future_pto()
     {
         Mail::fake();
@@ -175,7 +176,7 @@ class WorkingWithEmployeesTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function employee_cannot_remove_their_own_past_pto()
     {
         $employee = $this->create('App\Employee');
@@ -201,7 +202,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(1, PaidTimeOff::count());
     }
 
-    /** @test */
+    #[Test]
     public function employee_cannot_remove_someone_elses_pto()
     {
         $employee1 = $this->create('App\Employee');
@@ -228,7 +229,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(1, PaidTimeOff::count());
     }
 
-    /** @test */
+    #[Test]
     public function employee_cannot_remove_current_pto_that_has_started()
     {
         $employee = $this->create('App\Employee');
@@ -254,7 +255,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(1, PaidTimeOff::count());
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_still_remove_any_pto_via_manager_route()
     {
         $employee = $this->create('App\Employee');
@@ -276,7 +277,7 @@ class WorkingWithEmployeesTest extends TestCase
         $this->assertEquals(0, PaidTimeOff::count());
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_user_cannot_remove_pto()
     {
         $employee = $this->create('App\Employee');

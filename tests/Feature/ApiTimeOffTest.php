@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\PaidTimeOff;
 use Tests\TestCase;
@@ -20,7 +21,7 @@ class ApiTimeOffTest extends TestCase
         $this->headers = ['Authorization' => 'Bearer test-token'];
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_start_date_and_end_date()
     {
         $response = $this->getJson('/api/time-off', $this->headers);
@@ -29,7 +30,7 @@ class ApiTimeOffTest extends TestCase
                  ->assertJsonValidationErrors(['start_date', 'end_date']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_end_date_is_after_or_equal_to_start_date()
     {
         $response = $this->getJson('/api/time-off?' . http_build_query([
@@ -41,7 +42,7 @@ class ApiTimeOffTest extends TestCase
                  ->assertJsonValidationErrors(['end_date']);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_approved_pto_in_date_range()
     {
         $employee = $this->create(Employee::class);
@@ -76,11 +77,11 @@ class ApiTimeOffTest extends TestCase
         $response->assertStatus(200)
                  ->assertJsonCount(1, 'data')
                  ->assertJsonPath('data.0.employee_id', $employee->id)
-                 ->assertJsonPath('data.0.pto_days', 3.0)
+                 ->assertJsonPath('data.0.pto_days', 3)
                  ->assertJsonCount(1, 'data.0.entries');
     }
 
-    /** @test */
+    #[Test]
     public function it_excludes_pto_outside_date_range()
     {
         $employee = $this->create(Employee::class);
@@ -102,7 +103,7 @@ class ApiTimeOffTest extends TestCase
                  ->assertJsonCount(0, 'data');
     }
 
-    /** @test */
+    #[Test]
     public function it_filters_by_employee_ids()
     {
         $employee1 = $this->create(Employee::class);
@@ -135,7 +136,7 @@ class ApiTimeOffTest extends TestCase
                  ->assertJsonPath('data.0.employee_id', $employee1->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_filters_by_employee_names_case_insensitively()
     {
         $employee = $this->create(Employee::class, ['name' => 'Jane Doe']);
@@ -159,7 +160,7 @@ class ApiTimeOffTest extends TestCase
                  ->assertJsonPath('data.0.employee_name', 'Jane Doe');
     }
 
-    /** @test */
+    #[Test]
     public function it_sums_pto_days_including_half_days()
     {
         $employee = $this->create(Employee::class);

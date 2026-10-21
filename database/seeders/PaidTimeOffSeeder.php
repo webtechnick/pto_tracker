@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Employee;
 use App\PaidTimeOff;
 use Illuminate\Database\Seeder;

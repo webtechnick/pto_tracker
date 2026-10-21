@@ -10,8 +10,9 @@ PTO Tracker is a Laravel application for managing employee Paid Time Off request
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| PHP | 7.2 | **Production constraint** - cannot upgrade yet |
-| Laravel | 6.x | LTS version compatible with PHP 7.2 |
+| PHP | 8.4 | `php:8.4-fpm-trixie` image; servers need 8.4.27+ (PHP2Shell fix) |
+| Laravel | 13.x | Laravel 11+ application structure (`bootstrap/app.php`) |
+| PHPUnit | 12 | Tests use `#[Test]` attributes (docblock `@test` is not supported) |
 | Database | SQLite | Simple file-based DB |
 | Frontend | Vue 2 + Bootstrap 3 | Legacy stack |
 | Asset Build | Laravel Mix 6 | Webpack-based |
@@ -21,7 +22,7 @@ PTO Tracker is a Laravel application for managing employee Paid Time Off request
 All Docker operations use the `./pto` CLI script:
 
 ```bash
-./pto up          # Start containers
+./pto up          # Start containers (rebuilds the app image if the Dockerfile changed)
 ./pto down        # Stop containers
 ./pto rebuild     # Rebuild from scratch
 ./pto ssh         # Shell into app container
@@ -39,13 +40,16 @@ All Docker operations use the `./pto` CLI script:
 
 ### Directory Structure
 
+- `bootstrap/app.php` - Routing, middleware aliases, exception config (no HTTP/console kernels)
+- `bootstrap/providers.php` - Service providers (`AppServiceProvider` maps event listeners and policies)
 - `app/` - Laravel application code
   - `Http/Controllers/` - Request handlers
   - `Traits/` - Reusable model traits (Filterable, Taggable, etc.)
   - `Events/` & `Listeners/` - Event-driven features
   - `Mail/` - Email templates
-- `database/seeds/` - Test data seeders
-- `resources/views/` - Blade templates
+- `database/factories/` - Class-based model factories (`Model::factory()`)
+- `database/seeders/` - Test data seeders (`Database\Seeders` namespace)
+- `resources/views/` - Blade templates (forms use `spatie/laravel-html`: `html()->text(...)`)
 - `resources/assets/` - Vue components and SCSS
 
 ### Key Models
@@ -64,10 +68,28 @@ All Docker operations use the `./pto` CLI script:
 
 ## Known Constraints
 
-1. **PHP 7.2** - Production server runs 7.2.34, cannot upgrade without DevOps
-2. **Laravel 6.x** - LTS version, last to support PHP 7.2
-3. **Debian Buster** - Docker base image uses archived repos (EOL)
-4. **All Laravel 5.x/6.x/7.x are EOL** - Security patches not available
+1. **PHP 8.4.27+ on servers** - `composer.json` requires `^8.4` (platform pinned to 8.4.27); `prod-update.sh` and `./pto deploy` refuse PHP < 8.4.
+2. **Event discovery is off** - listeners are mapped in `AppServiceProvider::$listen`. Turning discovery on registers them twice (duplicate PTO emails); `UpgradeRegressionTest` guards this.
+3. **JSON dates use `Y-m-d H:i:s`** - models use `App\Traits\SerializesDatesAsDateTimeStrings`; the Vue calendar (moment.js) and the API rely on it. Use it on new models.
+4. **`TrimStrings` / `ConvertEmptyStringsToNull` are disabled** - forms post empty strings into NOT NULL columns.
+5. **Legacy `.env` names** - `MAIL_DRIVER`, `MAIL_ENCRYPTION`, `QUEUE_DRIVER`, `CACHE_DRIVER`, `BROADCAST_DRIVER`, `APP_LOG_LEVEL` are fallbacks in `config/*.php`; deployed instances still use them.
+6. **Frontend is legacy** - Vue 2 + Bootstrap 3 + Laravel Mix 6 with committed builds in `public/`.
+7. **Forms go through `App\Support\Html`** - it replaces `Spatie\Html\Html` in the container and escapes input values, textarea contents and select labels (spatie writes textarea contents raw). Keep using `html()->...`; never `->html($userValue)` / `->value()` on a textarea directly.
+8. **No CORS** - `config/cors.php` has no paths; the token API is server-to-server.
+9. **SQLite values come back as strings, like PHP 7.2** - `App\Database\LegacySqliteConnection` (registered in `AppServiceProvider`) converts fetched values to SQLite text (`"15"`, `"4.0"`). The JSON of `/api/time-off` and `/get/ptos` (dora-metrics, Vue) depends on it; `JsonApiContractTest` pins master's exact output. Use `$casts` for real types, never PDO's `ATTR_STRINGIFY_FETCHES` (renders `4.0` as `"4"`).
+
+## Deploying
+
+`./pto deploy` (Teleport) checks the session and the server's PHP (8.4+ required), then on the server enters maintenance mode (best effort), runs `git pull origin master` and the pulled `prod-update.sh`. Manual equivalent on the server: `git pull origin master && ./prod-update.sh`.
+
+### First deploy onto a server still running the Laravel 6 release
+
+1. Upgrade PHP on the server to 8.4.27+ (php-fpm, cli and the extensions in `readme.md`) and point php-fpm/nginx at it.
+2. From an up-to-date checkout of this release run `./pto deploy`. Do **not** run the server's existing `./prod-update.sh` first: that Laravel 6 copy dies at `artisan down` on PHP 8.4. If someone already did, recover with `git pull origin master && ./prod-update.sh` on the server.
+3. The new `prod-update.sh` tolerates the leftover Laravel 6 `vendor/` and caches: while artisan cannot run it serves a static 503 page, deletes the old framework caches, runs `composer install`, then migrates and rebuilds caches. On failure it reports what users currently get (maintenance 503, or THE SITE IS DOWN with the status).
+4. After `artisan up` it requests `APP_URL/login` through this host's web server (`curl --resolve` to 127.0.0.1; override with `PTO_HEALTHCHECK_URL`) and fails unless it gets HTTP 200. That catches nginx/php-fpm still on PHP < 8.4 (Composer's platform check makes the app 500) and broken releases.
+
+`scripts/rehearse-first-deploy.sh` rehearses these paths in Docker against a server built from the pre-upgrade release (needs the app image and `php:7.2-cli`); run it after changing `prod-update.sh` or `./pto deploy`.
 
 ## Testing
 
@@ -83,8 +105,9 @@ Test database uses SQLite in-memory.
 
 ### Add a new Artisan command
 ```bash
-./pto artisan make:command CommandName
+./pto artisan make:command CommandName   # auto-discovered from app/Console/Commands
 ```
+Schedule it in `routes/console.php` with `Schedule::command(...)`.
 
 ### Create migration
 ```bash
@@ -100,7 +123,7 @@ Test database uses SQLite in-memory.
 ```
 
 ### Debug
-- Laravel Debugbar is installed (appears in browser when APP_DEBUG=true)
+- Laravel Debugbar is a dev dependency (appears in browser when APP_DEBUG=true; absent with `composer install --no-dev`)
 - Logs are in `storage/logs/laravel.log`
 
 ## Code Style
@@ -117,8 +140,8 @@ Test database uses SQLite in-memory.
 Install and boot for Cloud Agents are automated and are the source of truth for setup. `.cursor/environment.json` wires them up:
 
 - `scripts/cloud-ensure-docker.sh` — shared bootstrap that installs/starts Docker with the nested-pod settings (`fuse-overlayfs` storage driver + `iptables-legacy`).
-- `scripts/cloud-install.sh` — `install` step: ensures Docker, writes/repairs `.env`, creates the SQLite file, then `./pto up`, `./pto composer install`, `./pto artisan key:generate` (only if `APP_KEY` empty), `./pto fresh`, `./pto build`.
-- `scripts/cloud-start.sh` — `start` step: ensures Docker, repairs the `.env` gotchas, and `./pto up` so `http://localhost:8000` is reachable from the Desktop tab.
+- `scripts/cloud-install.sh` — `install` step: ensures Docker, writes/repairs `.env`, creates the SQLite file, then `./pto up`, checks the app container is on PHP 8.4 (rebuilds otherwise), `./pto composer install`, `./pto artisan key:generate` (only if `APP_KEY` empty), `./pto fresh`, `./pto build`.
+- `scripts/cloud-start.sh` — `start` step: ensures Docker, repairs the `.env` gotchas, and `./pto up` so `http://localhost:8000` is reachable from the Desktop tab. If the snapshot predates the PHP 8.4 upgrade it rebuilds the image, and it reruns `./pto composer install` whenever `vendor/` was installed from a different `composer.lock` (marker: `vendor/composer/installed.lock`).
 
 The manual steps below document what these scripts do; prefer running the scripts.
 
@@ -147,7 +170,7 @@ dockerd &
 
 - `DB_DATABASE` must be an **absolute path** inside the container: `/var/www/database/database.sqlite` (not the relative `database/database.sqlite` from `docker-setup.sh`).
 - `SESSION_DOMAIN` must be `"localhost"` (without port). Setting it to `"localhost:8000"` breaks cookie/session handling and causes 419 CSRF errors.
-- The project was missing `config/logging.php` (required by Laravel 6's LogManager). A standard single-channel config has been added; without it the app returns 500 on every request.
+- Laravel 11+ reads `CACHE_STORE`, `QUEUE_CONNECTION`, `MAIL_MAILER`, `BROADCAST_CONNECTION`, `LOG_LEVEL`; the old `*_DRIVER` / `APP_LOG_LEVEL` names still work as fallbacks.
 
 ### Running services
 
@@ -169,8 +192,13 @@ docker exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cac
 ### Test credentials (seeded)
 
 - Admin: `nick.baker@continued.com` / `secret`
-- Regular users are also seeded; check `database/seeds/UserSeeder.php`.
+- Regular users are also seeded; check `database/seeders/UserSeeder.php`.
+- `APP_ENV=local` skips the Google SSO middleware, so the calendar opens without a Google login.
 
 ### Test mail driver
 
-`phpunit.xml` forces `MAIL_DRIVER=array`, so tests never send real mail regardless of `.env` (which may use `smtp`). Use `Mail::fake()` in tests that need to assert on sent mail. All 100 tests are expected to pass.
+`phpunit.xml` forces `MAIL_MAILER=array` (which wins over a legacy `MAIL_DRIVER`), so tests never send real mail regardless of `.env`. Use `Mail::fake()` in tests that need to assert on sent mail. All 174 tests are expected to pass.
+
+### vendor/ ownership
+
+Composer runs inside the container as root, so `vendor/` is root-owned on the host. Use `./pto composer ...` (or `sudo`) rather than editing it from the host.

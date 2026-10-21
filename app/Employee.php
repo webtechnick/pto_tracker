@@ -5,9 +5,11 @@ namespace App;
 use App\Events\EmployeeDeleting;
 use App\PaidTimeOff;
 use App\Traits\Filterable;
+use App\Traits\SerializesDatesAsDateTimeStrings;
 use App\Traits\Taggable;
 use App\Traits\UtilityScopes;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +19,8 @@ class Employee extends Model
 {
     use UtilityScopes,
         Filterable,
+        HasFactory,
+        SerializesDatesAsDateTimeStrings,
         Taggable;
 
     protected $fillable = [

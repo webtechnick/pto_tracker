@@ -26,6 +26,8 @@ class AddEmployeeIdToUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            // SQLite cannot drop a column that is still indexed.
+            $table->dropIndex(['employee_id']);
             $table->dropColumn('employee_id');
         });
     }
