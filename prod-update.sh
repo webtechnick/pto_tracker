@@ -22,6 +22,10 @@
 
 set -e  # Exit on any error
 
+# Absolute path, so re-running the updated script also works when started as
+# `bash prod-update.sh` (a bare name would be looked up in PATH).
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -71,27 +75,71 @@ fi
 
 DOWN="${PTO_UPDATE_DOWN:-0}"
 
-# Best effort: the installed vendor/ may not run on this PHP (e.g. Laravel 6
-# on PHP 8.4) or may not match freshly pulled code. The 503 page is
-# pre-rendered so it is served while vendor/ is being reinstalled.
+# The site as the web server serves it: APP_URL (or PTO_HEALTHCHECK_URL) with
+# its host pinned to this machine, so nginx + php-fpm are exercised.
+HEALTHCHECK_URL="${PTO_HEALTHCHECK_URL:-$(grep -m1 -E '^APP_URL=' .env 2>/dev/null | cut -d= -f2- | sed -E 's/[[:space:]]+#.*$//; s/^["'"'"']//; s/["'"'"']$//; s#/+$##')/login}"
+
+site_status() {
+    if ! command -v curl > /dev/null 2>&1; then
+        echo "unknown (curl not installed)"
+        return
+    fi
+    local scheme host port
+    scheme="${HEALTHCHECK_URL%%://*}"
+    host="${HEALTHCHECK_URL#*://}"; host="${host%%/*}"
+    port="${host##*:}"; host="${host%%:*}"
+    [ "$port" = "$host" ] && { [ "$scheme" = "https" ] && port=443 || port=80; }
+    curl -sk -o /dev/null -w '%{http_code}' --max-time 15 --resolve "${host}:${port}:127.0.0.1" "$HEALTHCHECK_URL" 2>/dev/null || true
+}
+
+# Static 503 page for when artisan cannot run yet (Laravel 6 vendor/ on PHP
+# 8.4, or new code on the old vendor/). public/index.php serves
+# storage/framework/maintenance.php before loading anything else, and
+# `artisan up` removes it together with the down marker.
+static_maintenance() {
+    mkdir -p storage/framework || return 1
+    cat > storage/framework/maintenance.php <<'PHP' || return 1
+<?php
+// Written by prod-update.sh while dependencies are reinstalled; removed by `php artisan up`.
+http_response_code(503);
+header('Retry-After: 60');
+header('Content-Type: text/html; charset=UTF-8');
+echo '<!DOCTYPE html><html><head><title>Be right back.</title></head><body><h1>Be right back.</h1><p>PTO Tracker is being updated.</p></body></html>';
+exit;
+PHP
+    echo '{"except":[],"redirect":null,"retry":60,"refresh":null,"secret":null,"status":503,"template":null}' > storage/framework/down
+}
+
+# Best effort until composer has installed the vendor/ matching the code.
 enter_maintenance() {
     [ "$DOWN" = 1 ] && return 0
-    if [ ! -f "vendor/autoload.php" ]; then
-        warn "vendor/ not installed yet; maintenance mode after composer install."
-        return 0
+    if [ -f "vendor/autoload.php" ]; then
+        info "Putting application in maintenance mode..."
+        if php artisan down --render="errors::503" --retry=60; then
+            DOWN=1
+            return 0
+        fi
+        warn "Installed code/vendor cannot run artisan here."
     fi
-    info "Putting application in maintenance mode..."
-    if php artisan down --render="errors::503" --retry=60; then
+    if static_maintenance; then
+        warn "Serving a static maintenance page until dependencies are installed."
         DOWN=1
     else
-        warn "Installed code/vendor cannot run artisan here; continuing, will retry after composer install."
+        warn "Could not write a maintenance page; continuing, will retry after composer install."
     fi
 }
 
 on_error() {
+    local status
+    status="$(site_status)"
     error "Deployment failed (line $1)."
     if [ "$DOWN" = 1 ]; then
-        error "The application is still in maintenance mode. Fix the problem and rerun ./prod-update.sh (or run: php artisan up)."
+        error "The site is in maintenance mode: users get the maintenance page (HTTP ${status} from ${HEALTHCHECK_URL})."
+        error "Fix the problem and rerun ./prod-update.sh; only run 'php artisan up' once the app works."
+    elif [ "$status" = "200" ]; then
+        error "The site still answers HTTP 200 at ${HEALTHCHECK_URL}, but this release is only partly deployed. Fix and rerun ./prod-update.sh."
+    else
+        error "THE SITE IS DOWN: ${HEALTHCHECK_URL} returns HTTP ${status}. Fix the problem and rerun ./prod-update.sh."
     fi
 }
 trap 'on_error $LINENO' ERR
@@ -101,12 +149,12 @@ enter_maintenance
 # Pull latest code. If this script itself changed, run the new version so a
 # release's deploy steps always come from that release.
 info "Pulling latest code from git..."
-SCRIPT_HASH_BEFORE="$(git hash-object "$0")"
+SCRIPT_HASH_BEFORE="$(git hash-object "$SCRIPT_PATH")"
 git pull origin master
-if [ "$(git hash-object "$0")" != "$SCRIPT_HASH_BEFORE" ] && [ -z "${PTO_UPDATE_REEXEC:-}" ]; then
-    info "prod-update.sh changed; re-running the updated script..."
+if [ "$(git hash-object "$SCRIPT_PATH")" != "$SCRIPT_HASH_BEFORE" ] && [ -z "${PTO_UPDATE_REEXEC:-}" ]; then
+    info "prod-update.sh changed; re-running the updated script ($SCRIPT_PATH)..."
     trap - ERR
-    PTO_UPDATE_REEXEC=1 PTO_UPDATE_DOWN="$DOWN" exec "$0" "$@"
+    PTO_UPDATE_REEXEC=1 PTO_UPDATE_DOWN="$DOWN" exec bash "$SCRIPT_PATH" "$@"
 fi
 
 # Composer's package:discover boots the new code, which must not read the
@@ -154,6 +202,28 @@ sudo find storage bootstrap/cache -type d -exec chmod g+s {} \;
 # Bring application back online
 info "Bringing application back online..."
 php artisan up
+DOWN=0
+
+# The CLI check above says nothing about the PHP that nginx/php-fpm runs.
+# Composer's platform check makes the app return 500 on PHP < 8.4, so a 200
+# here means the web server runs a supported PHP and the release boots.
+info "Checking ${HEALTHCHECK_URL} through the web server..."
+if command -v pgrep > /dev/null 2>&1; then
+    for fpm in $(pgrep -a -f 'php-fpm: master' 2>/dev/null | grep -oE 'php/[0-9]+\.[0-9]+' | cut -d/ -f2 | sort -u); do
+        case "$fpm" in
+            8.4|8.5|8.[6-9]|9.*) ;;
+            *) warn "A php-fpm ${fpm} master is still running; make sure nginx does not use it." ;;
+        esac
+    done
+fi
+STATUS="$(site_status)"
+if [ "$STATUS" != "200" ]; then
+    error "Post-deploy check failed: ${HEALTHCHECK_URL} returned HTTP ${STATUS} (expected 200)."
+    error "THE SITE IS NOT WORKING. Likely causes: nginx/php-fpm still on PHP < 8.4, or the app errors (see storage/logs/laravel.log)."
+    error "Set PTO_HEALTHCHECK_URL if APP_URL does not reach this server's nginx."
+    exit 1
+fi
+info "Web server answered HTTP 200."
 
 echo ""
 echo "========================================="

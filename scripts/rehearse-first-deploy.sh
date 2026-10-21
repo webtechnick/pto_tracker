@@ -9,8 +9,16 @@
 # image):
 #
 #   A  ./pto deploy (real script, tsh stubbed) after an in-place PHP upgrade
-#   B  code pulled first, then the new ./prod-update.sh
+#   B  code pulled first, then `bash prod-update.sh`
 #   C  the old prod-update.sh run by hand (fails), then the documented recovery
+#   D  ./pto deploy messages (Teleport hint only for auth failures)
+#   E  `bash prod-update.sh` from a release whose script differs (self re-run)
+#   F  web server still on PHP 7.2 -> post-deploy check fails loudly
+#   G  first deploy failing in composer install -> static 503, clear message
+#   G2 same, but no maintenance page can be written -> "THE SITE IS DOWN"
+#
+# Deploy commands run with `php -S` on localhost:80 standing in for nginx +
+# php-fpm, so prod-update.sh's post-deploy check hits a real web server.
 #
 # Usage: scripts/rehearse-first-deploy.sh [NEW_REF] [OLD_REF]
 #   NEW_REF  release to deploy (default HEAD; must be committed)
@@ -45,6 +53,8 @@ on_server() {
             git config --global user.email deploy@example.com 2>/dev/null; git config --global user.name deploy 2>/dev/null
             '"$*"
 }
+
+WEB='php -S 127.0.0.1:80 -t '"$APP_DIR"'/public > /dev/null 2>&1 & sleep 0.5;'
 
 build_old_server() {
     local server="$WORK/$1"
@@ -118,7 +128,7 @@ cat > "$WORK/bin/tsh" <<EOF
 case "\$1" in
     status) exit 0 ;;
     ssh) shift 2; exec docker run --rm -v "$WORK/A:$APP_DIR" -v "$WORK/origin.git:$WORK/origin.git" -w / "$NEW_IMAGE" \
-        bash -c 'printf "#!/bin/sh\nexec \"\\\$@\"\n" > /usr/local/bin/sudo; chmod +x /usr/local/bin/sudo; git config --global --add safe.directory "*"; '"\$*" ;;
+        bash -c 'printf "#!/bin/sh\nexec \"\\\$@\"\n" > /usr/local/bin/sudo; chmod +x /usr/local/bin/sudo; git config --global --add safe.directory "*"; $WEB '"\$*" ;;
 esac
 exit 2
 EOF
@@ -133,7 +143,7 @@ verify_server A
 # --- B: code pulled first, then the new prod-update.sh ---------------------
 say "B: code pulled first (Laravel 6 vendor/ + caches left behind), then ./prod-update.sh"
 build_old_server B
-if on_server "$NEW_IMAGE" "$WORK/B" 'git pull -q origin master && ./prod-update.sh'; then
+if on_server "$NEW_IMAGE" "$WORK/B" "$WEB"' git pull -q origin master && bash prod-update.sh'; then
     pass "B: prod-update.sh exited 0"
 else
     fail "B: prod-update.sh failed"
@@ -148,7 +158,7 @@ if on_server "$NEW_IMAGE" "$WORK/C" './prod-update.sh'; then
 else
     pass "C: old prod-update.sh fails on PHP 8.4 (expected; it cannot be fixed retroactively)"
 fi
-if on_server "$NEW_IMAGE" "$WORK/C" 'git pull -q origin master && ./prod-update.sh'; then
+if on_server "$NEW_IMAGE" "$WORK/C" "$WEB"' git pull -q origin master && ./prod-update.sh'; then
     pass "C: recovery (git pull origin master && ./prod-update.sh) exited 0"
 else
     fail "C: recovery failed"
@@ -167,6 +177,58 @@ grep -q "Deployment failed on pto-rehearsal" <<<"$out" && ! grep -q "tsh login" 
 printf '#!/bin/sh\n[ "$1" = status ] && exit 0\necho 70234\n' > "$WORK/bin/tsh"
 out="$(PATH="$WORK/bin:$PATH" PROD_USERNAME=deploy PROD_HOST=pto-rehearsal "$REPO/pto" deploy 2>&1 || true)"
 grep -q "runs PHP 70234" <<<"$out" && pass "D: PHP 7.2 server refused before deploying" || fail "D: PHP check: $out"
+
+
+# --- E: self re-run when started as `bash prod-update.sh` -------------------
+say "E: bash prod-update.sh from a previous release whose script differs (self re-run)"
+git clone -q "$WORK/origin.git" "$WORK/release" -b master
+git -C "$WORK/release" checkout -q "$NEW_SHA"
+printf '\n# previous release\n' >> "$WORK/release/prod-update.sh"
+git -C "$WORK/release" -c user.email=r@example.com -c user.name=r commit -qam "previous release"
+git -C "$WORK/release" push -q origin HEAD:refs/heads/previous-release
+git -C "$WORK/origin.git" update-ref refs/heads/master "$(git -C "$WORK/release" rev-parse HEAD)"
+git clone -q -b master "$WORK/origin.git" "$WORK/E"
+cp "$WORK/A/.env" "$WORK/E/.env"; cp "$WORK/A/composer.phar" "$WORK/E/composer.phar"; touch "$WORK/E/database/database.sqlite"
+on_server "$NEW_IMAGE" "$WORK/E" 'composer install -q --no-dev --no-interaction && php artisan migrate --force -q &&
+    php artisan tinker --execute="App\Employee::forceCreate([\"name\" => \"Legacy Employee\", \"color\" => \"white\", \"bgcolor\" => \"green\"]); App\Holiday::forceCreate([\"title\" => \"Legacy Holiday\", \"date\" => \"2026-12-25\"]);"'
+git -C "$WORK/origin.git" update-ref refs/heads/master "$NEW_SHA"
+out="$(on_server "$NEW_IMAGE" "$WORK/E" "$WEB"' bash prod-update.sh' 2>&1)" && rc=0 || rc=$?
+echo "$out" | grep -E "INFO|WARN|ERROR" || true
+[ "$rc" = 0 ] && pass "E: bash prod-update.sh exited 0" || fail "E: bash prod-update.sh exited $rc"
+grep -q "re-running the updated script (/var/www/laravel/pto_tracker/prod-update.sh)" <<<"$out" \
+    && pass "E: re-ran the updated script by absolute path" || fail "E: no self re-run"
+verify_server E
+
+# --- F: web server still on PHP 7.2 -----------------------------------------
+say "F: CLI upgraded to PHP 8.4 but the web server still runs PHP 7.2"
+build_old_server F
+docker run -d --rm --name pto-rehearsal-web72 -v "$WORK/F:$APP_DIR" -w "$APP_DIR" "$OLD_IMAGE" \
+    php -S 127.0.0.1:80 -t "$APP_DIR/public" > /dev/null
+out="$(docker run --rm -i --network container:pto-rehearsal-web72 -v "$WORK/F:$APP_DIR" -v "$WORK/origin.git:$WORK/origin.git" -w "$APP_DIR" "$NEW_IMAGE" \
+    bash -c 'printf "#!/bin/sh\nexec \"\$@\"\n" > /usr/local/bin/sudo; chmod +x /usr/local/bin/sudo; git config --global --add safe.directory "*"; git pull -q origin master && bash prod-update.sh' 2>&1)" && rc=0 || rc=$?
+docker rm -f pto-rehearsal-web72 > /dev/null 2>&1 || true
+echo "$out" | grep -E "ERROR|Web server answered" || true
+[ "$rc" != 0 ] && pass "F: deploy exits non-zero ($rc)" || fail "F: deploy reported success with the web server on PHP 7.2"
+grep -q "Post-deploy check failed: http://localhost/login returned HTTP 500" <<<"$out" \
+    && pass "F: post-deploy check reports HTTP 500" || fail "F: no post-deploy failure message"
+
+# --- G: first deploy fails in composer install ------------------------------
+say "G: first deploy fails during composer install"
+build_old_server G
+printf '<?php fwrite(STDERR, "simulated composer failure\\n"); exit(1);\n' > "$WORK/G/composer.phar"
+out="$(on_server "$NEW_IMAGE" "$WORK/G" "$WEB"' git pull -q origin master && bash prod-update.sh; echo "rc=$?"; echo "site $(curl -s -o /tmp/b -w "%{http_code}" http://localhost/login) $(grep -o "Be right back" /tmp/b | head -1)"' 2>&1)"
+echo "$out" | grep -E "ERROR|WARN|^rc=|^site" || true
+grep -q "^rc=1" <<<"$out" && pass "G: deploy exits 1" || fail "G: wrong exit code"
+grep -q "users get the maintenance page (HTTP 503" <<<"$out" && pass "G: error says the site is in maintenance (HTTP 503)" || fail "G: unclear failure message"
+grep -q "^site 503 Be right back" <<<"$out" && pass "G: site serves the static 503 page, not a 500" || fail "G: site not in maintenance"
+
+say "G2: first deploy fails during composer install and no maintenance page can be written"
+build_old_server G2
+printf '<?php exit(1);\n' > "$WORK/G2/composer.phar"
+out="$(on_server "$NEW_IMAGE" "$WORK/G2" "$WEB"' git pull -q origin master && mkdir -p storage/framework/maintenance.php && bash prod-update.sh; echo "rc=$?"' 2>&1)"
+echo "$out" | grep -E "ERROR|^rc=" || true
+grep -q "THE SITE IS DOWN: http://localhost/login returns HTTP 500" <<<"$out" \
+    && pass "G2: error says THE SITE IS DOWN (HTTP 500)" || fail "G2: unclear failure message"
 
 say "Result"
 if [ "$FAILED" = 0 ]; then
