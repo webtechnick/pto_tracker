@@ -74,7 +74,9 @@ case "$1" in
     up)
         check_docker
         echo -e "${GREEN}Starting containers...${NC}"
-        $COMPOSE up -d
+        # --build picks up Dockerfile changes (e.g. a PHP version bump); it is
+        # a cached no-op otherwise.
+        $COMPOSE up -d --build
         echo -e "${GREEN}Containers started! App available at http://localhost:8000${NC}"
         ;;
     down)

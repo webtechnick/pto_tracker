@@ -26,7 +26,7 @@ APP_NAME=PTO_Tracker
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
-APP_LOG_LEVEL=debug
+LOG_LEVEL=debug
 APP_URL=http://localhost:8000
 
 APP_DEPARTMENT="IT"
@@ -41,25 +41,20 @@ SESSION_DOMAIN="localhost"
 DB_CONNECTION=sqlite
 DB_DATABASE=${DB_PATH_IN_CONTAINER}
 
-BROADCAST_DRIVER=log
-CACHE_DRIVER=file
+BROADCAST_CONNECTION=log
+CACHE_STORE=file
 SESSION_DRIVER=file
-QUEUE_DRIVER=sync
+QUEUE_CONNECTION=sync
 
 REDIS_HOST=redis
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
-MAIL_DRIVER=log
+MAIL_MAILER=log
 MAIL_HOST=smtp.mailtrap.io
 MAIL_PORT=2525
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-
-PUSHER_APP_ID=
-PUSHER_KEY=
-PUSHER_SECRET=
 EOF
         ok ".env created"
         return
@@ -118,6 +113,20 @@ ensure_stack_up() {
     done
 }
 
+# Snapshots built before the Laravel 13 upgrade carry a PHP 7.2 app image.
+# ./pto up builds when the Dockerfile changes, but force a clean rebuild if the
+# running container is still on an older PHP.
+ensure_php_version() {
+    if docker_cmd exec pto_tracker_app php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);' 2>/dev/null; then
+        ok "app container runs PHP $(docker_cmd exec pto_tracker_app php -r 'echo PHP_VERSION;')"
+        return
+    fi
+
+    log "app container is not on PHP 8.4; rebuilding image (./pto rebuild)..."
+    ./pto rebuild
+    ensure_stack_up
+}
+
 fix_storage_permissions() {
     docker_cmd exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
 }
@@ -127,10 +136,13 @@ main() {
     ensure_env
     ensure_sqlite_file
     ensure_stack_up
+    ensure_php_version
     fix_storage_permissions
 
     log "Installing PHP dependencies (./pto composer install)..."
     ./pto composer install --no-interaction
+    # Marker cloud-start.sh uses to detect a vendor/ that is out of date.
+    docker_cmd exec pto_tracker_app cp composer.lock vendor/composer/installed.lock
 
     # Generate APP_KEY only when it is empty.
     if grep -qE '^APP_KEY=\s*$' .env; then

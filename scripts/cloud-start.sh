@@ -46,4 +46,18 @@ for _ in $(seq 1 60); do
 done
 docker_cmd exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
 
+# A snapshot built before the Laravel 13 / PHP 8.4 upgrade still has the PHP
+# 7.2 image and a Laravel 6 vendor/. Rebuild and resync so the app boots.
+if ! docker_cmd exec pto_tracker_app php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);' 2>/dev/null; then
+    log "app container is not on PHP 8.4; rebuilding image (./pto rebuild)..."
+    ./pto rebuild
+    docker_cmd exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+fi
+
+if ! cmp -s composer.lock vendor/composer/installed.lock 2>/dev/null; then
+    log "vendor/ does not match composer.lock; running ./pto composer install..."
+    ./pto composer install --no-interaction
+    docker_cmd exec pto_tracker_app cp composer.lock vendor/composer/installed.lock
+fi
+
 ok "App should be available at http://localhost:8000"
