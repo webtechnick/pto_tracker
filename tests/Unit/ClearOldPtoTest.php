@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\PaidTimeOff;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -13,7 +14,7 @@ class ClearOldPtoTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_clear_old_pto_but_keep_the_new()
     {
         $pto = $this->create('App\PaidTimeOff', [

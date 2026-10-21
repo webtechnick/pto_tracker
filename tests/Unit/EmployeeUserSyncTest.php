@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\Holiday;
 use App\User;
@@ -15,7 +16,7 @@ class EmployeeUserSyncTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_clear_old_pto_but_keep_the_new()
     {
         $john = $this->create('App\Employee', ['name' => 'John Smith']);

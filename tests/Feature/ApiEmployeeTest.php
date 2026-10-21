@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,7 +20,7 @@ class ApiEmployeeTest extends TestCase
         $this->headers = ['Authorization' => 'Bearer test-token'];
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_employees_with_expected_shape()
     {
         $this->create(Employee::class, ['name' => 'Jane Doe']);
@@ -36,7 +37,7 @@ class ApiEmployeeTest extends TestCase
                  ->assertJsonPath('data.0.is_contractor', false);
     }
 
-    /** @test */
+    #[Test]
     public function it_paginates_with_per_page_parameter()
     {
         $this->create(Employee::class, [], 3);
@@ -49,7 +50,7 @@ class ApiEmployeeTest extends TestCase
                  ->assertJsonPath('meta.total', 3);
     }
 
-    /** @test */
+    #[Test]
     public function it_works_as_health_check_with_per_page_one()
     {
         $this->create(Employee::class);
@@ -61,7 +62,7 @@ class ApiEmployeeTest extends TestCase
                  ->assertJsonPath('meta.per_page', 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_per_page_is_positive_integer()
     {
         $response = $this->getJson('/api/employees?per_page=0', $this->headers);
@@ -70,7 +71,7 @@ class ApiEmployeeTest extends TestCase
                  ->assertJsonValidationErrors(['per_page']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_per_page_max()
     {
         $response = $this->getJson('/api/employees?per_page=501', $this->headers);
@@ -79,7 +80,7 @@ class ApiEmployeeTest extends TestCase
                  ->assertJsonValidationErrors(['per_page']);
     }
 
-    /** @test */
+    #[Test]
     public function contractors_are_still_active_but_flagged()
     {
         $this->create(Employee::class, ['name' => 'Contractor Bob', 'is_contractor' => true]);

@@ -2,11 +2,16 @@
 
 namespace App;
 
+use App\Traits\SerializesDatesAsDateTimeStrings;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Holiday extends Model
 {
+    use HasFactory,
+        SerializesDatesAsDateTimeStrings;
+
     protected $fillable = [
         'title', 'date', 'is_half_day',
     ];

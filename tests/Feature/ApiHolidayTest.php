@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Holiday;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,7 +20,7 @@ class ApiHolidayTest extends TestCase
         $this->headers = ['Authorization' => 'Bearer test-token'];
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_start_date_and_end_date()
     {
         $response = $this->getJson('/api/holidays', $this->headers);
@@ -28,7 +29,7 @@ class ApiHolidayTest extends TestCase
                  ->assertJsonValidationErrors(['start_date', 'end_date']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_end_date_is_after_or_equal_to_start_date()
     {
         $response = $this->getJson('/api/holidays?' . http_build_query([
@@ -40,7 +41,7 @@ class ApiHolidayTest extends TestCase
                  ->assertJsonValidationErrors(['end_date']);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_holidays_in_date_range()
     {
         Holiday::create(['title' => 'Independence Day', 'date' => '2026-07-03', 'is_half_day' => false]);
@@ -55,10 +56,10 @@ class ApiHolidayTest extends TestCase
                  ->assertJsonCount(1, 'data')
                  ->assertJsonPath('data.0.title', 'Independence Day')
                  ->assertJsonPath('meta.total_holidays', 1)
-                 ->assertJsonPath('meta.total_days', 1.0);
+                 ->assertJsonPath('meta.total_days', 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_counts_half_day_holidays_as_half()
     {
         Holiday::create(['title' => 'Summer Hours', 'date' => '2026-06-05', 'is_half_day' => true]);
@@ -73,10 +74,10 @@ class ApiHolidayTest extends TestCase
         $response->assertStatus(200)
                  ->assertJsonCount(3, 'data')
                  ->assertJsonPath('meta.total_holidays', 3)
-                 ->assertJsonPath('meta.total_days', 2.0);
+                 ->assertJsonPath('meta.total_days', 2);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_holidays_ordered_by_date()
     {
         Holiday::create(['title' => 'Second', 'date' => '2026-07-10', 'is_half_day' => false]);
@@ -92,7 +93,7 @@ class ApiHolidayTest extends TestCase
                  ->assertJsonPath('data.1.title', 'Second');
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_empty_when_no_holidays_in_range()
     {
         Holiday::create(['title' => 'Christmas', 'date' => '2026-12-25', 'is_half_day' => false]);
@@ -105,10 +106,10 @@ class ApiHolidayTest extends TestCase
         $response->assertStatus(200)
                  ->assertJsonCount(0, 'data')
                  ->assertJsonPath('meta.total_holidays', 0)
-                 ->assertJsonPath('meta.total_days', 0.0);
+                 ->assertJsonPath('meta.total_days', 0);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_expected_response_shape()
     {
         Holiday::create(['title' => 'Test Holiday', 'date' => '2026-05-01', 'is_half_day' => false]);
@@ -125,7 +126,7 @@ class ApiHolidayTest extends TestCase
                  ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_auth()
     {
         $response = $this->getJson('/api/holidays?' . http_build_query([

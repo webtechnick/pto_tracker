@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\PaidTimeOff;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -12,7 +13,7 @@ class EmployeeTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function employee_can_have_different_max_days_off_allowed()
     {
         $employee = $this->create('App\Employee');
@@ -24,10 +25,10 @@ class EmployeeTest extends TestCase
         $this->assertEquals(6, $employee->daysLeft());
     }
 
-    /** @test */
+    #[Test]
     public function employee_can_be_on_call()
     {
-        $employee = factory(Employee::class)->create();
+        $employee = Employee::factory()->create();
 
         $this->assertFalse($employee->isOnCall());
 
@@ -36,10 +37,10 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->isOnCall());
     }
 
-    /** @test */
+    #[Test]
     public function we_can_clear_on_call_employees()
     {
-        $employees = factory(Employee::class, 3)->create(['is_on_call' => true]);
+        $employees = Employee::factory()->count(3)->create(['is_on_call' => true]);
 
         foreach ($employees as $employee) {
             $this->assertTrue($employee->isOnCall());
@@ -52,18 +53,18 @@ class EmployeeTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function can_retrive_all_on_call_employees()
     {
-        $employeesOnCall = factory(Employee::class, 2)->create(['is_on_call' => true]);
-        $employeesNotOnCall = factory(Employee::class, 3)->create(['is_on_call' => false]);
+        $employeesOnCall = Employee::factory()->count(2)->create(['is_on_call' => true]);
+        $employeesNotOnCall = Employee::factory()->count(3)->create(['is_on_call' => false]);
 
         $employees = Employee::onCall()->get();
 
         $this->assertCount(2, $employees);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_know_if_user_can_view_pto_because_admin()
     {
         $user = $this->signInAdmin();
@@ -72,7 +73,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_see_pto_because_google_user_is_employee()
     {
         $employee = $this->create('App\Employee', ['name' => 'Nick Baker']);
@@ -84,7 +85,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_see_pto_because_planner_in_team()
     {
         $user_employee = $this->create('App\Employee');
@@ -100,7 +101,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($other_employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_not_see_pto_because_planner_not_in_team()
     {
         $user_employee = $this->create('App\Employee');
@@ -116,7 +117,7 @@ class EmployeeTest extends TestCase
         $this->assertFalse($other_employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_see_all_pto_because_planner_without_employee()
     {
         $user = $this->signInPlanner();
@@ -132,7 +133,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($other_employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_see_own_pto_because_they_are_the_employee()
     {
         $employee = $this->create('App\Employee');
@@ -144,7 +145,7 @@ class EmployeeTest extends TestCase
         $this->assertFalse($employee2->canViewPto()); // Not Their PTO
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_see_pto_because_not_planner_or_admin_or_google_user()
     {
         $user = $this->signIn();
@@ -153,7 +154,7 @@ class EmployeeTest extends TestCase
         $this->assertFalse($employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_has_a_manager()
     {
         $user = $this->signInAdmin();
@@ -164,7 +165,7 @@ class EmployeeTest extends TestCase
         $this->assertEquals($user->id, $manager->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_see_pto_because_user_is_manager()
     {
         $user = $this->signInManager();
@@ -173,7 +174,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_see_pto_because_user_is_manager_but_not_employee_manager()
     {
         $user = $this->signInManager();
@@ -182,7 +183,7 @@ class EmployeeTest extends TestCase
         $this->assertFalse($employee->canViewPto());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_be_managed_by_manager()
     {
         $user = $this->signInManager();
@@ -191,7 +192,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->can_manage);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_be_managed_by_admin_or_manager()
     {
         $user = $this->signInAdmin();
@@ -200,7 +201,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee->can_manage);
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_be_managed_by_user_or_planner()
     {
         $user = $this->signInPlanner();
@@ -209,7 +210,7 @@ class EmployeeTest extends TestCase
         $this->assertFalse($employee->can_manage);
     }
 
-    /** @test */
+    #[Test]
     public function it_has_pto_on_certain_day()
     {
         $employee = $this->create('App\Employee');
@@ -232,7 +233,7 @@ class EmployeeTest extends TestCase
         $this->assertTrue($employee2->hasPTOon('2022-03-05'));
     }
 
-    /** @test */
+    #[Test]
     public function it_has_pto_on_certain_day_even_with_pto_span()
     {
         $employee = $this->create('App\Employee');

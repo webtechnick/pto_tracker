@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Employee;
 use App\Holiday;
@@ -12,27 +13,27 @@ class ContractorTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function employee_can_be_a_contractor()
     {
-        $employee = factory(Employee::class)->create(['is_contractor' => true]);
+        $employee = Employee::factory()->create(['is_contractor' => true]);
 
         $this->assertTrue($employee->isContractor());
     }
 
-    /** @test */
+    #[Test]
     public function employee_is_not_a_contractor_by_default()
     {
-        $employee = factory(Employee::class)->create();
+        $employee = Employee::factory()->create();
 
         $this->assertFalse($employee->isContractor());
     }
 
-    /** @test */
+    #[Test]
     public function scope_contractor_returns_only_contractors()
     {
-        factory(Employee::class, 3)->create(['is_contractor' => false]);
-        factory(Employee::class, 2)->create(['is_contractor' => true]);
+        Employee::factory()->count(3)->create(['is_contractor' => false]);
+        Employee::factory()->count(2)->create(['is_contractor' => true]);
 
         $contractors = Employee::contractor()->get();
 
@@ -42,13 +43,13 @@ class ContractorTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function contractor_is_charged_full_day_on_full_day_holiday()
     {
-        $contractor = factory(Employee::class)->create(['is_contractor' => true]);
-        factory(Holiday::class)->create(['date' => '2017-02-20']); // Monday
+        $contractor = Employee::factory()->create(['is_contractor' => true]);
+        Holiday::factory()->create(['date' => '2017-02-20']); // Monday
 
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'employee_id' => $contractor->id,
             'start_time' => '2017-02-20', // Monday (holiday)
             'end_time' => '2017-02-21',   // Tuesday
@@ -57,13 +58,13 @@ class ContractorTest extends TestCase
         $this->assertEquals(2, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function regular_employee_is_not_charged_on_full_day_holiday()
     {
-        $employee = factory(Employee::class)->create(['is_contractor' => false]);
-        factory(Holiday::class)->create(['date' => '2017-02-20']); // Monday
+        $employee = Employee::factory()->create(['is_contractor' => false]);
+        Holiday::factory()->create(['date' => '2017-02-20']); // Monday
 
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'employee_id' => $employee->id,
             'start_time' => '2017-02-20', // Monday (holiday)
             'end_time' => '2017-02-21',   // Tuesday
@@ -72,13 +73,13 @@ class ContractorTest extends TestCase
         $this->assertEquals(1, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function contractor_is_charged_full_day_on_half_day_holiday()
     {
-        $contractor = factory(Employee::class)->create(['is_contractor' => true]);
-        factory(Holiday::class)->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday half day
+        $contractor = Employee::factory()->create(['is_contractor' => true]);
+        Holiday::factory()->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday half day
 
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'employee_id' => $contractor->id,
             'start_time' => '2017-02-20', // Monday (half-day holiday)
             'end_time' => '2017-02-21',   // Tuesday
@@ -87,13 +88,13 @@ class ContractorTest extends TestCase
         $this->assertEquals(2, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function regular_employee_is_charged_half_day_on_half_day_holiday()
     {
-        $employee = factory(Employee::class)->create(['is_contractor' => false]);
-        factory(Holiday::class)->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday half day
+        $employee = Employee::factory()->create(['is_contractor' => false]);
+        Holiday::factory()->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday half day
 
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'employee_id' => $employee->id,
             'start_time' => '2017-02-20', // Monday (half-day holiday)
             'end_time' => '2017-02-21',   // Tuesday
@@ -102,12 +103,12 @@ class ContractorTest extends TestCase
         $this->assertEquals(1.5, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function contractor_still_skips_weekends()
     {
-        $contractor = factory(Employee::class)->create(['is_contractor' => true]);
+        $contractor = Employee::factory()->create(['is_contractor' => true]);
 
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'employee_id' => $contractor->id,
             'start_time' => '2017-02-17', // Friday
             'end_time' => '2017-02-21',   // Tuesday

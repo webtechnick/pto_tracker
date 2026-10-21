@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Employee;
 use App\Mail\PaidTimeOffApproved;
 use App\Mail\PaidTimeOffDeleted;
@@ -18,7 +19,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_be_able_to_add_pto()
     {
         $employee = $this->create('App\Employee');
@@ -36,7 +37,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_be_able_to_add_empty_pto()
     {
         $data = [];
@@ -48,7 +49,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         $this->assertEquals($count, PaidTimeOff::count()); // We did not add a PTO
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_be_able_to_end_time_earlier_than_start_time_pto()
     {
         $employee = $this->create('App\Employee');
@@ -65,7 +66,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         $this->assertEquals($count, PaidTimeOff::count()); // We did not add a PTO
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_be_able_to_add_pto_with_different_year()
     {
         $employee = $this->create('App\Employee');
@@ -82,12 +83,12 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         $this->assertEquals($count, PaidTimeOff::count()); // We did not add a PTO
     }
 
-    /** @test */
+    #[Test]
     public function it_should_mark_pto_as_sent_to_calendar()
     {
         $this->signInAdmin();
 
-        $pto = factory(PaidTimeOff::class)->create();
+        $pto = PaidTimeOff::factory()->create();
 
         $this->assertFalse($pto->fresh()->is_sent_to_calendar);
 
@@ -96,7 +97,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         $this->assertTrue($pto->fresh()->is_sent_to_calendar);
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_request_end_time_before_start_time()
     {
         $employee = $this->create('App\Employee');
@@ -113,7 +114,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         $this->assertEquals($count, PaidTimeOff::count()); // We did not add a PTO
     }
 
-    /** @test */
+    #[Test]
     public function it_should_email_manager_only_on_pto_save()
     {
         Mail::fake();
@@ -137,7 +138,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_should_email_all_admin_on_pto_save()
     {
         Mail::fake();
@@ -161,7 +162,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_request_pto_on_single_weekend()
     {
         Mail::fake();
@@ -182,7 +183,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         Mail::assertNotSent(PaidTimeOffRequested::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_email_employee_when_pto_approved()
     {
         Mail::fake();
@@ -214,7 +215,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_email_employee_if_pto_is_in_past()
     {
         Mail::fake();
@@ -245,7 +246,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         Mail::assertNotSent(PaidTimeOffApproved::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_email_employee_when_pto_deleted()
     {
         Mail::fake();
@@ -276,7 +277,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_should_not_email_employee_when_past_pto_is_deleted()
     {
         Mail::fake();
@@ -305,7 +306,7 @@ class WorkingWithPaidTimeOffsTest extends TestCase
         Mail::assertNotSent(PaidTimeOffDeleted::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_now_allow_same_day_pto_request()
     {
         Mail::fake();

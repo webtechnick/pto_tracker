@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
     /**
      * The base URL to use while testing the application.
      *
@@ -24,9 +23,9 @@ abstract class TestCase extends BaseTestCase
     public function make($model, $defaults = [], $count = 1)
     {
         if ($count > 1) {
-            return factory($model, $count)->make($defaults);
+            return $model::factory()->count($count)->make($defaults);
         }
-        return factory($model)->make($defaults);
+        return $model::factory()->make($defaults);
     }
 
     /**
@@ -39,9 +38,9 @@ abstract class TestCase extends BaseTestCase
     public function create($model, $defaults = [], $count = 1)
     {
         if ($count > 1) {
-            return factory($model, $count)->create($defaults);
+            return $model::factory()->count($count)->create($defaults);
         }
-        return factory($model)->create($defaults);
+        return $model::factory()->create($defaults);
     }
 
     /**
@@ -94,31 +93,5 @@ abstract class TestCase extends BaseTestCase
     public function signInManager($data = [])
     {
         return $this->signIn($this->create('App\User', array_merge($data, ['role' => 'manager'])));
-    }
-
-    /**
-     * Assert that a string contains another string.
-     * Wrapper for PHPUnit 9+ compatibility.
-     */
-    public static function assertContains($needle, $haystack, string $message = '', bool $ignoreCase = false, bool $checkForObjectIdentity = true, bool $checkForNonObjectIdentity = false): void
-    {
-        if (is_string($haystack)) {
-            static::assertStringContainsString($needle, $haystack, $message);
-        } else {
-            parent::assertContains($needle, $haystack, $message, $ignoreCase, $checkForObjectIdentity, $checkForNonObjectIdentity);
-        }
-    }
-
-    /**
-     * Assert that a string does not contain another string.
-     * Wrapper for PHPUnit 9+ compatibility.
-     */
-    public static function assertNotContains($needle, $haystack, string $message = '', bool $ignoreCase = false, bool $checkForObjectIdentity = true, bool $checkForNonObjectIdentity = false): void
-    {
-        if (is_string($haystack)) {
-            static::assertStringNotContainsString($needle, $haystack, $message);
-        } else {
-            parent::assertNotContains($needle, $haystack, $message, $ignoreCase, $checkForObjectIdentity, $checkForNonObjectIdentity);
-        }
     }
 }

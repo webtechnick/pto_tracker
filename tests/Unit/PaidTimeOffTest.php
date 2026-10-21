@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Holiday;
 use App\PaidTimeOff;
@@ -14,11 +15,11 @@ class PaidTimeOffTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_should_calculate_days_excluding_holidays()
     {
-        factory(Holiday::class)->create(['date' => '2017-02-20']); // Monday
-        $pto = factory(PaidTimeOff::class)->create([
+        Holiday::factory()->create(['date' => '2017-02-20']); // Monday
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2017-02-20', // Monday
             'end_time' => '2017-02-21', // Tuesday
         ]);
@@ -27,12 +28,12 @@ class PaidTimeOffTest extends TestCase
         $this->assertEquals(1, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_calculate_days_excluding_holidays_and_weekends()
     {
-        factory(Holiday::class)->create(['date' => '2017-02-20']); // Monday
-        factory(Holiday::class)->create(['date' => '2017-02-21']); // Tuesday
-        $pto = factory(PaidTimeOff::class)->create([
+        Holiday::factory()->create(['date' => '2017-02-20']); // Monday
+        Holiday::factory()->create(['date' => '2017-02-21']); // Tuesday
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2017-02-17', // Friday
             'end_time' => '2017-02-23', // Thursday
         ]);
@@ -41,10 +42,10 @@ class PaidTimeOffTest extends TestCase
         $this->assertEquals(3, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_mark_as_sent_to_calendar()
     {
-        $pto = factory(PaidTimeOff::class)->create();
+        $pto = PaidTimeOff::factory()->create();
         $this->assertFalse($pto->is_sent_to_calendar);
 
         $pto->sentToCalendar()->save();
@@ -52,12 +53,12 @@ class PaidTimeOffTest extends TestCase
         $this->assertTrue($pto->fresh()->is_sent_to_calendar);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_calculate_days_excluding_half_day_holidays()
     {
-        factory(Holiday::class)->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday Half Day
-        factory(Holiday::class)->create(['date' => '2017-02-21']); // Tuesday
-        $pto = factory(PaidTimeOff::class)->create([
+        Holiday::factory()->create(['date' => '2017-02-20', 'is_half_day' => true]); // Monday Half Day
+        Holiday::factory()->create(['date' => '2017-02-21']); // Tuesday
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2017-02-17', // Friday
             'end_time' => '2017-02-23', // Thursday
         ]);
@@ -66,10 +67,10 @@ class PaidTimeOffTest extends TestCase
         $this->assertEquals(3.5, $pto->days);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_have_a_simple_subject()
     {
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2017-02-17', // Friday
             'end_time' => '2017-02-23', // Thursday
             'is_approved' => true
@@ -79,10 +80,10 @@ class PaidTimeOffTest extends TestCase
         $this->assertEquals('Paid Time Off starting Feb 17, 2017 for 5 days(s)', $pto->simpleSubject(false));
     }
 
-    /** @test */
+    #[Test]
     public function it_should_know_if_in_past()
     {
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2017-02-17', // Friday
             'end_time' => '2017-02-23', // Thursday
             'is_approved' => true
@@ -91,10 +92,10 @@ class PaidTimeOffTest extends TestCase
         $this->assertTrue($pto->isPast());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_know_if_in_future()
     {
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => '2035-02-17', // Friday
             'end_time' => '2035-02-23', // Thursday
             'is_approved' => true
@@ -103,10 +104,10 @@ class PaidTimeOffTest extends TestCase
         $this->assertTrue($pto->isFuture());
     }
 
-    /** @test */
+    #[Test]
     public function it_should_know_if_in_current()
     {
-        $pto = factory(PaidTimeOff::class)->create([
+        $pto = PaidTimeOff::factory()->create([
             'start_time' => Carbon::now()->subDays(5)->toDateString(),
             'end_time' => Carbon::now()->addDays(5)->toDateString(),
             'is_approved' => true

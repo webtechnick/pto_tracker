@@ -5,25 +5,24 @@ namespace App;
 use App\Employee;
 use App\Holiday;
 use App\Traits\Filterable;
+use App\Traits\SerializesDatesAsDateTimeStrings;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PaidTimeOff extends Model
 {
-    use Filterable;
+    use Filterable,
+        HasFactory,
+        SerializesDatesAsDateTimeStrings;
 
     protected $fillable = [
         'employee_id', 'start_time', 'end_time', 'description', 'notes',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'start_time',
-        'end_time'
-    ];
-
     protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
         'is_approved' => 'boolean',
         'is_half_day' => 'boolean',
         'is_sent_to_calendar' => 'boolean',

@@ -46,7 +46,7 @@ abstract class ModelSearch
      * Setup the request
      * @param Request $request [description]
      */
-    public function __construct(Request $request = null)
+    public function __construct(?Request $request = null)
     {
         $this->request = $request ?: request();
         $this->startQuery();

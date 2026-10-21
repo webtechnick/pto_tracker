@@ -26,6 +26,8 @@ class AddIsHalfDayToHoliday extends Migration
     public function down()
     {
         Schema::table('holidays', function (Blueprint $table) {
+            // SQLite cannot drop a column that is still indexed.
+            $table->dropIndex(['is_half_day']);
             $table->dropColumn('is_half_day');
         });
     }

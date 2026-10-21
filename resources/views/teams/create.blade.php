@@ -4,11 +4,11 @@
     <div class="container">
         <h1>New Team</h1>
 
-        {{ Form::open(['route' => 'admin.teams.store']) }}
+        {{ html()->form('POST', route('admin.teams.store'))->open() }}
             @include('teams/_form')
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Create Team</button>
             </div>
-        {{ Form::close() }}
+        {{ html()->form()->close() }}
     </div>
 @endsection

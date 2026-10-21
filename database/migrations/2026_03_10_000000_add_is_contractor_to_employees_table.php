@@ -16,6 +16,8 @@ class AddIsContractorToEmployeesTable extends Migration
     public function down()
     {
         Schema::table('employees', function (Blueprint $table) {
+            // SQLite cannot drop a column that is still indexed.
+            $table->dropIndex(['is_contractor']);
             $table->dropColumn('is_contractor');
         });
     }

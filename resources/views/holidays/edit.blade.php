@@ -6,11 +6,11 @@
 
         <h1>Update Holiday</h1>
 
-        {{ Form::model($holiday, ['route' => ['admin.holidays.update', $holiday], 'method' => 'POST']) }}
+        {{ html()->modelForm($holiday, 'POST', route('admin.holidays.update', $holiday))->open() }}
             @include('holidays/_form')
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Update Holiday</button>
             </div>
-        {{ Form::close() }}
+        {{ html()->closeModelForm() }}
     </div>
 @endsection

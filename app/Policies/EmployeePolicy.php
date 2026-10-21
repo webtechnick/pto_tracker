@@ -32,7 +32,7 @@ class EmployeePolicy
      * @param  Employee  $employee [description]
      * @return [type]              [description]
      */
-    public function viewpto(User $user = null, Employee $employee)
+    public function viewpto(?User $user, Employee $employee)
     {
         return $employee->canViewPto();
     }

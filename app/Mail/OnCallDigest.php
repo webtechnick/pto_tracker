@@ -18,7 +18,7 @@ class OnCallDigest extends Mailable
      *
      * @return void
      */
-    public function __construct(Carbon $start = null, Carbon $end = null)
+    public function __construct(?Carbon $start = null, ?Carbon $end = null)
     {
         $start = $start ?: Carbon::now();
         $this->start = $start;

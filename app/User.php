@@ -3,12 +3,16 @@
 namespace App;
 
 use App\Employee;
+use App\Traits\SerializesDatesAsDateTimeStrings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory,
+        Notifiable,
+        SerializesDatesAsDateTimeStrings;
 
     /**
      * User Roles
