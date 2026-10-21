@@ -76,6 +76,7 @@ All Docker operations use the `./pto` CLI script:
 6. **Frontend is legacy** - Vue 2 + Bootstrap 3 + Laravel Mix 6 with committed builds in `public/`.
 7. **Forms go through `App\Support\Html`** - it replaces `Spatie\Html\Html` in the container and escapes input values, textarea contents and select labels (spatie writes textarea contents raw). Keep using `html()->...`; never `->html($userValue)` / `->value()` on a textarea directly.
 8. **No CORS** - `config/cors.php` has no paths; the token API is server-to-server.
+9. **SQLite values come back as strings, like PHP 7.2** - `App\Database\LegacySqliteConnection` (registered in `AppServiceProvider`) converts fetched values to SQLite text (`"15"`, `"4.0"`). The JSON of `/api/time-off` and `/get/ptos` (dora-metrics, Vue) depends on it; `JsonApiContractTest` pins master's exact output. Use `$casts` for real types, never PDO's `ATTR_STRINGIFY_FETCHES` (renders `4.0` as `"4"`).
 
 ## Deploying
 
@@ -85,7 +86,8 @@ All Docker operations use the `./pto` CLI script:
 
 1. Upgrade PHP on the server to 8.4.27+ (php-fpm, cli and the extensions in `readme.md`) and point php-fpm/nginx at it.
 2. From an up-to-date checkout of this release run `./pto deploy`. Do **not** run the server's existing `./prod-update.sh` first: that Laravel 6 copy dies at `artisan down` on PHP 8.4. If someone already did, recover with `git pull origin master && ./prod-update.sh` on the server.
-3. The new `prod-update.sh` tolerates the leftover Laravel 6 `vendor/` and caches: it deletes the old framework caches, runs `composer install`, only then enters maintenance mode for certain, migrates and rebuilds caches.
+3. The new `prod-update.sh` tolerates the leftover Laravel 6 `vendor/` and caches: while artisan cannot run it serves a static 503 page, deletes the old framework caches, runs `composer install`, then migrates and rebuilds caches. On failure it reports what users currently get (maintenance 503, or THE SITE IS DOWN with the status).
+4. After `artisan up` it requests `APP_URL/login` through this host's web server (`curl --resolve` to 127.0.0.1; override with `PTO_HEALTHCHECK_URL`) and fails unless it gets HTTP 200. That catches nginx/php-fpm still on PHP < 8.4 (Composer's platform check makes the app 500) and broken releases.
 
 `scripts/rehearse-first-deploy.sh` rehearses these paths in Docker against a server built from the pre-upgrade release (needs the app image and `php:7.2-cli`); run it after changing `prod-update.sh` or `./pto deploy`.
 
@@ -195,7 +197,7 @@ docker exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cac
 
 ### Test mail driver
 
-`phpunit.xml` forces `MAIL_MAILER=array` (which wins over a legacy `MAIL_DRIVER`), so tests never send real mail regardless of `.env`. Use `Mail::fake()` in tests that need to assert on sent mail. All 148 tests are expected to pass.
+`phpunit.xml` forces `MAIL_MAILER=array` (which wins over a legacy `MAIL_DRIVER`), so tests never send real mail regardless of `.env`. Use `Mail::fake()` in tests that need to assert on sent mail. All 174 tests are expected to pass.
 
 ### vendor/ ownership
 
