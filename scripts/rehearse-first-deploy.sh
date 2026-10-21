@@ -94,7 +94,7 @@ verify_server() {
         echo "employees $(curl -s -H "Authorization: Bearer rehearsal-token" http://127.0.0.1:8099/api/employees)"
         echo "holidays $(curl -s -H "Authorization: Bearer rehearsal-token" "http://127.0.0.1:8099/api/holidays?start_date=2026-01-01&end_date=2026-12-31")"
         php -r "require \"vendor/autoload.php\"; \$a = require \"bootstrap/app.php\"; \$a->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo \"mail \", config(\"mail.default\"), \" \", (string) \$a[\"mail.manager\"]->mailer()->getSymfonyTransport(), \"\n\";"
-    ')"
+    ' || true)"
     echo "$out"
     grep -q "Laravel Framework 13\." <<<"$out" && pass "$name: Laravel 13 installed" || fail "$name: not on Laravel 13"
     grep -q "^LIVE" <<<"$out" && pass "$name: out of maintenance mode" || fail "$name: left in maintenance mode"

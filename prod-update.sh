@@ -109,8 +109,13 @@ if [ "$(git hash-object "$0")" != "$SCRIPT_HASH_BEFORE" ] && [ -z "${PTO_UPDATE_
     PTO_UPDATE_REEXEC=1 PTO_UPDATE_DOWN="$DOWN" exec "$0" "$@"
 fi
 
-# Install composer dependencies. Its post-autoload-dump hook also deletes any
-# config/services/packages cache left by the previous release.
+# Composer's package:discover boots the new code, which must not read the
+# previous release's cached config (a Laravel 6 config cache lists providers
+# that no longer exist). Caches are rebuilt below.
+info "Removing the previous release's framework caches..."
+rm -f bootstrap/cache/config.php bootstrap/cache/services.php bootstrap/cache/packages.php \
+    bootstrap/cache/events.php bootstrap/cache/compiled.php bootstrap/cache/routes*.php
+
 info "Installing composer dependencies..."
 php composer.phar install --no-dev --optimize-autoloader --no-interaction
 
