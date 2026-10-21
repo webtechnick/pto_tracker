@@ -11,9 +11,13 @@
 #        tsh login
 #   2. SSH into the production host:
 #        tsh ssh continued_lead@lcg-east2-pto.lacallegroup.com
-#   3. Navigate to the project and run:
+#   3. Navigate to the project, pull, and run the (now current) script:
 #        cd /var/www/laravel/pto_tracker
-#        ./prod-update.sh
+#        git pull origin master && ./prod-update.sh
+#
+# Works from any previous release, including a server still holding the
+# Laravel 6 code/vendor: nothing that must succeed runs through artisan until
+# composer has installed the vendor/ that matches the pulled code.
 #
 
 set -e  # Exit on any error
@@ -65,22 +69,56 @@ if ! php -r '$v = PHP_VERSION_ID; exit(($v >= 80427 && $v < 80500) || $v >= 8051
     warn "PHP ${PHP_VERSION} predates the PHP2Shell fix (8.4.27+ / 8.5.12+). Patch PHP on this server."
 fi
 
-# Put application in maintenance mode. The 503 page is pre-rendered so it is
-# served even while vendor/ is being reinstalled.
-if [ -f "vendor/autoload.php" ]; then
+DOWN="${PTO_UPDATE_DOWN:-0}"
+
+# Best effort: the installed vendor/ may not run on this PHP (e.g. Laravel 6
+# on PHP 8.4) or may not match freshly pulled code. The 503 page is
+# pre-rendered so it is served while vendor/ is being reinstalled.
+enter_maintenance() {
+    [ "$DOWN" = 1 ] && return 0
+    if [ ! -f "vendor/autoload.php" ]; then
+        warn "vendor/ not installed yet; maintenance mode after composer install."
+        return 0
+    fi
     info "Putting application in maintenance mode..."
-    php artisan down --render="errors::503" --retry=60
-else
-    warn "vendor/ not installed yet (first deploy?); skipping maintenance mode."
+    if php artisan down --render="errors::503" --retry=60; then
+        DOWN=1
+    else
+        warn "Installed code/vendor cannot run artisan here; continuing, will retry after composer install."
+    fi
+}
+
+on_error() {
+    error "Deployment failed (line $1)."
+    if [ "$DOWN" = 1 ]; then
+        error "The application is still in maintenance mode. Fix the problem and rerun ./prod-update.sh (or run: php artisan up)."
+    fi
+}
+trap 'on_error $LINENO' ERR
+
+enter_maintenance
+
+# Pull latest code. If this script itself changed, run the new version so a
+# release's deploy steps always come from that release.
+info "Pulling latest code from git..."
+SCRIPT_HASH_BEFORE="$(git hash-object "$0")"
+git pull origin master
+if [ "$(git hash-object "$0")" != "$SCRIPT_HASH_BEFORE" ] && [ -z "${PTO_UPDATE_REEXEC:-}" ]; then
+    info "prod-update.sh changed; re-running the updated script..."
+    trap - ERR
+    PTO_UPDATE_REEXEC=1 PTO_UPDATE_DOWN="$DOWN" exec "$0" "$@"
 fi
 
-# Pull latest code
-info "Pulling latest code from git..."
-git pull origin master
-
-# Install composer dependencies
+# Install composer dependencies. Its post-autoload-dump hook also deletes any
+# config/services/packages cache left by the previous release.
 info "Installing composer dependencies..."
 php composer.phar install --no-dev --optimize-autoloader --no-interaction
+
+enter_maintenance
+if [ "$DOWN" != 1 ]; then
+    error "Could not enter maintenance mode with the freshly installed dependencies."
+    exit 1
+fi
 
 # Run database migrations
 info "Running database migrations..."
