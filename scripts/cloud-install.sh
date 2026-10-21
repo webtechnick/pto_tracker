@@ -129,6 +129,9 @@ ensure_php_version() {
 
 fix_storage_permissions() {
     docker_cmd exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+    # php-fpm runs as www-data; SQLite needs to write the file and create its
+    # journal next to it in the bind-mounted (host-owned) database/ directory.
+    docker_cmd exec pto_tracker_app sh -c 'chmod 777 /var/www/database && chmod 666 /var/www/database/database.sqlite' 2>/dev/null || true
 }
 
 main() {

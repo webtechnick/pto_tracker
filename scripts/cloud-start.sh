@@ -45,6 +45,8 @@ for _ in $(seq 1 60); do
     sleep 2
 done
 docker_cmd exec pto_tracker_app chmod -R 777 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+# php-fpm runs as www-data; SQLite needs a writable file and directory.
+docker_cmd exec pto_tracker_app sh -c 'chmod 777 /var/www/database && chmod 666 /var/www/database/database.sqlite' 2>/dev/null || true
 
 # A snapshot built before the Laravel 13 / PHP 8.4 upgrade still has the PHP
 # 7.2 image and a Laravel 6 vendor/. Rebuild and resync so the app boots.
