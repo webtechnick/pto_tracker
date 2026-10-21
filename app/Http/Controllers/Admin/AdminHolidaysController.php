@@ -83,7 +83,7 @@ class AdminHolidaysController extends Controller
      * @param  holiday $holiday [description]
      * @return redirect
      */
-    public function update(Request $request, Holiday $holiday)
+    public function update(HolidayRequest $request, Holiday $holiday)
     {
         $holiday->updateFromRequest($request->all());
 

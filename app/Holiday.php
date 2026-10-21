@@ -127,7 +127,7 @@ Holiday 5,2022-12-26
         $rows = explode(PHP_EOL,$bulk['bulk']);
 
         foreach ($rows as $row) {
-            $parsed = str_getcsv($row);
+            $parsed = str_getcsv($row, ',', '"', '\\');
 
             $half_day = false;
             if (isset($parsed[2])) {

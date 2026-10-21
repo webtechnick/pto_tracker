@@ -111,6 +111,10 @@ class ManagerEmployeesController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
+        // EmployeeRequest's rules without its admin-only authorize(): managers
+        // may update employees.
+        $request->validate((new EmployeeRequest)->rules());
+
         $employee->updateFromRequest($request->all());
 
         $this->goodFlash($employee->name . ' Updated.');
