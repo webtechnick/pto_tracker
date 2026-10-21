@@ -14,9 +14,11 @@ use App\Listeners\NotifyManagerOfPTORequest;
 use App\Listeners\RemoveEmployeePTO;
 use App\Listeners\RemoveTeamFromTaggables;
 use App\Policies\EmployeePolicy;
+use App\Support\Html;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Html\Html as SpatieHtml;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -48,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(SpatieHtml::class, Html::class);
     }
 
     /**
