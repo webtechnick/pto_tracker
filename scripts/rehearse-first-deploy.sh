@@ -54,7 +54,8 @@ on_server() {
             '"$*"
 }
 
-WEB='php -S 127.0.0.1:80 -t '"$APP_DIR"'/public > /dev/null 2>&1 & sleep 0.5;'
+# display_errors=0 as on production php-fpm (otherwise a fatal error is a 200).
+WEB='php -d display_errors=0 -S 127.0.0.1:80 -t '"$APP_DIR"'/public > /dev/null 2>&1 & sleep 0.5;'
 
 build_old_server() {
     local server="$WORK/$1"
@@ -92,7 +93,7 @@ EOF
 }
 
 verify_server() {
-    local name="$1" server="$WORK/$1"
+    local name="$1" server="$WORK/$1" expected_sha="${2:-$NEW_SHA}"
     local out
     out="$(on_server "$NEW_IMAGE" "$server" '
         php artisan --version
@@ -108,7 +109,7 @@ verify_server() {
     echo "$out"
     grep -q "Laravel Framework 13\." <<<"$out" && pass "$name: Laravel 13 installed" || fail "$name: not on Laravel 13"
     grep -q "^LIVE" <<<"$out" && pass "$name: out of maintenance mode" || fail "$name: left in maintenance mode"
-    grep -q "^HEAD $NEW_SHA" <<<"$out" && pass "$name: new release checked out" || fail "$name: wrong commit"
+    grep -q "^HEAD $expected_sha" <<<"$out" && pass "$name: new release checked out" || fail "$name: wrong commit"
     grep -q "^login 200" <<<"$out" && pass "$name: /login 200" || fail "$name: /login not 200"
     grep -q '"name":"Legacy Employee"' <<<"$out" && pass "$name: existing employee data served by API" || fail "$name: employee data missing"
     grep -q '"title":"Legacy Holiday"' <<<"$out" && pass "$name: existing holiday data served by API" || fail "$name: holiday data missing"
@@ -180,30 +181,32 @@ grep -q "runs PHP 70234" <<<"$out" && pass "D: PHP 7.2 server refused before dep
 
 
 # --- E: self re-run when started as `bash prod-update.sh` -------------------
-say "E: bash prod-update.sh from a previous release whose script differs (self re-run)"
-git clone -q "$WORK/origin.git" "$WORK/release" -b master
-git -C "$WORK/release" checkout -q "$NEW_SHA"
-printf '\n# previous release\n' >> "$WORK/release/prod-update.sh"
-git -C "$WORK/release" -c user.email=r@example.com -c user.name=r commit -qam "previous release"
-git -C "$WORK/release" push -q origin HEAD:refs/heads/previous-release
-git -C "$WORK/origin.git" update-ref refs/heads/master "$(git -C "$WORK/release" rev-parse HEAD)"
-git clone -q -b master "$WORK/origin.git" "$WORK/E"
+say "E: bash prod-update.sh on this release, pulling a next release whose script differs (self re-run)"
+git clone -q "$WORK/origin.git" "$WORK/E" -b master
+git -C "$WORK/E" checkout -q -B master "$NEW_SHA"
 cp "$WORK/A/.env" "$WORK/E/.env"; cp "$WORK/A/composer.phar" "$WORK/E/composer.phar"; touch "$WORK/E/database/database.sqlite"
 on_server "$NEW_IMAGE" "$WORK/E" 'composer install -q --no-dev --no-interaction && php artisan migrate --force -q &&
     php artisan tinker --execute="App\Employee::forceCreate([\"name\" => \"Legacy Employee\", \"color\" => \"white\", \"bgcolor\" => \"green\"]); App\Holiday::forceCreate([\"title\" => \"Legacy Holiday\", \"date\" => \"2026-12-25\"]);"'
-git -C "$WORK/origin.git" update-ref refs/heads/master "$NEW_SHA"
+git clone -q "$WORK/origin.git" "$WORK/next" -b master
+git -C "$WORK/next" checkout -q "$NEW_SHA"
+printf '\necho "NEXT-RELEASE-SCRIPT-RAN"\n' >> "$WORK/next/prod-update.sh"
+git -C "$WORK/next" -c user.email=r@example.com -c user.name=r commit -qam "next release"
+git -C "$WORK/next" push -q origin HEAD:refs/heads/master
+NEXT_SHA="$(git -C "$WORK/next" rev-parse HEAD)"
 out="$(on_server "$NEW_IMAGE" "$WORK/E" "$WEB"' bash prod-update.sh' 2>&1)" && rc=0 || rc=$?
-echo "$out" | grep -E "INFO|WARN|ERROR" || true
+echo "$out" | grep -E "INFO|WARN|ERROR|NEXT-RELEASE" || true
 [ "$rc" = 0 ] && pass "E: bash prod-update.sh exited 0" || fail "E: bash prod-update.sh exited $rc"
 grep -q "re-running the updated script (/var/www/laravel/pto_tracker/prod-update.sh)" <<<"$out" \
     && pass "E: re-ran the updated script by absolute path" || fail "E: no self re-run"
-verify_server E
+grep -q "^NEXT-RELEASE-SCRIPT-RAN" <<<"$out" && pass "E: the pulled script's steps ran" || fail "E: pulled script did not run"
+verify_server E "$NEXT_SHA"
+git -C "$WORK/origin.git" update-ref refs/heads/master "$NEW_SHA"
 
 # --- F: web server still on PHP 7.2 -----------------------------------------
 say "F: CLI upgraded to PHP 8.4 but the web server still runs PHP 7.2"
 build_old_server F
 docker run -d --rm --name pto-rehearsal-web72 -v "$WORK/F:$APP_DIR" -w "$APP_DIR" "$OLD_IMAGE" \
-    php -S 127.0.0.1:80 -t "$APP_DIR/public" > /dev/null
+    php -d display_errors=0 -S 127.0.0.1:80 -t "$APP_DIR/public" > /dev/null
 out="$(docker run --rm -i --network container:pto-rehearsal-web72 -v "$WORK/F:$APP_DIR" -v "$WORK/origin.git:$WORK/origin.git" -w "$APP_DIR" "$NEW_IMAGE" \
     bash -c 'printf "#!/bin/sh\nexec \"\$@\"\n" > /usr/local/bin/sudo; chmod +x /usr/local/bin/sudo; git config --global --add safe.directory "*"; git pull -q origin master && bash prod-update.sh' 2>&1)" && rc=0 || rc=$?
 docker rm -f pto-rehearsal-web72 > /dev/null 2>&1 || true
