@@ -42,41 +42,43 @@ If you prefer to set up manually:
 2. **Update the `.env` file with Docker settings:**
    ```env
    DB_CONNECTION=sqlite
-   DB_DATABASE=database/database.sqlite
+   DB_DATABASE=/var/www/database/database.sqlite
+   SESSION_DOMAIN="localhost"
    REDIS_HOST=redis
    ```
 
 3. **Build and start containers:**
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 4. **Install dependencies and setup Laravel:**
    ```bash
    # Install PHP dependencies
-   docker-compose exec app composer install
+   docker compose exec app composer install
 
    # Install Node.js dependencies
-   docker-compose exec app npm install
+   docker compose run --rm node npm install
 
    # Build assets
-   docker-compose exec app npm run prod
+   docker compose run --rm node npm run prod
 
    # Generate application key
-   docker-compose exec app php artisan key:generate
+   docker compose exec app php artisan key:generate
 
    # Run migrations
-   docker-compose exec app php artisan migrate
+   docker compose exec app php artisan migrate
 
    # Run seeders (optional)
-   docker-compose exec app php artisan db:seed
+   docker compose exec app php artisan db:seed
    ```
 
 ## Docker Services
 
 The application consists of the following services:
 
-- **app**: PHP 7.2-FPM with Laravel application (includes SQLite)
+- **app**: PHP 8.4-FPM (`php:8.4-fpm-trixie`) with the Laravel 13 application (includes SQLite)
+- **node**: Node 18 for building front-end assets (`./pto npm`, `./pto build`)
 - **webserver**: Nginx web server
 - **redis**: Redis cache server
 
@@ -85,51 +87,51 @@ The application consists of the following services:
 ### Container Management
 ```bash
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # Stop all services
-docker-compose down
+docker compose down
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # View logs for specific service
-docker-compose logs -f app
+docker compose logs -f app
 ```
 
 ### Laravel Commands
 ```bash
 # Run artisan commands
-docker-compose exec app php artisan [command]
+docker compose exec app php artisan [command]
 
 # Examples:
-docker-compose exec app php artisan migrate
-docker-compose exec app php artisan tinker
-docker-compose exec app php artisan route:list
+docker compose exec app php artisan migrate
+docker compose exec app php artisan tinker
+docker compose exec app php artisan route:list
 ```
 
 ### Database
 ```bash
 # Access SQLite database
-docker-compose exec app sqlite3 database/database.sqlite
+docker compose exec app sqlite3 database/database.sqlite
 
 # Run migrations
-docker-compose exec app php artisan migrate
+docker compose exec app php artisan migrate
 
 # Rollback migrations
-docker-compose exec app php artisan migrate:rollback
+docker compose exec app php artisan migrate:rollback
 ```
 
 ### Asset Compilation
 ```bash
 # Install Node.js dependencies
-docker-compose exec app npm install
+docker compose run --rm node npm install
 
 # Build assets for production
-docker-compose exec app npm run prod
+docker compose run --rm node npm run prod
 
 # Watch for changes (development)
-docker-compose exec app npm run dev
+docker compose run --rm node npm run dev
 ```
 
 ## Configuration Files
@@ -156,16 +158,16 @@ docker-compose exec app npm run dev
    - Change ports in `docker-compose.yml` if 8000 or 6379 are in use
 
 4. **Container won't start:**
-   - Check logs: `docker-compose logs [service-name]`
-   - Rebuild containers: `docker-compose up -d --build`
+   - Check logs: `docker compose logs [service-name]`
+   - Rebuild containers: `docker compose up -d --build`
 
 ### Reset Everything
 ```bash
 # Stop and remove all containers, networks, and volumes
-docker-compose down -v
+docker compose down -v
 
 # Remove all images
-docker-compose down --rmi all
+docker compose down --rmi all
 
 # Start fresh
 ./docker-setup.sh
@@ -180,15 +182,15 @@ docker-compose down --rmi all
 2. **Adding new dependencies:**
    ```bash
    # PHP dependencies
-   docker-compose exec app composer require [package]
+   docker compose exec app composer require [package]
 
    # Node.js dependencies
-   docker-compose exec app npm install [package]
+   docker compose run --rm node npm install [package]
    ```
 
 3. **Running tests:**
    ```bash
-   docker-compose exec app php artisan test
+   ./pto test
    ```
 
 ## Production Considerations
