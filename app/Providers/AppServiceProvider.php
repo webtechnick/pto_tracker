@@ -13,8 +13,10 @@ use App\Listeners\NotifyEmployeeOfPTODelete;
 use App\Listeners\NotifyManagerOfPTORequest;
 use App\Listeners\RemoveEmployeePTO;
 use App\Listeners\RemoveTeamFromTaggables;
+use App\Database\LegacySqliteConnection;
 use App\Policies\EmployeePolicy;
 use App\Support\Html;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +53,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(SpatieHtml::class, Html::class);
+
+        Connection::resolverFor('sqlite', function ($pdo, $database, $prefix, $config) {
+            return new LegacySqliteConnection($pdo, $database, $prefix, $config);
+        });
     }
 
     /**

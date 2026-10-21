@@ -123,7 +123,7 @@ class UpgradeRegressionTest extends TestCase
             ->assertJsonPath('0.id', $pto->id)
             ->assertJsonPath('0.start_time', '2035-05-25 00:00:00')
             ->assertJsonPath('0.end_time', '2035-05-29 00:00:00')
-            ->assertJsonPath('0.days', 2) // Fri + Tue; Memorial Day and the weekend are free
+            ->assertJsonPath('0.days', '2.0') // Fri + Tue; Memorial Day and the weekend are free
             ->assertJsonPath('0.is_approved', false)
             ->assertJsonPath('0.employee.name', 'Alice');
 
