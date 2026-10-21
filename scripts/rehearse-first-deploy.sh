@@ -41,15 +41,15 @@ on_server() {
     local image="$1" server="$2"; shift 2
     docker run --rm -i -v "$server:$APP_DIR" -v "$WORK/origin.git:$WORK/origin.git" -w "$APP_DIR" \
         "$image" bash -c 'printf "#!/bin/sh\nexec \"\$@\"\n" > /usr/local/bin/sudo; chmod +x /usr/local/bin/sudo
-            git config --global --add safe.directory "*" 2>/dev/null || true
-            git config --global user.email deploy@example.com; git config --global user.name deploy
+            command -v git >/dev/null && git config --global --add safe.directory "*"
+            git config --global user.email deploy@example.com 2>/dev/null; git config --global user.name deploy 2>/dev/null
             '"$*"
 }
 
 build_old_server() {
     local server="$WORK/$1"
     git -C "$WORK/origin.git" update-ref refs/heads/master "$OLD_SHA"
-    git clone -q "$WORK/origin.git" "$server"
+    git clone -q -b master "$WORK/origin.git" "$server"
     docker run --rm "$NEW_IMAGE" cat /usr/bin/composer > "$server/composer.phar"
     touch "$server/database/database.sqlite"
     cat > "$server/.env" <<EOF
