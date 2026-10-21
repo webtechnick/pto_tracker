@@ -156,6 +156,13 @@ case "$1" in
             echo -e "${RED}Error: PROD_USERNAME and PROD_HOST must be set in .env${NC}"
             exit 1
         fi
+        # The server's prod-update.sh runs `git pull` before composer, so a
+        # server still on PHP < 8.4 would be left in maintenance mode. Check first.
+        echo -e "${GREEN}Checking PHP version on ${PROD_HOST}...${NC}"
+        if ! tsh ssh "${PROD_USERNAME}@${PROD_HOST}" "php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);'"; then
+            echo -e "${RED}Production PHP is older than 8.4 (or unreachable). This release needs PHP 8.4+; not deploying.${NC}"
+            exit 1
+        fi
         echo -e "${GREEN}Deploying to production via Teleport...${NC}"
         if ! tsh ssh "${PROD_USERNAME}@${PROD_HOST}" "cd /var/www/laravel/pto_tracker && ./prod-update.sh"; then
             echo ""

@@ -54,9 +54,25 @@ echo "   PTO Tracker Production Deployment"
 echo "========================================="
 echo ""
 
-# Put application in maintenance mode
-info "Putting application in maintenance mode..."
-php artisan down --message="Updating application. Back shortly!" --retry=60
+# Refuse to deploy onto a PHP that cannot run the app, before touching anything.
+PHP_VERSION="$(php -r 'echo PHP_VERSION;')"
+if ! php -r 'exit(PHP_VERSION_ID >= 80400 ? 0 : 1);'; then
+    error "PHP 8.4+ is required (found ${PHP_VERSION}). Aborting before maintenance mode."
+    exit 1
+fi
+# CVE-2026-109618 / CVE-2026-109619 ("PHP2Shell") are fixed in 8.4.27+ and 8.5.12+.
+if ! php -r '$v = PHP_VERSION_ID; exit(($v >= 80427 && $v < 80500) || $v >= 80512 ? 0 : 1);'; then
+    warn "PHP ${PHP_VERSION} predates the PHP2Shell fix (8.4.27+ / 8.5.12+). Patch PHP on this server."
+fi
+
+# Put application in maintenance mode. The 503 page is pre-rendered so it is
+# served even while vendor/ is being reinstalled.
+if [ -f "vendor/autoload.php" ]; then
+    info "Putting application in maintenance mode..."
+    php artisan down --render="errors::503" --retry=60
+else
+    warn "vendor/ not installed yet (first deploy?); skipping maintenance mode."
+fi
 
 # Pull latest code
 info "Pulling latest code from git..."
