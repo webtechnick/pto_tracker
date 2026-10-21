@@ -78,8 +78,15 @@ php artisan key:generate        # only for a brand new instance
 ./prod-update.sh                # migrate, cache config/routes/views, fix perms
 ```
 
-After that, `./pto deploy` (Teleport) runs `prod-update.sh` remotely. It first
-checks that the server is on PHP 8.4+.
+After that, `./pto deploy` (Teleport) checks the session and that the server is
+on PHP 8.4+, pulls on the server and runs the pulled `prod-update.sh`.
+
+### Upgrading a server that runs the Laravel 6 release
+
+Upgrade PHP to 8.4.27+ first, then run `./pto deploy` from this release. Do not
+run the server's old `prod-update.sh` (it fails on PHP 8.4); if that already
+happened, run `git pull origin master && ./prod-update.sh` on the server.
+`scripts/rehearse-first-deploy.sh` rehearses this in Docker.
 
 Existing instance `.env` files keep working: the Laravel 6 variable names
 (`MAIL_DRIVER`, `MAIL_ENCRYPTION`, `QUEUE_DRIVER`, `CACHE_DRIVER`,
